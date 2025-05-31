@@ -194,12 +194,12 @@
   }
 
   .gallery-card {
-    @apply transition-all duration-400 ease-out hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(199,166,122,0.3)]
+    @apply transition-all duration-300 ease-out hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(199,166,122,0.3)]
            border border-navy/10 rounded-lg overflow-hidden bg-white;
   }
 
   .gallery-card img {
-    @apply transition-all duration-400 ease-out;
+    @apply transition-all duration-300 ease-out;
   }
 
   .gallery-card:hover img {
@@ -208,7 +208,7 @@
   }
 
   .gallery-card .overlay {
-    @apply absolute inset-0 bg-navy/0 transition-all duration-400 ease-out flex items-center justify-center;
+    @apply absolute inset-0 bg-navy/0 transition-all duration-300 ease-out flex items-center justify-center;
   }
 
   .gallery-card:hover .overlay {
@@ -216,7 +216,7 @@
   }
 
   .gallery-card .overlay-content {
-    @apply text-ivory text-center opacity-0 transform translate-y-4 transition-all duration-400 ease-out;
+    @apply text-ivory text-center opacity-0 transform translate-y-4 transition-all duration-300 ease-out;
   }
 
   .gallery-card:hover .overlay-content {
@@ -266,7 +266,7 @@
   }
 
   .lightbox-caption {
-    @apply transform translate-y-full transition-transform duration-600 ease-out;
+    @apply transform translate-y-full transition-transform duration-700 ease-out;
   }
 
   .lightbox.open .lightbox-caption {
