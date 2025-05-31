@@ -33,9 +33,11 @@ const Navigation = () => {
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
             <Link to="/" className="flex-shrink-0">
-              <div className="text-2xl font-serif font-bold text-navy tracking-[0.5px]">
-                SAFA MAATOUG
-              </div>
+              <img 
+                src="/lovable-uploads/bdb13012-59ce-422b-8158-5a780a8fa555.png" 
+                alt="Safa Maatoug Logo" 
+                className="h-12 w-auto transition-all duration-300 hover:scale-105"
+              />
             </Link>
 
             {/* Desktop Navigation */}

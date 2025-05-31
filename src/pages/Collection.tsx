@@ -13,35 +13,84 @@ const Collection = () => {
   const dresses = [
     {
       id: 1,
-      image: '/placeholder.svg',
-      name: 'Étoile d\'Auréole',
-      fabric: 'Dentelle française, soie sauvage',
-      colors: 'Ivoire, Champagne, Blush',
-      description: 'Une création délicate alliant tradition et modernité, ornée de perles fines et de broderies d\'exception.'
+      image: '/lovable-uploads/88c2ef1d-431e-419a-ba66-607284097b92.png',
+      name: 'Étoile Azure',
+      fabric: 'Plumes véritables, paillettes brodées main',
+      colors: 'Bleu céleste, Argent',
+      description: 'Une création audacieuse aux manches plumes spectaculaires, sublimée par des broderies perlées d\'exception.',
+      category: 'Haute Couture'
     },
     {
       id: 2,
-      image: '/placeholder.svg',
-      name: 'Rêve de Lumière',
-      fabric: 'Tulle brodé, organza',
-      colors: 'Ivory, Nude',
-      description: 'Silhouette romantique aux détails précieux, sublimée par des applications de cristaux Swarovski.'
+      image: '/lovable-uploads/6254dd8b-8e1d-44e8-af43-adb58b41fa97.png',
+      name: 'Lumière Champagne',
+      fabric: 'Tulle brodé, paillettes dorées',
+      colors: 'Champagne, Or pâle',
+      description: 'Silhouette majestueuse aux détails scintillants, rehaussée de broderies précieuses ton sur ton.',
+      category: 'Cérémonie'
     },
     {
       id: 3,
-      image: '/placeholder.svg',
-      name: 'Grâce Éternelle',
-      fabric: 'Crêpe de soie, dentelle Chantilly',
-      colors: 'Blanc pur, Champagne',
-      description: 'Élégance intemporelle dans une coupe épurée, rehaussée de broderies ton sur ton.'
+      image: '/lovable-uploads/2c7222b1-a23a-4739-8373-3dfadc9633e5.png',
+      name: 'Grâce Perlée',
+      fabric: 'Dentelle française, perles fines',
+      colors: 'Blanc nacré, Ivoire',
+      description: 'Élégance intemporelle dans une silhouette épaules dénudées, ornée de perles délicates.',
+      category: 'Mariage Civil'
     },
     {
       id: 4,
-      image: '/placeholder.svg',
-      name: 'Symphonie Dorée',
-      fabric: 'Mikado, dentelle dorée',
-      colors: 'Champagne, Or pâle',
-      description: 'Une ode à la féminité avec ses lignes fluides et ses détails métallisés subtilement intégrés.'
+      image: '/lovable-uploads/1e066b73-bcc6-4941-89b2-4fccd4acdc32.png',
+      name: 'Constellation Dorée',
+      fabric: 'Mikado, broderies métallisées',
+      colors: 'Champagne doré, Bronze',
+      description: 'Une ode à la sophistication avec ses lignes épurées et ses détails géométriques raffinés.',
+      category: 'Haute Couture'
+    },
+    {
+      id: 5,
+      image: '/lovable-uploads/8630b707-80e4-4ccb-a99e-6ab29491ce9e.png',
+      name: 'Éclat Noir',
+      fabric: 'Crêpe stretch, ceinture cristal',
+      colors: 'Noir profond, Argent',
+      description: 'Sophistication moderne dans une silhouette épurée, rehaussée d\'une ceinture ornementée.',
+      category: 'Cérémonie'
+    },
+    {
+      id: 6,
+      image: '/lovable-uploads/4c0ac742-ef06-42c2-b9f0-b01290af4dd2.png',
+      name: 'Romance Printanière',
+      fabric: 'Dentelle Chantilly, tulle brodé',
+      colors: 'Blanc pur, Ivoire',
+      description: 'Fraîcheur romantique dans une création mi-longue, parfaite pour une cérémonie intime.',
+      category: 'Mariage Civil'
+    },
+    {
+      id: 7,
+      image: '/lovable-uploads/751c5221-23b0-45db-ae85-970443bf024e.png',
+      name: 'Soleil d\'Or',
+      fabric: 'Tulle volumé, broderies dorées',
+      colors: 'Jaune soleil, Or',
+      description: 'Création spectaculaire aux volumes généreux, illuminée de broderies précieuses.',
+      category: 'Haute Couture'
+    },
+    {
+      id: 8,
+      image: '/lovable-uploads/b7d5454b-f7aa-42e9-a591-a5636043dad3.png',
+      name: 'Symphonie Argentée',
+      fabric: 'Brocart métallisé, col halter',
+      colors: 'Argent, Platine',
+      description: 'Sophistication moderne dans une silhouette halter, rehaussée de motifs géométriques précieux.',
+      category: 'Cérémonie'
+    },
+    {
+      id: 9,
+      image: '/lovable-uploads/f231d151-f79a-45c9-99b4-aff96b6b9a6b.png',
+      name: 'Royauté Scintillante',
+      fabric: 'Brocart doré, col montant brodé',
+      colors: 'Argent, Or, Platine',
+      description: 'Création royale aux détails somptueux, incarnant l\'excellence de la haute couture.',
+      category: 'Haute Couture'
     }
   ];
 
@@ -81,7 +130,7 @@ const Collection = () => {
   };
 
   const filteredDresses = selectedFilter === 'Toutes' ? dresses : 
-    dresses.filter(dress => dress.name.includes(selectedFilter));
+    dresses.filter(dress => dress.category === selectedFilter);
 
   const filters = ['Toutes', 'Mariage Civil', 'Cérémonie', 'Haute Couture'];
 
@@ -132,7 +181,7 @@ const Collection = () => {
         {/* Gallery Grid */}
         <section className="py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredDresses.map((dress, index) => (
                 <div
                   key={dress.id}
@@ -155,7 +204,8 @@ const Collection = () => {
                   </div>
                   <div className="p-6">
                     <h3 className="font-serif text-xl text-navy mb-2">{dress.name}</h3>
-                    <p className="font-sans text-sm text-navy/70 tracking-wide">{dress.fabric}</p>
+                    <p className="font-sans text-sm text-navy/70 tracking-wide mb-1">{dress.fabric}</p>
+                    <p className="font-sans text-xs text-champagne uppercase tracking-wider">{dress.category}</p>
                   </div>
                 </div>
               ))}

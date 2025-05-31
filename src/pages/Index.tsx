@@ -27,7 +27,7 @@ const Index = () => {
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat parallax-bg"
           style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?q=80&w=2070&auto=format&fit=crop')`,
+            backgroundImage: `url('/lovable-uploads/6254dd8b-8e1d-44e8-af43-adb58b41fa97.png')`,
             animation: 'ken-burns 20s ease-in-out infinite alternate'
           }}
         >
@@ -111,16 +111,16 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
-                image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=2070&auto=format&fit=crop",
-                title: "Élégance intemporelle incarnée"
+                image: "/lovable-uploads/88c2ef1d-431e-419a-ba66-607284097b92.png",
+                title: "Étoile Azure - Plumes et Éclats"
               },
               {
-                image: "https://images.unsplash.com/photo-1566174053879-31528523f8ae?q=80&w=2070&auto=format&fit=crop",
-                title: "Romance sublimée"
+                image: "/lovable-uploads/b7d5454b-f7aa-42e9-a591-a5636043dad3.png",
+                title: "Symphonie Dorée - Éclat Halter"
               },
               {
-                image: "https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?q=80&w=2070&auto=format&fit=crop",
-                title: "Une robe qui captivera tous les regards"
+                image: "/lovable-uploads/4c0ac742-ef06-42c2-b9f0-b01290af4dd2.png",
+                title: "Romance Printanière - Dentelle Pure"
               }
             ].map((item, index) => (
               <div 
