@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
+import LuxuryAnimations from '../components/LuxuryAnimations';
 
 const Avis = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -63,6 +64,7 @@ const Avis = () => {
   return (
     <div className="min-h-screen">
       <Navigation />
+      <LuxuryAnimations />
       
       {/* Header Section */}
       <section className="pt-32 pb-16">
@@ -77,11 +79,12 @@ const Avis = () => {
             
             {/* Main content */}
             <div className="relative z-10">
-              <h1 className="font-serif text-5xl md:text-6xl text-navy mb-8">
+              <h1 className="fade-slide-up font-serif text-5xl md:text-6xl text-navy mb-8 stroke-fill-animation">
                 Avis
               </h1>
+              <div className="animated-separator mx-auto"></div>
               
-              <p className="font-sans text-xl text-navy/70 leading-relaxed max-w-3xl mx-auto">
+              <p className="fade-slide-up font-sans text-xl text-navy/70 leading-relaxed max-w-3xl mx-auto mt-8">
                 Les témoignages de nos mariées nous touchent profondément. 
                 Découvrez leurs expériences et laissez-vous inspirer par leurs histoires d'amour uniques.
               </p>
@@ -95,20 +98,20 @@ const Avis = () => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="relative">
             {/* Carousel Container */}
-            <div className="overflow-hidden">
+            <div className="overflow-hidden rounded-lg">
               <div 
-                className="flex transition-transform duration-500 ease-in-out"
+                className="flex transition-transform duration-600 ease-in-out"
                 style={{ transform: `translateX(-${currentSlide * 100}%)` }}
               >
                 {testimonials.map((testimonial) => (
                   <div key={testimonial.id} className="w-full flex-shrink-0">
-                    <div className="max-w-4xl mx-auto text-center">
+                    <div className="max-w-4xl mx-auto text-center py-12">
                       {/* Avatar */}
                       <div className="mb-8">
                         <img
                           src={testimonial.avatar}
                           alt={testimonial.name}
-                          className="w-24 h-24 rounded-full mx-auto object-cover border-4 border-champagne shadow-lg"
+                          className="w-24 h-24 rounded-full mx-auto object-cover border-4 border-champagne shadow-lg transform hover:scale-110 transition-transform duration-300"
                         />
                       </div>
 
@@ -122,7 +125,7 @@ const Avis = () => {
                         <p className="font-sans font-semibold text-champagne text-lg">
                           {testimonial.name}
                         </p>
-                        <p className="font-sans text-navy/60 text-sm uppercase tracking-wide">
+                        <p className="font-sans text-navy/60 text-sm uppercase tracking-[1.2px]">
                           {testimonial.date}
                         </p>
                       </div>
@@ -135,7 +138,7 @@ const Avis = () => {
             {/* Navigation Arrows */}
             <button
               onClick={prevSlide}
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-navy hover:text-champagne transition-colors duration-300 bg-ivory/80 backdrop-blur-sm rounded-full p-3 shadow-lg"
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-navy hover:text-champagne transition-colors duration-300 bg-ivory/80 backdrop-blur-sm rounded-full p-3 shadow-lg opacity-0 hover:opacity-100"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -143,7 +146,7 @@ const Avis = () => {
             </button>
             <button
               onClick={nextSlide}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-navy hover:text-champagne transition-colors duration-300 bg-ivory/80 backdrop-blur-sm rounded-full p-3 shadow-lg"
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-navy hover:text-champagne transition-colors duration-300 bg-ivory/80 backdrop-blur-sm rounded-full p-3 shadow-lg opacity-0 hover:opacity-100"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -156,8 +159,8 @@ const Avis = () => {
                 <button
                   key={index}
                   onClick={() => setCurrentSlide(index)}
-                  className={`w-3 h-3 rounded-full transition-colors duration-300 ${
-                    index === currentSlide ? 'bg-champagne' : 'bg-champagne/30'
+                  className={`w-3 h-3 rounded-full transition-all duration-300 hover:scale-125 ${
+                    index === currentSlide ? 'bg-champagne scale-125' : 'bg-champagne/30 hover:bg-champagne/50'
                   }`}
                 />
               ))}
@@ -169,19 +172,22 @@ const Avis = () => {
       {/* Call to Action */}
       <section className="py-24">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="font-serif text-4xl md:text-5xl text-navy mb-8">
+          <h2 className="fade-slide-up font-serif text-4xl md:text-5xl text-navy mb-8">
             Votre histoire commence ici
           </h2>
-          <p className="font-sans text-xl text-navy/70 leading-relaxed mb-12">
+          <div className="animated-separator mx-auto mb-8"></div>
+          <p className="fade-slide-up font-sans text-xl text-navy/70 leading-relaxed mb-12">
             Rejoignez nos mariées comblées et vivez l'expérience d'une création sur mesure. 
             Chaque robe raconte une histoire d'amour unique.
           </p>
-          <button
-            onClick={() => window.location.href = '/contact'}
-            className="luxury-button"
-          >
-            Contactez-nous
-          </button>
+          <div className="fade-slide-up">
+            <button
+              onClick={() => window.location.href = '/contact'}
+              className="luxury-button"
+            >
+              Contactez-nous
+            </button>
+          </div>
         </div>
       </section>
 

@@ -2,25 +2,27 @@
 import React from 'react';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
+import LuxuryAnimations from '../components/LuxuryAnimations';
 
 const Histoire = () => {
   return (
     <div className="min-h-screen">
       <Navigation />
+      <LuxuryAnimations />
       
-      {/* Hero Banner */}
+      {/* Hero Banner with Parallax */}
       <section className="relative h-96 md:h-[60vh] flex items-center justify-center overflow-hidden mt-20">
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat parallax-bg"
           style={{
             backgroundImage: `url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=2070&auto=format&fit=crop')`
           }}
         >
-          <div className="absolute inset-0 bg-navy/40"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-navy/40 via-transparent to-transparent"></div>
         </div>
         
         <div className="relative z-10 text-center">
-          <h1 className="font-serif text-5xl md:text-7xl text-ivory font-bold fade-in-up">
+          <h1 className="fade-slide-up font-serif text-5xl md:text-7xl text-ivory font-bold">
             Histoire
           </h1>
         </div>
@@ -39,12 +41,15 @@ const Histoire = () => {
             
             {/* Main content */}
             <div className="relative z-10 max-w-4xl mx-auto text-center">
-              <h2 className="font-serif text-4xl md:text-5xl text-navy mb-12">
-                Lien Éternel
-              </h2>
+              <div className="fade-slide-up mb-12">
+                <h2 className="font-serif text-4xl md:text-5xl text-navy mb-4">
+                  Lien Éternel
+                </h2>
+                <div className="animated-separator mx-auto"></div>
+              </div>
               
               <div className="space-y-8 text-lg md:text-xl text-navy/80 leading-relaxed">
-                <p className="font-sans">
+                <p className="fade-slide-up font-sans">
                   Née d'une passion pour l'excellence artisanale et l'élégance intemporelle, 
                   notre maison de couture célèbre l'art de sublimer chaque femme en sa plus 
                   belle version. Chaque création naît d'un dialogue unique entre la mariée 
@@ -52,7 +57,7 @@ const Histoire = () => {
                   donner naissance à des pièces d'exception.
                 </p>
                 
-                <p className="font-sans">
+                <p className="fade-slide-up font-sans">
                   Dans notre atelier, chaque point, chaque perle, chaque détail est pensé 
                   et exécuté à la main par nos artisans d'exception. Nous croyons que derrière 
                   chaque robe se cache une histoire d'amour unique, et c'est cette philosophie 
@@ -85,13 +90,15 @@ const Histoire = () => {
             ].map((item, index) => (
               <div 
                 key={index} 
-                className="group relative overflow-hidden bg-white shadow-lg hover:shadow-xl transition-all duration-500"
+                className="fade-slide-up atelier-card group relative overflow-hidden bg-white shadow-lg rounded-lg"
+                style={{animationDelay: `${index * 150}ms`}}
               >
                 <div className="aspect-[4/3] overflow-hidden">
                   <img
                     src={item.image}
                     alt={item.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="w-full h-full object-cover transition-all duration-300"
+                    loading="lazy"
                   />
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-navy/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -107,9 +114,10 @@ const Histoire = () => {
 
           {/* Mission & Values */}
           <div className="text-center mb-12">
-            <h3 className="font-serif text-3xl md:text-4xl text-navy mb-16">
+            <h3 className="fade-slide-up font-serif text-3xl md:text-4xl text-navy mb-16">
               Nos Valeurs
             </h3>
+            <div className="animated-separator mx-auto mb-16"></div>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -142,8 +150,10 @@ const Histoire = () => {
                 description: "Notre obsession du détail fait de chaque création une œuvre unique et intemporelle."
               }
             ].map((value, index) => (
-              <div key={index} className="text-center">
-                {value.icon}
+              <div key={index} className="fade-slide-up text-center" style={{animationDelay: `${index * 200}ms`}}>
+                <div className="transform hover:scale-110 transition-transform duration-300">
+                  {value.icon}
+                </div>
                 <h4 className="font-serif text-xl text-navy mb-4">
                   {value.title}
                 </h4>

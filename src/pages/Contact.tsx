@@ -1,12 +1,23 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
+import LuxuryAnimations from '../components/LuxuryAnimations';
 
 const Contact = () => {
+  const [showToast, setShowToast] = useState(false);
+
+  const handleEmailClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigator.clipboard.writeText('contact@safamaatoug.com');
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 2000);
+  };
+
   return (
     <div className="min-h-screen">
       <Navigation />
+      <LuxuryAnimations />
       
       {/* Header Section */}
       <section className="pt-32 pb-16">
@@ -21,9 +32,10 @@ const Contact = () => {
             
             {/* Main content */}
             <div className="relative z-10">
-              <h1 className="font-serif text-5xl md:text-6xl text-navy mb-8">
+              <h1 className="fade-slide-up font-serif text-5xl md:text-6xl text-navy mb-8">
                 Service Client
               </h1>
+              <div className="animated-separator mx-auto"></div>
             </div>
           </div>
         </div>
@@ -34,28 +46,28 @@ const Contact = () => {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-soft-beige rounded-lg p-12 md:p-16 text-center">
             <div className="mb-12">
-              <h2 className="font-serif text-3xl md:text-4xl text-navy mb-8">
+              <h2 className="fade-slide-up font-serif text-3xl md:text-4xl text-navy mb-8">
                 Prenez rendez-vous
               </h2>
-              <p className="font-sans text-lg md:text-xl text-navy/70 leading-relaxed max-w-3xl mx-auto">
+              <p className="fade-slide-up font-sans text-lg md:text-xl text-navy/70 leading-relaxed max-w-3xl mx-auto">
                 Pour toute demande d'information, prise de rendez-vous ou essayage sur mesure, 
                 merci de nous contacter à l'adresse suivante :
               </p>
             </div>
 
             {/* Email Contact */}
-            <div className="mb-12">
-              <a 
-                href="mailto:contact@safamaatoug.com"
-                className="inline-block luxury-button text-lg px-12 py-4 hover:scale-105 transform transition-all duration-300"
+            <div className="fade-slide-up mb-12">
+              <button 
+                onClick={handleEmailClick}
+                className="email-button text-lg px-12 py-4"
               >
                 contact@safamaatoug.com
-              </a>
+              </button>
             </div>
 
             {/* Additional Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-16">
-              <div>
+              <div className="fade-slide-up">
                 <div className="mb-6">
                   <svg className="w-8 h-8 mx-auto mb-4 text-champagne" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -71,7 +83,7 @@ const Contact = () => {
                 </div>
               </div>
 
-              <div>
+              <div className="fade-slide-up">
                 <div className="mb-6">
                   <svg className="w-8 h-8 mx-auto mb-4 text-champagne" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -96,10 +108,11 @@ const Contact = () => {
       <section className="py-24 bg-ivory">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="font-serif text-4xl md:text-5xl text-navy mb-8">
+            <h2 className="fade-slide-up font-serif text-4xl md:text-5xl text-navy mb-8">
               Nos Services
             </h2>
-            <p className="font-sans text-lg text-navy/70 max-w-3xl mx-auto">
+            <div className="animated-separator mx-auto mb-8"></div>
+            <p className="fade-slide-up font-sans text-lg text-navy/70 max-w-3xl mx-auto">
               Découvrez notre gamme complète de services haute couture, 
               conçus pour vous offrir une expérience exceptionnelle.
             </p>
@@ -135,8 +148,10 @@ const Contact = () => {
                 description: "Ajustements de dernière minute pour une coupe parfaite le jour J."
               }
             ].map((service, index) => (
-              <div key={index} className="text-center bg-soft-beige p-8 rounded-lg">
-                {service.icon}
+              <div key={index} className="fade-slide-up text-center bg-soft-beige p-8 rounded-lg hover:shadow-lg transition-shadow duration-300" style={{animationDelay: `${index * 200}ms`}}>
+                <div className="transform hover:scale-110 transition-transform duration-300">
+                  {service.icon}
+                </div>
                 <h3 className="font-serif text-xl text-navy mb-4">
                   {service.title}
                 </h3>
@@ -153,9 +168,10 @@ const Contact = () => {
       <section className="py-24">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="font-serif text-4xl md:text-5xl text-navy mb-8">
+            <h2 className="fade-slide-up font-serif text-4xl md:text-5xl text-navy mb-8">
               Questions fréquentes
             </h2>
+            <div className="animated-separator mx-auto"></div>
           </div>
 
           <div className="space-y-8">
@@ -177,7 +193,7 @@ const Contact = () => {
                 answer: "Absolument. Lors de votre première consultation, nous vous présenterons une sélection de tissus et matériaux premium."
               }
             ].map((faq, index) => (
-              <div key={index} className="border-b border-champagne/20 pb-6">
+              <div key={index} className="fade-slide-up border-b border-champagne/20 pb-6" style={{animationDelay: `${index * 150}ms`}}>
                 <h3 className="font-serif text-xl text-navy mb-3">
                   {faq.question}
                 </h3>
@@ -189,6 +205,11 @@ const Contact = () => {
           </div>
         </div>
       </section>
+
+      {/* Toast Notification */}
+      <div className={`toast ${showToast ? 'show' : ''}`}>
+        Email copié!
+      </div>
 
       <Footer />
     </div>

@@ -27,13 +27,13 @@ const Navigation = () => {
   return (
     <>
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-ivory/95 backdrop-blur-sm shadow-lg' : 'bg-transparent'
+        isScrolled ? 'bg-ivory/95 backdrop-blur-sm shadow-[0_4px_8px_rgba(0,0,0,0.05)]' : 'bg-transparent'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
             <Link to="/" className="flex-shrink-0">
-              <div className="text-2xl font-serif font-bold text-navy">
+              <div className="text-2xl font-serif font-bold text-navy tracking-[0.5px]">
                 SAFA MAATOUG
               </div>
             </Link>
@@ -45,8 +45,8 @@ const Navigation = () => {
                   <Link
                     key={item.href}
                     to={item.href}
-                    className={`font-sans font-medium text-sm tracking-wide uppercase transition-colors duration-300 hover:text-champagne ${
-                      location.pathname === item.href ? 'text-champagne' : 'text-navy'
+                    className={`nav-link font-sans font-medium text-sm tracking-[1.2px] uppercase transition-colors duration-300 ${
+                      location.pathname === item.href ? 'text-champagne' : 'text-navy hover:text-champagne'
                     }`}
                   >
                     {item.label}
@@ -81,8 +81,8 @@ const Navigation = () => {
                 <Link
                   key={item.href}
                   to={item.href}
-                  className={`block px-3 py-2 font-sans font-medium text-sm tracking-wide uppercase transition-colors duration-300 hover:text-champagne ${
-                    location.pathname === item.href ? 'text-champagne' : 'text-navy'
+                  className={`block px-3 py-2 font-sans font-medium text-sm tracking-[1.2px] uppercase transition-colors duration-300 ${
+                    location.pathname === item.href ? 'text-champagne' : 'text-navy hover:text-champagne'
                   }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
@@ -98,7 +98,7 @@ const Navigation = () => {
       <div className="fixed bottom-6 right-6 z-40 md:hidden">
         <Link
           to="/contact"
-          className="bg-navy text-ivory p-4 rounded-full shadow-lg hover:bg-champagne hover:text-navy transition-all duration-300 flex items-center justify-center"
+          className="bg-navy text-ivory p-4 rounded-full shadow-lg hover:bg-champagne hover:text-navy transition-all duration-300 flex items-center justify-center hover:scale-110 hover:shadow-[0_0_20px_rgba(199,166,122,0.4)]"
         >
           <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />

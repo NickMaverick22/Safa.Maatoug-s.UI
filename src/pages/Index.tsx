@@ -1,21 +1,34 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
+import LuxuryAnimations from '../components/LuxuryAnimations';
 
 const Index = () => {
+  useEffect(() => {
+    // Add hero text animation classes on load
+    const heroLines = document.querySelectorAll('.hero-text-line');
+    heroLines.forEach((line, index) => {
+      setTimeout(() => {
+        line.classList.add('animate');
+      }, 200 + (index * 200));
+    });
+  }, []);
+
   return (
     <div className="min-h-screen">
       <Navigation />
+      <LuxuryAnimations />
       
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        {/* Background Image */}
+        {/* Background Image with Ken Burns effect */}
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat parallax-bg"
           style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?q=80&w=2070&auto=format&fit=crop')`
+            backgroundImage: `url('https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?q=80&w=2070&auto=format&fit=crop')`,
+            animation: 'ken-burns 20s ease-in-out infinite alternate'
           }}
         >
           <div className="hero-overlay"></div>
@@ -23,17 +36,17 @@ const Index = () => {
         
         {/* Hero Content */}
         <div className="relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="font-serif text-6xl md:text-8xl font-bold text-ivory mb-6 fade-in-up">
+          <h1 className="hero-text-line font-serif text-6xl md:text-8xl font-bold text-ivory mb-6">
             élégance
           </h1>
-          <h2 className="font-serif text-4xl md:text-6xl text-ivory/90 mb-8 fade-in-up" style={{animationDelay: '0.2s'}}>
+          <h2 className="hero-text-line font-serif text-4xl md:text-6xl text-ivory/90 mb-8">
             intemporelle
           </h2>
-          <h3 className="font-serif text-2xl md:text-4xl text-ivory/80 mb-12 fade-in-up" style={{animationDelay: '0.4s'}}>
+          <h3 className="hero-text-line font-serif text-2xl md:text-4xl text-ivory/80 mb-12">
             incarnée
           </h3>
           
-          <div className="space-y-4 fade-in-up" style={{animationDelay: '0.6s'}}>
+          <div className="hero-text-line space-y-4">
             <p className="font-sans text-xl md:text-2xl text-ivory/90 mb-8 italic">
               Robes de mariée conçues pour vous.
             </p>
@@ -60,23 +73,25 @@ const Index = () => {
             
             {/* Main content */}
             <div className="relative z-10 max-w-4xl mx-auto">
-              <blockquote className="font-serif text-2xl md:text-3xl lg:text-4xl text-navy leading-relaxed mb-12">
+              <blockquote className="fade-slide-up font-serif text-2xl md:text-3xl lg:text-4xl text-navy leading-relaxed mb-12">
                 "Chaque robe raconte une histoire d'amour unique, et nous sommes honorés de 
                 participer à la vôtre."
               </blockquote>
               
-              <div className="w-24 h-px bg-gold mx-auto mb-8"></div>
+              <div className="animated-separator mb-8"></div>
               
-              <p className="font-sans text-lg text-navy/70 mb-8 max-w-2xl mx-auto">
-                HISTOIRE
+              <p className="fade-slide-up font-sans text-lg text-navy/70 mb-8 max-w-2xl mx-auto tracking-[1.2px] uppercase">
+                Histoire
               </p>
               
-              <Link 
-                to="/histoire"
-                className="inline-block luxury-button-outline"
-              >
-                Notre Histoire
-              </Link>
+              <div className="fade-slide-up">
+                <Link 
+                  to="/histoire"
+                  className="inline-block luxury-button-outline"
+                >
+                  Notre Histoire
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -86,8 +101,8 @@ const Index = () => {
       <section className="py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="font-serif text-5xl md:text-6xl text-navy mb-6">collection</h2>
-            <p className="font-sans text-lg text-navy/70 max-w-3xl mx-auto">
+            <h2 className="fade-slide-up font-serif text-5xl md:text-6xl text-navy mb-6">collection</h2>
+            <p className="fade-slide-up font-sans text-lg text-navy/70 max-w-3xl mx-auto leading-relaxed">
               Un univers de grâce et de beauté, Découvrez notre collection, une symphonie enchantée. 
               Des robes qui célèbrent l'amour et l'élégance, Laissez-vous séduire par leur magie, sans résistance.
             </p>
@@ -110,17 +125,19 @@ const Index = () => {
             ].map((item, index) => (
               <div 
                 key={index} 
-                className="group relative overflow-hidden bg-white shadow-lg hover:shadow-xl transition-all duration-500"
+                className="fade-slide-up gallery-card group relative overflow-hidden bg-white shadow-lg"
+                style={{animationDelay: `${index * 200}ms`}}
               >
                 <div className="aspect-[3/4] overflow-hidden">
                   <img
                     src={item.image}
                     alt={item.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="w-full h-full object-cover"
+                    loading="lazy"
                   />
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-navy/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="absolute bottom-6 left-6 right-6">
+                <div className="overlay">
+                  <div className="overlay-content">
                     <h3 className="font-serif text-xl text-ivory mb-2">
                       {item.title}
                     </h3>
@@ -134,12 +151,14 @@ const Index = () => {
           </div>
           
           <div className="text-center mt-12">
-            <Link 
-              to="/collection"
-              className="inline-block luxury-button"
-            >
-              Découvrez la collection
-            </Link>
+            <div className="fade-slide-up">
+              <Link 
+                to="/collection"
+                className="inline-block luxury-button"
+              >
+                Découvrez la collection
+              </Link>
+            </div>
           </div>
         </div>
       </section>

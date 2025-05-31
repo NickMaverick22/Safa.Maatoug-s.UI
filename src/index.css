@@ -43,6 +43,14 @@
     --sidebar-accent-foreground: 210 71% 10%;
     --sidebar-border: 32 18% 90%;
     --sidebar-ring: 210 71% 10%;
+
+    /* Luxury brand variables */
+    --color-bg: #F9F6F2;
+    --color-text-primary: #0F1C33;
+    --color-accent: #C7A67A;
+    --color-gold: #D4AF37;
+    --font-display: 'Playfair Display', serif;
+    --font-body: 'Montserrat', sans-serif;
   }
 
   .dark {
@@ -89,31 +97,51 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    @apply bg-ivory text-navy font-sans;
-    line-height: 1.6;
+    @apply bg-ivory text-navy;
+    font-family: var(--font-body);
+    line-height: 1.7;
+    background-image: 
+      radial-gradient(circle at 1px 1px, rgba(15, 28, 51, 0.04) 1px, transparent 0);
+    background-size: 20px 20px;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-serif;
+    font-family: var(--font-display);
+    letter-spacing: 0.5px;
   }
 }
 
 @layer components {
   .luxury-button {
-    @apply bg-navy text-ivory px-8 py-3 font-sans font-medium tracking-wide uppercase text-sm transition-all duration-300 hover:bg-opacity-90 hover:shadow-lg border-2 border-navy hover:border-gold;
+    @apply bg-navy text-ivory px-8 py-4 font-sans font-medium tracking-[1.2px] uppercase text-sm 
+           transition-all duration-300 hover:bg-opacity-90 border-2 border-navy 
+           hover:shadow-[0_0_10px_rgba(199,166,122,0.4)] hover:scale-[1.03] hover:tracking-[1.5px]
+           relative overflow-hidden;
+  }
+  
+  .luxury-button::after {
+    content: '→';
+    @apply absolute right-4 top-1/2 transform -translate-y-1/2 opacity-0 translate-x-2
+           transition-all duration-300;
+  }
+  
+  .luxury-button:hover::after {
+    @apply opacity-100 translate-x-0;
   }
   
   .luxury-button-outline {
-    @apply bg-transparent text-navy px-8 py-3 font-sans font-medium tracking-wide uppercase text-sm transition-all duration-300 border-2 border-navy hover:bg-navy hover:text-ivory hover:border-gold;
+    @apply bg-transparent text-navy px-8 py-4 font-sans font-medium tracking-[1.2px] uppercase text-sm 
+           transition-all duration-300 border-2 border-navy hover:bg-navy hover:text-ivory 
+           hover:shadow-[0_0_12px_rgba(199,166,122,0.4)] hover:scale-[1.03] hover:tracking-[1.5px];
   }
 
   .hero-overlay {
     @apply absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent;
-  }
-
-  .fade-in-up {
-    animation: fade-in 0.8s ease-out forwards;
   }
 
   .parallax-bg {
@@ -121,6 +149,210 @@
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+  }
+
+  @media (max-width: 768px) {
+    .parallax-bg {
+      background-attachment: scroll;
+    }
+  }
+
+  /* Animation classes */
+  .fade-slide-up {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .fade-slide-up.animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .hero-text-line {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeSlideUp 0.6s ease forwards;
+  }
+
+  .hero-text-line:nth-child(1) { animation-delay: 0.2s; }
+  .hero-text-line:nth-child(2) { animation-delay: 0.4s; }
+  .hero-text-line:nth-child(3) { animation-delay: 0.6s; }
+  .hero-text-line:nth-child(4) { animation-delay: 0.8s; }
+
+  .nav-link {
+    @apply relative transition-colors duration-300;
+  }
+
+  .nav-link::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-gold transition-all duration-250 ease-out;
+  }
+
+  .nav-link:hover::after {
+    @apply w-full;
+  }
+
+  .gallery-card {
+    @apply transition-all duration-400 ease-out hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(199,166,122,0.3)]
+           border border-navy/10 rounded-lg overflow-hidden bg-white;
+  }
+
+  .gallery-card img {
+    @apply transition-all duration-400 ease-out;
+  }
+
+  .gallery-card:hover img {
+    filter: brightness(1.05);
+    transform: scale(1.03);
+  }
+
+  .gallery-card .overlay {
+    @apply absolute inset-0 bg-navy/0 transition-all duration-400 ease-out flex items-center justify-center;
+  }
+
+  .gallery-card:hover .overlay {
+    @apply bg-navy/60;
+  }
+
+  .gallery-card .overlay-content {
+    @apply text-ivory text-center opacity-0 transform translate-y-4 transition-all duration-400 ease-out;
+  }
+
+  .gallery-card:hover .overlay-content {
+    @apply opacity-100 transform translate-y-0;
+  }
+
+  .atelier-card {
+    @apply transition-all duration-300 ease-out hover:shadow-xl;
+  }
+
+  .atelier-card:hover {
+    transform: perspective(600px) rotateY(2deg);
+  }
+
+  .animated-separator {
+    @apply h-px bg-gold mx-auto transition-all duration-500 ease-out;
+    width: 0;
+  }
+
+  .animated-separator.animate {
+    width: 80px;
+  }
+
+  .typing-text {
+    overflow: hidden;
+    border-right: 2px solid var(--color-accent);
+    white-space: nowrap;
+    margin: 0 auto;
+    animation: typing 1.5s steps(40, end), blink-caret 0.75s step-end infinite;
+  }
+
+  .lightbox {
+    @apply fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4
+           opacity-0 pointer-events-none transition-opacity duration-300;
+  }
+
+  .lightbox.open {
+    @apply opacity-100 pointer-events-auto;
+  }
+
+  .lightbox-content {
+    @apply relative max-w-6xl w-full transform scale-95 transition-transform duration-300;
+  }
+
+  .lightbox.open .lightbox-content {
+    @apply scale-100;
+  }
+
+  .lightbox-caption {
+    @apply transform translate-y-full transition-transform duration-600 ease-out;
+  }
+
+  .lightbox.open .lightbox-caption {
+    @apply translate-y-0;
+  }
+
+  .stroke-fill-animation {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: stroke 0.8s ease-in-out forwards, fill 0.4s ease-in-out 0.8s forwards;
+  }
+
+  .email-button {
+    @apply bg-navy text-ivory px-8 py-4 rounded-full font-sans tracking-[1.2px]
+           transition-all duration-300 hover:shadow-[0_0_12px_rgba(199,166,122,0.4)]
+           hover:border-2 hover:border-gold hover:tracking-[1.5px];
+  }
+
+  .footer-link {
+    @apply relative transition-colors duration-200;
+  }
+
+  .footer-link::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-gold transition-all duration-200 ease-out;
+  }
+
+  .footer-link:hover::after {
+    @apply w-full;
+  }
+
+  .toast {
+    @apply fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-navy text-ivory px-6 py-3 rounded-full
+           opacity-0 translate-y-4 transition-all duration-300 pointer-events-none;
+  }
+
+  .toast.show {
+    @apply opacity-100 translate-y-0;
+  }
+}
+
+/* Keyframe animations */
+@keyframes fadeSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent; }
+  50% { border-color: var(--color-accent); }
+}
+
+@keyframes stroke {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes fill {
+  from {
+    fill: transparent;
+  }
+  to {
+    fill: var(--color-text-primary);
+  }
+}
+
+@keyframes scale-in {
+  0% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
   }
 }
 
