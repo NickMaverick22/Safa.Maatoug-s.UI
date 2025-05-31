@@ -186,7 +186,7 @@
 
   .nav-link::after {
     content: '';
-    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-gold transition-all duration-250 ease-out;
+    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-gold transition-all duration-200 ease-out;
   }
 
   .nav-link:hover::after {
