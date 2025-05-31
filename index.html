@@ -1,17 +1,17 @@
+
 <!DOCTYPE html>
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Accueil | Safa Maatoug</title>
-    <meta name="description" content="Présentation de la maison de couture Safa Maatoug, robes de mariée haut de gamme, collection, histoire, avis, contact." />
+    <title>Safa Maatoug - Élégance Intemporelle Incarnée</title>
+    <meta name="description" content="Haute couture bridal - Robes de mariée conçues pour vous. Découvrez notre collection d'élégance intemporelle." />
     <meta name="author" content="Safa Maatoug" />
 
-    <meta property="og:title" content="Safa Maatoug – Couture Mariage" />
-    <meta property="og:description" content="Découvrez nos créations de robes de mariée, notre histoire et nos avis clients." />
+    <meta property="og:title" content="Safa Maatoug - Élégance Intemporelle Incarnée" />
+    <meta property="og:description" content="Haute couture bridal - Robes de mariée conçues pour vous" />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="assets/images/og-hero.jpg" />
-    <meta property="og:url" content="https://NickMaverick22.github.io/Safa.Maatoug-s.UI/" />
+    <meta property="og:image" content="/images/hero-home.jpg" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content="/images/hero-home.jpg" />
@@ -20,50 +20,17 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;700&family=Montserrat:wght@300;400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,700;1,400;1,700&family=Montserrat:wght@300;400;500;600&display=swap"
       rel="stylesheet"
     />
     
     <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    <!-- Main CSS -->
-    <link rel="stylesheet" href="assets/css/styles.css" />
+    <script type="module" src="/src/main.tsx"></script>
   </head>
 
   <body>
-    <header class="site-header">
-      <div class="container">
-        <a href="index.html">
-          <img src="assets/images/logo.png" alt="Safa Maatoug Logo" class="logo" />
-        </a>
-        <!-- Desktop Nav -->
-        <nav class="desktop-nav">
-          <ul>
-            <li><a href="index.html">Accueil</a></li>
-            <li><a href="histoire.html">Histoire</a></li>
-            <li><a href="collection.html">Collection</a></li>
-            <li><a href="avis.html">Avis</a></li>
-            <li><a href="contact.html">Contact</a></li>
-          </ul>
-        </nav>
-        <!-- Burger Icon (hidden on desktop) -->
-        <div class="burger" id="burger" aria-label="Open mobile menu" role="button" tabindex="0">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-      </div>
-      <!-- Mobile Nav (initially hidden offscreen) -->
-      <nav class="mobile-nav" id="mobileNav">
-        <ul>
-          <li><a href="index.html">Accueil</a></li>
-          <li><a href="histoire.html">Histoire</a></li>
-          <li><a href="collection.html">Collection</a></li>
-          <li><a href="avis.html">Avis</a></li>
-          <li><a href="contact.html">Contact</a></li>
-        </ul>
-      </nav>
-    </header>
+    <div id="root"></div>
     
     <!-- SCROLL‐TO‐TOP ON EVERY PAGE LOAD -->
     <script>
@@ -71,13 +38,5 @@
         window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
       });
     </script>
-    <section class="hero">
-      <div class="hero-content">
-        <h1 class="animate-on-scroll">Élégance intemporelle incarnée</h1>
-        <p class="animate-on-scroll">La robe qui fera briller votre jour unique.</p>
-        <a href="collection.html" class="btn-primary animate-on-scroll">Découvrez la collection</a>
-      </div>
-    </section>
-    <script src="assets/js/scripts.js"></script>
   </body>
 </html>
