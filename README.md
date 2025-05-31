@@ -1,73 +1,187 @@
-# Welcome to your Lovable project
 
-## Project info
+# Safa Maatoug - Haute Couture Bridal Website
 
-**URL**: https://lovable.dev/projects/7b8ee932-1f5f-4d1c-bae6-7fe2ce0938f4
+A luxury bridal couture showcase website built with React, TypeScript, and Tailwind CSS. This static site presents the elegant collections and craftsmanship of Safa Maatoug's bridal house.
 
-## How can I edit this code?
+## 🌟 Features
 
-There are several ways of editing your application.
+- **Fully Responsive Design** - Optimized for desktop, tablet, and mobile
+- **Luxury Color Palette** - Ivory, champagne, navy, and gold accents
+- **French Typography** - Playfair Display serif for headings, Montserrat sans-serif for body
+- **Interactive Gallery** - Collection showcase with lightbox functionality
+- **Testimonials Carousel** - Client reviews with smooth transitions
+- **Contact Integration** - Direct email contact with elegant styling
+- **Performance Optimized** - Fast loading with lazy-loaded images
 
-**Use Lovable**
+## 🏗️ Project Structure
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/7b8ee932-1f5f-4d1c-bae6-7fe2ce0938f4) and start prompting.
+```
+├── src/
+│   ├── components/
+│   │   ├── Navigation.tsx    # Main navigation with mobile menu
+│   │   └── Footer.tsx        # Site footer with links
+│   ├── pages/
+│   │   ├── Index.tsx         # Homepage with hero and collection preview
+│   │   ├── Histoire.tsx      # About/Brand story page
+│   │   ├── Collection.tsx    # Gallery with filtering and lightbox
+│   │   ├── Avis.tsx          # Testimonials carousel page
+│   │   └── Contact.tsx       # Contact information and services
+│   ├── App.tsx               # Main app with routing
+│   └── index.css             # Global styles and luxury palette
+├── tailwind.config.ts        # Tailwind configuration with custom colors
+└── index.html                # HTML template with French meta tags
+```
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🎨 Design System
 
-**Use your preferred IDE**
+### Color Palette
+- **Ivory** (`#F9F6F2`) - Primary background
+- **Navy** (`#0F1C33`) - Text and buttons
+- **Champagne** (`#C7A67A`) - Accent color
+- **Gold** (`#D4AF37`) - Highlights and hover states
+- **Soft Beige** (`#F5F2EE`) - Section backgrounds
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Typography
+- **Playfair Display** - Elegant serif for headings
+- **Montserrat** - Clean sans-serif for body text
+- **Font weights**: 300, 400, 500, 600, 700
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Components
+- `luxury-button` - Primary call-to-action styling
+- `luxury-button-outline` - Secondary button styling
+- `hero-overlay` - Gradient overlays for hero sections
+- `fade-in-up` - Smooth entrance animations
 
-Follow these steps:
+## 🚀 Getting Started
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### Prerequisites
+- Node.js (v16 or higher)
+- npm or yarn
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### Installation
 
-# Step 3: Install the necessary dependencies.
-npm i
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd safa-maatoug-website
+```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Start the development server:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+4. Build for production:
+```bash
+npm run build
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 📱 Pages Overview
 
-**Use GitHub Codespaces**
+### Homepage (`/`)
+- Full-screen hero with brand messaging
+- Collection preview grid
+- Brand promise section with French quote
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Histoire (`/histoire`)
+- Brand story and values
+- Atelier photography grid
+- Mission statement with icons
 
-## What technologies are used for this project?
+### Collection (`/collection`)
+- Filterable gallery (Toutes, Mariage Civil, Cérémonie, Haute Couture)
+- Interactive lightbox with dress details
+- Fabric and color information
 
-This project is built with:
+### Avis (`/avis`)
+- Client testimonials carousel
+- Auto-advancing slides with manual controls
+- Call-to-action section
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Contact (`/contact`)
+- Service information
+- Email contact with styling
+- FAQ section
+- Operating hours and location
 
-## How can I deploy this project?
+## 🔧 Customization
 
-Simply open [Lovable](https://lovable.dev/projects/7b8ee932-1f5f-4d1c-bae6-7fe2ce0938f4) and click on Share -> Publish.
+### Updating Colors
+Modify the color palette in `tailwind.config.ts`:
+```typescript
+colors: {
+  ivory: '#F9F6F2',
+  champagne: '#C7A67A',
+  navy: '#0F1C33',
+  gold: '#D4AF37',
+  'soft-beige': '#F5F2EE'
+}
+```
 
-## Can I connect a custom domain to my Lovable project?
+### Changing Fonts
+Update font imports in `index.html` and configuration in `tailwind.config.ts`:
+```typescript
+fontFamily: {
+  serif: ['Playfair Display', 'serif'],
+  sans: ['Montserrat', 'sans-serif'],
+}
+```
 
-Yes, you can!
+### Adding Images
+- Replace placeholder images with high-resolution photos
+- Maintain aspect ratios for consistent layout
+- Use WebP format for better performance
+- Add appropriate alt text for accessibility
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### Contact Email
+Update the contact email in `Contact.tsx`:
+```typescript
+href="mailto:your-email@domain.com"
+```
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## 🌐 Deployment
+
+This static site can be deployed to any hosting platform:
+
+### Netlify
+1. Build the project: `npm run build`
+2. Deploy the `dist` folder to Netlify
+3. Configure custom domain if needed
+
+### Vercel
+1. Connect your repository to Vercel
+2. Set build command: `npm run build`
+3. Set output directory: `dist`
+
+### Traditional Hosting
+1. Build the project: `npm run build`
+2. Upload contents of `dist` folder to your web server
+
+## 📋 SEO & Performance
+
+- Semantic HTML5 structure
+- Meta tags for social sharing
+- Lazy loading for images
+- Optimized font loading
+- WCAG AA color contrast compliance
+- Mobile-first responsive design
+
+## 🔗 Links & Resources
+
+- **Typography**: [Google Fonts](https://fonts.google.com/)
+- **Icons**: Custom SVGs for luxury aesthetic
+- **Images**: High-resolution placeholder images from Unsplash
+- **Animations**: CSS transitions and transforms for smooth interactions
+
+## 📝 License
+
+This project is proprietary software for Safa Maatoug. All rights reserved.
+
+---
+
+For any questions or customization requests, please contact the development team.
