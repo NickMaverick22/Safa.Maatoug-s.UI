@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -49,7 +48,7 @@
     --color-text-primary: #0F1C33;
     --color-accent: #C7A67A;
     --color-gold: #D4AF37;
-    --font-display: 'Playfair Display', serif;
+    --font-display: 'Bodoni Moda', serif;
     --font-body: 'Montserrat', sans-serif;
   }
 

@@ -1,35 +1,35 @@
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 
 const LuxuryAnimations = () => {
   useEffect(() => {
-    // Intersection Observer for scroll-triggered animations
-    const observerOptions = {
-      threshold: 0.25,
-      rootMargin: '0px 0px -10% 0px'
-    };
+    // SCROLL TO TOP ON PAGE LOAD
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('animate');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, observerOptions);
+    // Initialize scroll-triggered animations
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry, index) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => {
+              entry.target.classList.add('animate');
+            }, index * 100);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -10% 0px' }
+    );
 
-    // Observe all elements with fade-slide-up class
+    // Observe all fade-slide-up elements
     const animatedElements = document.querySelectorAll('.fade-slide-up');
-    animatedElements.forEach((el) => observer.observe(el));
+    animatedElements.forEach((element) => observer.observe(element));
 
     // Observe animated separators
     const separators = document.querySelectorAll('.animated-separator');
-    separators.forEach((el) => observer.observe(el));
+    separators.forEach((separator) => observer.observe(separator));
 
-    // Cleanup
-    return () => {
-      observer.disconnect();
-    };
+    return () => observer.disconnect();
   }, []);
 
   return null;

@@ -16,9 +16,13 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content="/images/hero-home.jpg" />
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- PRELOAD + LOAD BODONI MODA -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,700;1,400;1,700&family=Montserrat:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
     
     <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
@@ -27,5 +31,12 @@
 
   <body>
     <div id="root"></div>
+    
+    <!-- SCROLL‐TO‐TOP ON EVERY PAGE LOAD -->
+    <script>
+      window.addEventListener('DOMContentLoaded', () => {
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      });
+    </script>
   </body>
 </html>
