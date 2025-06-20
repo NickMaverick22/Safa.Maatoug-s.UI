@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
@@ -12,10 +11,6 @@ const Contact = () => {
     navigator.clipboard.writeText('contact@safamaatoug.com');
     setShowToast(true);
     setTimeout(() => setShowToast(false), 2000);
-  };
-
-  const handleWhatsAppContact = () => {
-    window.open('https://wa.me/21629646000', '_blank');
   };
 
   return (
@@ -55,18 +50,18 @@ const Contact = () => {
               </h2>
               <p className="fade-slide-up font-sans text-lg md:text-xl text-navy/70 leading-relaxed max-w-3xl mx-auto">
                 Pour toute demande d'information, prise de rendez-vous ou essayage sur mesure, 
-                contactez-nous directement via WhatsApp ou par email.
+                réservez directement votre consultation ou contactez-nous par email.
               </p>
             </div>
 
             {/* Contact Options */}
             <div className="fade-slide-up mb-12 space-y-6">
-              <button 
-                onClick={handleWhatsAppContact} 
-                className="email-button text-lg px-12 py-4 font-normal"
+              <a 
+                href="/book-appointment" 
+                className="bg-champagne text-navy px-12 py-4 rounded-full font-sans font-medium tracking-[1.2px] uppercase text-lg transition-all duration-300 hover:bg-gold hover:scale-105 shadow-lg inline-block"
               >
-                WHATSAPP
-              </button>
+                Book Your Appointment
+              </a>
               
               <div className="text-navy/60">ou</div>
               

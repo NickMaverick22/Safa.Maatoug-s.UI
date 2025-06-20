@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
@@ -51,10 +50,6 @@ const Avis = () => {
       avatar: "https://images.unsplash.com/photo-1524250502761-1ac6f2e30d43?q=80&w=200&auto=format&fit=crop&crop=face"
     }
   ];
-
-  const handleWhatsAppContact = () => {
-    window.open('https://wa.me/21629646000', '_blank');
-  };
 
   return (
     <div className="min-h-screen">
@@ -143,12 +138,12 @@ const Avis = () => {
             Chaque robe raconte une histoire d'amour unique.
           </p>
           <div className="fade-slide-up">
-            <button
-              onClick={handleWhatsAppContact}
-              className="luxury-button"
+            <a
+              href="/book-appointment"
+              className="bg-champagne text-navy px-8 py-4 rounded-full font-sans font-medium tracking-[1.2px] uppercase text-sm transition-all duration-300 hover:bg-gold hover:scale-105 shadow-lg inline-block"
             >
-              Contactez-nous sur WhatsApp
-            </button>
+              Book Your Appointment
+            </a>
           </div>
         </div>
       </section>

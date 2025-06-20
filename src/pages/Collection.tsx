@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
@@ -222,12 +221,12 @@ const Collection = () => {
             <p className="font-sans text-lg text-navy/80 mb-8 fade-slide-up">
               Chaque création est unique et réalisée sur mesure selon vos désirs et votre morphologie.
             </p>
-            <button
-              onClick={() => window.location.href = '/contact'}
-              className="luxury-button fade-slide-up"
+            <a
+              href="/book-appointment"
+              className="bg-champagne text-navy px-8 py-4 rounded-full font-sans font-medium tracking-[1.2px] uppercase text-sm transition-all duration-300 hover:bg-gold hover:scale-105 shadow-lg inline-block fade-slide-up"
             >
-              Prendre rendez-vous
-            </button>
+              Book Your Appointment
+            </a>
           </div>
         </section>
       </main>

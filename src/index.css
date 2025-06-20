@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -199,6 +198,59 @@
     animation: scroll 60s linear infinite;
   }
 
+  /* HubSpot form styling */
+  .hubspot-form-container {
+    @apply w-full;
+  }
+
+  .hubspot-form-container .hs-form {
+    @apply space-y-6;
+  }
+
+  .hubspot-form-container .hs-form-field {
+    @apply w-full;
+  }
+
+  .hubspot-form-container .hs-form-field label {
+    @apply font-sans text-navy font-medium mb-2 block;
+  }
+
+  .hubspot-form-container .hs-form-field input,
+  .hubspot-form-container .hs-form-field textarea,
+  .hubspot-form-container .hs-form-field select {
+    @apply w-full px-4 py-3 border border-navy/20 rounded-lg font-sans text-navy
+           focus:outline-none focus:ring-2 focus:ring-champagne focus:border-transparent
+           transition-all duration-200;
+  }
+
+  .hubspot-form-container .hs-form-field textarea {
+    @apply min-h-[120px] resize-vertical;
+  }
+
+  .hubspot-form-container .hs-submit {
+    @apply w-full;
+  }
+
+  .hubspot-form-container .hs-submit input[type="submit"] {
+    @apply w-full bg-champagne text-navy px-8 py-4 rounded-full font-sans font-medium 
+           tracking-[1.2px] uppercase text-sm transition-all duration-300 
+           hover:bg-gold hover:scale-105 shadow-lg cursor-pointer border-none;
+  }
+
+  .hubspot-form-container .hs-error-msgs {
+    @apply text-red-600 text-sm mt-1;
+  }
+
+  /* Toast notification */
+  .toast {
+    @apply fixed top-4 right-4 bg-navy text-ivory px-6 py-3 rounded-lg shadow-lg
+           transform translate-x-full transition-transform duration-300 z-50;
+  }
+
+  .toast.show {
+    @apply translate-x-0;
+  }
+
   @keyframes scroll {
     0% { transform: translateX(0); }
     100% { transform: translateX(-50%); }
@@ -233,4 +285,54 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: #B8956A;
+}
+
+/* Lightbox styles */
+.lightbox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 28, 51, 0.95);
+  backdrop-filter: blur(10px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.lightbox.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.lightbox-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  background: rgba(15, 28, 51, 0.9);
+  border-radius: 12px;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.lightbox-caption {
+  padding: 1rem 0;
+}
+
+@media (max-width: 768px) {
+  .lightbox-content {
+    padding: 1rem;
+    max-width: 95vw;
+    max-height: 95vh;
+  }
+  
+  .lightbox-content .grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
 }

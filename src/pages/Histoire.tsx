@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
@@ -6,10 +5,6 @@ import LuxuryAnimations from '../components/LuxuryAnimations';
 import OptimizedImage from '../components/OptimizedImage';
 
 const Histoire = () => {
-  const handleWhatsAppContact = () => {
-    window.open('https://wa.me/21629646000', '_blank');
-  };
-
   return (
     <div className="min-h-screen">
       <Navigation />
@@ -159,15 +154,15 @@ const Histoire = () => {
             ))}
           </div>
 
-          {/* Contact CTA with WhatsApp */}
+          {/* Contact CTA */}
           <div className="text-center mt-16">
             <div className="fade-slide-up">
-              <button
-                onClick={handleWhatsAppContact}
-                className="luxury-button"
+              <a
+                href="/book-appointment"
+                className="bg-champagne text-navy px-8 py-4 rounded-full font-sans font-medium tracking-[1.2px] uppercase text-sm transition-all duration-300 hover:bg-gold hover:scale-105 shadow-lg inline-block"
               >
-                Prendre rendez-vous
-              </button>
+                Book Your Appointment
+              </a>
             </div>
           </div>
         </div>
