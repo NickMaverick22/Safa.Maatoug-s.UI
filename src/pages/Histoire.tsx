@@ -19,7 +19,7 @@ const Histoire = () => {
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=2070&auto=format&fit=crop')`
+            backgroundImage: `url('/lovable-uploads/c1cae7de-bc73-4523-90ed-a29c70ab076d.png')`
           }}
         >
           <div className="absolute inset-0 bg-gradient-to-t from-navy/40 via-transparent to-transparent"></div>
@@ -72,24 +72,16 @@ const Histoire = () => {
             </div>
           </div>
 
-          {/* Atelier Images Grid - Updated with proper couture images */}
+          {/* Atelier Images Grid - Updated with uploaded images */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
             {[
               {
-                image: "https://images.unsplash.com/photo-1605901309584-818e25960a8f?q=80&w=2070&auto=format&fit=crop",
+                image: "/lovable-uploads/bffa22ae-b3c6-4a40-8f2d-b678d195898f.png",
                 title: "Couture à la main"
               },
               {
-                image: "https://images.unsplash.com/photo-1521335629791-ce4aec67dd15?q=80&w=2070&auto=format&fit=crop",
+                image: "/lovable-uploads/5d223bab-3555-4b49-8e23-d8c05ee15206.png",
                 title: "Création artisanale"
-              },
-              {
-                image: "https://images.unsplash.com/photo-1562157873-818bc0726f68?q=80&w=2070&auto=format&fit=crop",
-                title: "Sélection des tissus nobles"
-              },
-              {
-                image: "https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=2070&auto=format&fit=crop",
-                title: "Broderie fine"
               }
             ].map((item, index) => (
               <div 
