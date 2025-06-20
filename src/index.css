@@ -224,7 +224,7 @@
   }
 
   .hubspot-form-container .hs-form-field textarea {
-    @apply min-h-[120px] resize-vertical;
+    @apply min-h-[120px] resize-y;
   }
 
   .hubspot-form-container .hs-submit {
