@@ -110,11 +110,12 @@
     @apply absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent;
   }
 
-  /* Simplified animation classes */
+  /* Optimized animation classes */
   .fade-slide-up {
     opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.4s ease, transform 0.4s ease;
+    transform: translateY(15px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    will-change: opacity, transform;
   }
 
   .fade-slide-up.animate {
@@ -124,8 +125,9 @@
 
   .hero-text-line {
     opacity: 0;
-    transform: translateY(20px);
-    animation: fadeSlideUp 0.4s ease forwards;
+    transform: translateY(15px);
+    animation: fadeSlideUp 0.3s ease forwards;
+    will-change: opacity, transform;
   }
 
   .hero-text-line:nth-child(1) { animation-delay: 0.1s; }
@@ -147,12 +149,13 @@
   }
 
   .gallery-card {
-    @apply transition-all duration-200 ease-out hover:scale-[1.02]
+    @apply transition-transform duration-200 ease-out hover:scale-[1.01]
            border border-navy/10 rounded-lg overflow-hidden bg-white;
+    will-change: transform;
   }
 
   .gallery-card .overlay {
-    @apply absolute inset-0 bg-navy/0 transition-all duration-200 ease-out flex items-center justify-center;
+    @apply absolute inset-0 bg-navy/0 transition-colors duration-200 ease-out flex items-center justify-center;
   }
 
   .gallery-card:hover .overlay {
@@ -160,7 +163,7 @@
   }
 
   .gallery-card .overlay-content {
-    @apply text-ivory text-center opacity-0 transform translate-y-4 transition-all duration-200 ease-out;
+    @apply text-ivory text-center opacity-0 transform translate-y-2 transition-all duration-200 ease-out;
   }
 
   .gallery-card:hover .overlay-content {
@@ -168,11 +171,12 @@
   }
 
   .atelier-card {
-    @apply transition-all duration-200 ease-out;
+    @apply transition-transform duration-200 ease-out;
+    will-change: transform;
   }
 
   .animated-separator {
-    @apply h-px bg-gold mx-auto transition-all duration-300 ease-out;
+    @apply h-px bg-gold mx-auto transition-all duration-200 ease-out;
     width: 0;
   }
 
@@ -214,32 +218,13 @@
   .footer-link:hover::after {
     @apply w-full;
   }
-
-  /* Horizontal Scrolling Testimonials */
-  .testimonials-scroll {
-    will-change: transform;
-  }
-
-  .animate-scroll {
-    animation: scroll-horizontal 30s linear infinite;
-  }
-
-  .testimonial-card {
-    min-width: 320px;
-  }
-
-  @media (min-width: 768px) {
-    .testimonial-card {
-      min-width: 384px;
-    }
-  }
 }
 
-/* Simplified keyframe animations */
+/* Optimized keyframe animations */
 @keyframes fadeSlideUp {
   0% {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(15px);
   }
   100% {
     opacity: 1;
@@ -247,27 +232,18 @@
   }
 }
 
-@keyframes scroll-horizontal {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
   background: #C7A67A;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {

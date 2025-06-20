@@ -3,6 +3,7 @@ import React from 'react';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import LuxuryAnimations from '../components/LuxuryAnimations';
+import OptimizedImage from '../components/OptimizedImage';
 
 const Histoire = () => {
   const handleWhatsAppContact = () => {
@@ -72,7 +73,7 @@ const Histoire = () => {
             </div>
           </div>
 
-          {/* Atelier Images Grid - Updated with uploaded images */}
+          {/* Atelier Images Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
             {[
               {
@@ -89,14 +90,12 @@ const Histoire = () => {
                 className="fade-slide-up atelier-card group relative overflow-hidden bg-white shadow-lg rounded-lg"
                 style={{animationDelay: `${index * 150}ms`}}
               >
-                <div className="aspect-[4/3] overflow-hidden">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-full h-full object-cover transition-all duration-300"
-                    loading="lazy"
-                  />
-                </div>
+                <OptimizedImage
+                  src={item.image}
+                  alt={item.title}
+                  className="w-full h-full object-cover transition-all duration-300"
+                  aspectRatio="[4/3]"
+                />
                 <div className="absolute inset-0 bg-gradient-to-t from-navy/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <div className="absolute bottom-4 left-4 right-4">
                     <h3 className="font-serif text-lg text-ivory">
