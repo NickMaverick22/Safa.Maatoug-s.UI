@@ -27,36 +27,35 @@ const Index = () => {
       
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        {/* Background Image with better positioning */}
+        {/* Background Image with static positioning */}
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat parallax-bg"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: `url('/lovable-uploads/6254dd8b-8e1d-44e8-af43-adb58b41fa97.png')`,
-            backgroundPosition: 'center top',
-            animation: 'ken-burns 20s ease-in-out infinite alternate'
+            backgroundPosition: 'center top'
           }}
         >
           <div className="hero-overlay"></div>
         </div>
         
-        {/* Hero Content with enhanced visibility */}
+        {/* Hero Content with larger text */}
         <div className="relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="hero-text-line font-serif text-6xl md:text-8xl font-bold text-ivory mb-6 drop-shadow-2xl" 
+          <h1 className="hero-text-line font-serif text-8xl md:text-[12rem] font-bold text-ivory mb-6 drop-shadow-2xl" 
               style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.7)' }}>
             élégance
           </h1>
-          <h2 className="hero-text-line font-serif text-4xl md:text-6xl text-ivory/95 mb-8 drop-shadow-xl"
+          <h2 className="hero-text-line font-serif text-6xl md:text-8xl text-ivory/95 mb-8 drop-shadow-xl"
               style={{ textShadow: '1px 1px 6px rgba(0,0,0,0.6)' }}>
             intemporelle
           </h2>
-          <h3 className="hero-text-line font-serif text-2xl md:text-4xl text-ivory/90 mb-12 drop-shadow-lg"
+          <h3 className="hero-text-line font-serif text-4xl md:text-6xl text-ivory/90 mb-12 drop-shadow-lg"
               style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.5)' }}>
             incarnée
           </h3>
           
           <div className="hero-text-line space-y-4">
-            <div className="bg-black/20 backdrop-blur-sm rounded-lg p-6 inline-block">
-              <p className="font-sans text-xl md:text-2xl text-ivory mb-8 italic">
+            <div className="inline-block">
+              <p className="font-sans text-2xl md:text-3xl text-ivory mb-8 italic">
                 Robes de mariée conçues pour vous.
               </p>
               <Link 
