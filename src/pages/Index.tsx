@@ -1,10 +1,8 @@
-
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import LuxuryAnimations from '../components/LuxuryAnimations';
-
 const Index = () => {
   useEffect(() => {
     // Add hero text animation classes on load
@@ -12,44 +10,41 @@ const Index = () => {
     heroLines.forEach((line, index) => {
       setTimeout(() => {
         line.classList.add('animate');
-      }, 200 + (index * 200));
+      }, 200 + index * 200);
     });
   }, []);
-
   const handleWhatsAppContact = () => {
     window.open('https://wa.me/21629646000', '_blank');
   };
-
-  return (
-    <div className="min-h-screen">
+  return <div className="min-h-screen">
       <Navigation />
       <LuxuryAnimations />
       
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         {/* Background Image with static positioning */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `url('/lovable-uploads/6254dd8b-8e1d-44e8-af43-adb58b41fa97.png')`,
-            backgroundPosition: 'center top'
-          }}
-        >
+        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{
+        backgroundImage: `url('/lovable-uploads/6254dd8b-8e1d-44e8-af43-adb58b41fa97.png')`,
+        backgroundPosition: 'center top'
+      }}>
           <div className="hero-overlay"></div>
         </div>
         
         {/* Hero Content with larger text */}
         <div className="relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="hero-text-line font-serif text-8xl md:text-[12rem] font-bold text-ivory mb-6 drop-shadow-2xl" 
-              style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.7)' }}>
+          <h1 style={{
+          textShadow: '2px 2px 8px rgba(0,0,0,0.7)'
+        }} className="hero-text-line font-serif text-8xl md:text-[12rem] font-bold text-ivory mb-6 text-2xl ">
             élégance
           </h1>
-          <h2 className="hero-text-line font-serif text-6xl md:text-8xl text-ivory/95 mb-8 drop-shadow-xl"
-              style={{ textShadow: '1px 1px 6px rgba(0,0,0,0.6)' }}>
+          <h2 style={{
+          textShadow: '1px 1px 6px rgba(0,0,0,0.6)'
+        }} className="hero-text-line font-serif text-6xl md:text-8xl text-ivory/95 mb-8">
             intemporelle
           </h2>
-          <h3 className="hero-text-line font-serif text-4xl md:text-6xl text-ivory/90 mb-12 drop-shadow-lg"
-              style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.5)' }}>
+          <h3 style={{
+          textShadow: '1px 1px 4px rgba(0,0,0,0.5)'
+        }} className="hero-text-line font-serif text-4xl md:text-6xl text-ivory/90 mb-12 ">
             incarnée
           </h3>
           
@@ -58,10 +53,7 @@ const Index = () => {
               <p className="font-sans text-2xl md:text-3xl text-ivory mb-8 italic">
                 Robes de mariée conçues pour vous.
               </p>
-              <Link 
-                to="/collection"
-                className="inline-block luxury-button"
-              >
+              <Link to="/collection" className="inline-block luxury-button">
                 Découvrez la collection
               </Link>
             </div>
@@ -94,10 +86,7 @@ const Index = () => {
               </p>
               
               <div className="fade-slide-up">
-                <Link 
-                  to="/histoire"
-                  className="inline-block luxury-button-outline"
-                >
+                <Link to="/histoire" className="inline-block luxury-button-outline">
                   Notre Histoire
                 </Link>
               </div>
@@ -118,32 +107,20 @@ const Index = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                image: "/lovable-uploads/88c2ef1d-431e-419a-ba66-607284097b92.png",
-                title: "Étoile Azure - Plumes et Éclats"
-              },
-              {
-                image: "/lovable-uploads/b7d5454b-f7aa-42e9-a591-a5636043dad3.png",
-                title: "Symphonie Dorée - Éclat Halter"
-              },
-              {
-                image: "/lovable-uploads/4c0ac742-ef06-42c2-b9f0-b01290af4dd2.png",
-                title: "Romance Printanière - Dentelle Pure"
-              }
-            ].map((item, index) => (
-              <div 
-                key={index} 
-                className="fade-slide-up gallery-card group relative overflow-hidden bg-white shadow-lg"
-                style={{animationDelay: `${index * 200}ms`}}
-              >
+            {[{
+            image: "/lovable-uploads/88c2ef1d-431e-419a-ba66-607284097b92.png",
+            title: "Étoile Azure - Plumes et Éclats"
+          }, {
+            image: "/lovable-uploads/b7d5454b-f7aa-42e9-a591-a5636043dad3.png",
+            title: "Symphonie Dorée - Éclat Halter"
+          }, {
+            image: "/lovable-uploads/4c0ac742-ef06-42c2-b9f0-b01290af4dd2.png",
+            title: "Romance Printanière - Dentelle Pure"
+          }].map((item, index) => <div key={index} className="fade-slide-up gallery-card group relative overflow-hidden bg-white shadow-lg" style={{
+            animationDelay: `${index * 200}ms`
+          }}>
                 <div className="aspect-[3/4] overflow-hidden">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
+                  <img src={item.image} alt={item.title} className="w-full h-full object-cover" loading="lazy" />
                 </div>
                 <div className="overlay">
                   <div className="overlay-content">
@@ -155,16 +132,12 @@ const Index = () => {
                     </p>
                   </div>
                 </div>
-              </div>
-            ))}
+              </div>)}
           </div>
           
           <div className="text-center mt-12">
             <div className="fade-slide-up">
-              <Link 
-                to="/collection"
-                className="inline-block luxury-button"
-              >
+              <Link to="/collection" className="inline-block luxury-button">
                 Découvrez la collection
               </Link>
             </div>
@@ -173,8 +146,6 @@ const Index = () => {
       </section>
 
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
