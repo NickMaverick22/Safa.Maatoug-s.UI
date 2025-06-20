@@ -98,24 +98,23 @@
 @layer components {
   .luxury-button {
     @apply bg-navy text-ivory px-8 py-4 font-sans font-medium tracking-[1.2px] uppercase text-sm 
-           transition-all duration-200 hover:bg-opacity-90 border-2 border-navy;
+           transition-colors duration-200 hover:bg-opacity-90 border-2 border-navy;
   }
   
   .luxury-button-outline {
     @apply bg-transparent text-navy px-8 py-4 font-sans font-medium tracking-[1.2px] uppercase text-sm 
-           transition-all duration-200 border-2 border-navy hover:bg-navy hover:text-ivory;
+           transition-colors duration-200 border-2 border-navy hover:bg-navy hover:text-ivory;
   }
 
   .hero-overlay {
     @apply absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent;
   }
 
-  /* Optimized animation classes */
+  /* Minimal essential animations only */
   .fade-slide-up {
     opacity: 0;
     transform: translateY(15px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    will-change: opacity, transform;
+    transition: opacity 0.2s ease, transform 0.2s ease;
   }
 
   .fade-slide-up.animate {
@@ -126,22 +125,21 @@
   .hero-text-line {
     opacity: 0;
     transform: translateY(15px);
-    animation: fadeSlideUp 0.3s ease forwards;
-    will-change: opacity, transform;
+    animation: fadeSlideUp 0.2s ease forwards;
   }
 
-  .hero-text-line:nth-child(1) { animation-delay: 0.1s; }
-  .hero-text-line:nth-child(2) { animation-delay: 0.2s; }
-  .hero-text-line:nth-child(3) { animation-delay: 0.3s; }
-  .hero-text-line:nth-child(4) { animation-delay: 0.4s; }
+  .hero-text-line:nth-child(1) { animation-delay: 0.05s; }
+  .hero-text-line:nth-child(2) { animation-delay: 0.1s; }
+  .hero-text-line:nth-child(3) { animation-delay: 0.15s; }
+  .hero-text-line:nth-child(4) { animation-delay: 0.2s; }
 
   .nav-link {
-    @apply relative transition-colors duration-200;
+    @apply relative transition-colors duration-150;
   }
 
   .nav-link::after {
     content: '';
-    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-gold transition-all duration-200 ease-out;
+    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-gold transition-all duration-150 ease-out;
   }
 
   .nav-link:hover::after {
@@ -149,13 +147,12 @@
   }
 
   .gallery-card {
-    @apply transition-transform duration-200 ease-out hover:scale-[1.01]
+    @apply transition-transform duration-150 ease-out hover:scale-[1.01]
            border border-navy/10 rounded-lg overflow-hidden bg-white;
-    will-change: transform;
   }
 
   .gallery-card .overlay {
-    @apply absolute inset-0 bg-navy/0 transition-colors duration-200 ease-out flex items-center justify-center;
+    @apply absolute inset-0 bg-navy/0 transition-colors duration-150 ease-out flex items-center justify-center;
   }
 
   .gallery-card:hover .overlay {
@@ -163,20 +160,15 @@
   }
 
   .gallery-card .overlay-content {
-    @apply text-ivory text-center opacity-0 transform translate-y-2 transition-all duration-200 ease-out;
+    @apply text-ivory text-center opacity-0 transform translate-y-2 transition-all duration-150 ease-out;
   }
 
   .gallery-card:hover .overlay-content {
     @apply opacity-100 transform translate-y-0;
   }
 
-  .atelier-card {
-    @apply transition-transform duration-200 ease-out;
-    will-change: transform;
-  }
-
   .animated-separator {
-    @apply h-px bg-gold mx-auto transition-all duration-200 ease-out;
+    @apply h-px bg-gold mx-auto transition-all duration-150 ease-out;
     width: 0;
   }
 
@@ -184,43 +176,36 @@
     width: 80px;
   }
 
-  .lightbox {
-    @apply fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4
-           opacity-0 pointer-events-none transition-opacity duration-200;
-  }
-
-  .lightbox.open {
-    @apply opacity-100 pointer-events-auto;
-  }
-
-  .lightbox-content {
-    @apply relative max-w-6xl w-full transform scale-95 transition-transform duration-200;
-  }
-
-  .lightbox.open .lightbox-content {
-    @apply scale-100;
-  }
-
   .email-button {
     @apply bg-navy text-ivory px-8 py-4 rounded-full font-sans tracking-[1.2px]
-           transition-all duration-200;
+           transition-colors duration-150;
   }
 
   .footer-link {
-    @apply relative transition-colors duration-200;
+    @apply relative transition-colors duration-150;
   }
 
   .footer-link::after {
     content: '';
-    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-gold transition-all duration-200 ease-out;
+    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-gold transition-all duration-150 ease-out;
   }
 
   .footer-link:hover::after {
     @apply w-full;
   }
+
+  /* Testimonials scroll animation - optimized */
+  .testimonials-scroll {
+    animation: scroll 60s linear infinite;
+  }
+
+  @keyframes scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
 }
 
-/* Optimized keyframe animations */
+/* Minimal keyframe animations */
 @keyframes fadeSlideUp {
   0% {
     opacity: 0;
@@ -232,9 +217,9 @@
   }
 }
 
-/* Custom scrollbar */
+/* Optimized scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 
 ::-webkit-scrollbar-track {
@@ -243,7 +228,7 @@
 
 ::-webkit-scrollbar-thumb {
   background: #C7A67A;
-  border-radius: 3px;
+  border-radius: 2px;
 }
 
 ::-webkit-scrollbar-thumb:hover {

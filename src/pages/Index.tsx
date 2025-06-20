@@ -8,12 +8,28 @@ import OptimizedImage from '../components/OptimizedImage';
 
 const Index = () => {
   useEffect(() => {
+    // Preload critical images
+    const criticalImages = [
+      '/lovable-uploads/6254dd8b-8e1d-44e8-af43-adb58b41fa97.png',
+      '/lovable-uploads/88c2ef1d-431e-419a-ba66-607284097b92.png',
+      '/lovable-uploads/b7d5454b-f7aa-42e9-a591-a5636043dad3.png',
+      '/lovable-uploads/4c0ac742-ef06-42c2-b9f0-b01290af4dd2.png'
+    ];
+
+    criticalImages.forEach(src => {
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'image';
+      link.href = src;
+      document.head.appendChild(link);
+    });
+
     // Add hero text animation classes on load
     const heroLines = document.querySelectorAll('.hero-text-line');
     heroLines.forEach((line, index) => {
       setTimeout(() => {
         line.classList.add('animate');
-      }, 200 + index * 200);
+      }, 100 + index * 100);
     });
   }, []);
 
@@ -136,13 +152,14 @@ const Index = () => {
               <div 
                 key={index} 
                 className="fade-slide-up gallery-card group relative overflow-hidden bg-white shadow-lg" 
-                style={{ animationDelay: `${index * 200}ms` }}
+                style={{ animationDelay: `${index * 100}ms` }}
               >
                 <OptimizedImage
                   src={item.image}
                   alt={item.title}
                   className="w-full h-full object-cover"
                   aspectRatio="[3/4]"
+                  priority={index === 0}
                 />
                 <div className="overlay">
                   <div className="overlay-content">
