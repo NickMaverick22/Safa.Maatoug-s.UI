@@ -5,6 +5,10 @@ import Footer from '../components/Footer';
 import LuxuryAnimations from '../components/LuxuryAnimations';
 
 const Histoire = () => {
+  const handleWhatsAppContact = () => {
+    window.open('https://wa.me/21629646000', '_blank');
+  };
+
   return (
     <div className="min-h-screen">
       <Navigation />
@@ -68,24 +72,24 @@ const Histoire = () => {
             </div>
           </div>
 
-          {/* Atelier Images Grid */}
+          {/* Atelier Images Grid - Updated with couture craftsmanship */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
             {[
+              {
+                image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?q=80&w=2070&auto=format&fit=crop",
+                title: "Couture à la main"
+              },
               {
                 image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=2070&auto=format&fit=crop",
                 title: "Création artisanale"
               },
               {
-                image: "https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?q=80&w=2070&auto=format&fit=crop",
-                title: "Attention aux détails"
-              },
-              {
                 image: "https://images.unsplash.com/photo-1566174053879-31528523f8ae?q=80&w=2070&auto=format&fit=crop",
-                title: "Sélection des tissus"
+                title: "Sélection des tissus nobles"
               },
               {
-                image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=2070&auto=format&fit=crop",
-                title: "Essayages personnalisés"
+                image: "https://images.unsplash.com/photo-1590736969955-71cc94901144?q=80&w=2070&auto=format&fit=crop",
+                title: "Broderie fine"
               }
             ].map((item, index) => (
               <div 
@@ -162,6 +166,18 @@ const Histoire = () => {
                 </p>
               </div>
             ))}
+          </div>
+
+          {/* Contact CTA with WhatsApp */}
+          <div className="text-center mt-16">
+            <div className="fade-slide-up">
+              <button
+                onClick={handleWhatsAppContact}
+                className="luxury-button"
+              >
+                Prendre rendez-vous
+              </button>
+            </div>
           </div>
         </div>
       </section>

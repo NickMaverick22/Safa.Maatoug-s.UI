@@ -14,6 +14,10 @@ const Contact = () => {
     setTimeout(() => setShowToast(false), 2000);
   };
 
+  const handleWhatsAppContact = () => {
+    window.open('https://wa.me/21629646000', '_blank');
+  };
+
   return (
     <div className="min-h-screen">
       <Navigation />
@@ -51,12 +55,21 @@ const Contact = () => {
               </h2>
               <p className="fade-slide-up font-sans text-lg md:text-xl text-navy/70 leading-relaxed max-w-3xl mx-auto">
                 Pour toute demande d'information, prise de rendez-vous ou essayage sur mesure, 
-                merci de nous contacter à l'adresse suivante :
+                contactez-nous directement via WhatsApp ou par email.
               </p>
             </div>
 
-            {/* Email Contact */}
-            <div className="fade-slide-up mb-12">
+            {/* Contact Options */}
+            <div className="fade-slide-up mb-12 space-y-6">
+              <button 
+                onClick={handleWhatsAppContact}
+                className="luxury-button block w-full max-w-md mx-auto mb-4"
+              >
+                📱 Contactez-nous sur WhatsApp
+              </button>
+              
+              <div className="text-navy/60">ou</div>
+              
               <button 
                 onClick={handleEmailClick}
                 className="email-button text-lg px-12 py-4"

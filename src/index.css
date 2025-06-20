@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -305,6 +306,25 @@
   .toast.show {
     @apply opacity-100 translate-y-0;
   }
+
+  /* Horizontal Scrolling Testimonials */
+  .testimonials-scroll {
+    will-change: transform;
+  }
+
+  .animate-scroll {
+    animation: scroll-horizontal 40s linear infinite;
+  }
+
+  .testimonial-card {
+    min-width: 320px;
+  }
+
+  @media (min-width: 768px) {
+    .testimonial-card {
+      min-width: 384px;
+    }
+  }
 }
 
 /* Keyframe animations */
@@ -352,6 +372,27 @@
   100% {
     transform: scale(1);
     opacity: 1;
+  }
+}
+
+@keyframes ken-burns {
+  0% {
+    transform: scale(1) translateX(0);
+  }
+  50% {
+    transform: scale(1.1) translateX(-2%);
+  }
+  100% {
+    transform: scale(1.05) translateX(2%);
+  }
+}
+
+@keyframes scroll-horizontal {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
   }
 }
 
