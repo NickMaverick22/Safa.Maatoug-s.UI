@@ -1,28 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import LuxuryAnimations from '../components/LuxuryAnimations';
 
 const BookAppointment = () => {
-  const [showThankYou, setShowThankYou] = useState(false);
+  const [showRedirectMessage, setShowRedirectMessage] = useState(false);
 
-  useEffect(() => {
-    // Listen for HubSpot meeting booking events
-    const handleMessage = (event) => {
-      if (event.data && event.data.type === 'hsFormCallback' && event.data.eventName === 'onFormSubmit') {
-        // Show thank you message after booking
-        setTimeout(() => {
-          setShowThankYou(true);
-        }, 1000);
-      }
-    };
-
-    window.addEventListener('message', handleMessage);
-
-    return () => {
-      window.removeEventListener('message', handleMessage);
-    };
-  }, []);
+  const handleBookingClick = () => {
+    setShowRedirectMessage(true);
+    
+    // Show redirect message for 2 seconds, then open external link
+    setTimeout(() => {
+      window.open('https://meetings-eu1.hubspot.com/ssoussi', '_blank');
+      setShowRedirectMessage(false);
+    }, 2000);
+  };
 
   return (
     <div className="min-h-screen bg-ivory">
@@ -43,80 +35,43 @@ const BookAppointment = () => {
             {/* Main content */}
             <div className="relative z-10">
               <h1 className="fade-slide-up font-serif text-5xl md:text-6xl text-navy mb-8">
-                Schedule Your Fitting
+                Planifiez votre rendez-vous gratuitement
               </h1>
               <div className="animated-separator mx-auto"></div>
               
               <p className="fade-slide-up font-sans text-xl text-navy/70 leading-relaxed max-w-3xl mx-auto mt-8">
-                Réservez votre consultation privée pour découvrir nos créations exceptionnelles 
-                et commencer votre voyage vers la robe de vos rêves.
+                Choisissez l'heure qui vous convient pour discuter avec Safa. Vous recevrez une confirmation par email après la réservation.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Meeting Scheduler Section */}
-      <section className="py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          {!showThankYou ? (
-            <div className="bg-white rounded-2xl shadow-xl border border-champagne/10 overflow-hidden">
-              {/* HubSpot Meeting Scheduler Embed */}
-              <div className="fade-slide-up">
-                <iframe
-                  src="https://meetings-eu1.hubspot.com/ssoussi"
-                  width="100%"
-                  height="800"
-                  frameBorder="0"
-                  style={{ border: 'none', minHeight: '800px' }}
-                  title="Schedule a Meeting"
-                  className="w-full"
-                  onLoad={() => {
-                    // Listen for booking completion
-                    const iframe = document.querySelector('iframe[src*="meetings-eu1.hubspot.com"]');
-                    if (iframe) {
-                      iframe.addEventListener('load', () => {
-                        // Check for booking completion periodically
-                        const checkBooking = setInterval(() => {
-                          try {
-                            // This is a simple check - in a real implementation, you'd use HubSpot's API
-                            // For now, we'll show the thank you message after 30 seconds as a demo
-                            if (window.location.hash === '#booked') {
-                              setShowThankYou(true);
-                              clearInterval(checkBooking);
-                            }
-                          } catch (e) {
-                            // Ignore cross-origin errors
-                          }
-                        }, 1000);
-
-                        // Clear interval after 5 minutes
-                        setTimeout(() => clearInterval(checkBooking), 300000);
-                      });
-                    }
-                  }}
-                />
-              </div>
+      {/* Booking Section */}
+      <section className="py-24">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          {!showRedirectMessage ? (
+            <div className="fade-slide-up">
+              <button
+                onClick={handleBookingClick}
+                className="bg-navy text-ivory px-12 py-6 rounded-full font-sans font-medium tracking-[1.2px] uppercase text-lg transition-all duration-300 hover:bg-champagne hover:text-navy hover:scale-105 shadow-xl"
+              >
+                Réserver maintenant
+              </button>
             </div>
           ) : (
-            <div className="bg-white rounded-2xl p-8 md:p-12 shadow-xl border border-champagne/10 text-center fade-slide-up">
+            <div className="bg-white rounded-2xl p-8 md:p-12 shadow-xl border border-champagne/10 fade-slide-up">
               <div className="mb-6">
-                <svg className="w-16 h-16 mx-auto text-champagne mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg className="w-16 h-16 mx-auto text-champagne mb-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
               </div>
               <h2 className="font-serif text-3xl text-navy mb-6">
-                Thank You for Booking!
+                Redirection en cours...
               </h2>
-              <p className="font-sans text-lg text-navy/70 leading-relaxed mb-8">
-                Thank you for booking your appointment! Please check your email to confirm the meeting. Looking forward to connecting.
+              <p className="font-sans text-lg text-navy/70 leading-relaxed">
+                Vous serez redirigé(e) vers notre page de réservation sécurisée...
               </p>
-              <button
-                onClick={() => window.location.href = '/'}
-                className="luxury-button"
-              >
-                Retour à l'accueil
-              </button>
             </div>
           )}
         </div>
@@ -167,7 +122,7 @@ const BookAppointment = () => {
         </div>
       </section>
 
-      {/* What to Expect */}
+      {/* Process Overview */}
       <section className="py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
