@@ -58,14 +58,14 @@ const Contact = () => {
             <div className="fade-slide-up mb-12 space-y-6">
               <a 
                 href="/book-appointment" 
-                className="bg-champagne text-navy px-12 py-4 rounded-full font-sans font-medium tracking-[1.2px] uppercase text-lg transition-all duration-300 hover:bg-gold hover:scale-105 shadow-lg inline-block"
+                className="bg-navy text-ivory px-12 py-4 rounded-full font-sans font-medium tracking-[1.2px] uppercase text-lg transition-all duration-300 hover:bg-champagne hover:text-navy inline-block"
               >
                 Book Your Appointment
               </a>
               
               <div className="text-navy/60">ou</div>
               
-              <button onClick={handleEmailClick} className="email-button text-lg px-12 py-4 font-normal">
+              <button onClick={handleEmailClick} className="bg-navy text-ivory px-12 py-4 rounded-full font-sans font-medium tracking-[1.2px] uppercase text-lg transition-all duration-300 hover:bg-champagne hover:text-navy">
                 contact@safamaatoug.com
               </button>
             </div>

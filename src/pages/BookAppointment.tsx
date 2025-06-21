@@ -31,12 +31,14 @@ const BookAppointment = () => {
     };
 
     return () => {
-      document.body.removeChild(script);
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
     };
   }, []);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-ivory">
       <Navigation />
       <LuxuryAnimations />
       
@@ -71,7 +73,7 @@ const BookAppointment = () => {
       <section className="py-16">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           {!formSubmitted ? (
-            <div className="bg-soft-beige rounded-lg p-8 md:p-12 shadow-lg">
+            <div className="bg-white rounded-2xl p-8 md:p-12 shadow-xl border border-champagne/10">
               <div className="fade-slide-up">
                 <div id="hubspot-form" className="hubspot-form-container">
                   {/* HubSpot form will be injected here */}
@@ -83,7 +85,7 @@ const BookAppointment = () => {
               </div>
             </div>
           ) : (
-            <div className="bg-soft-beige rounded-lg p-8 md:p-12 shadow-lg text-center fade-slide-up">
+            <div className="bg-white rounded-2xl p-8 md:p-12 shadow-xl border border-champagne/10 text-center fade-slide-up">
               <div className="mb-6">
                 <svg className="w-16 h-16 mx-auto text-champagne mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -107,7 +109,7 @@ const BookAppointment = () => {
       </section>
 
       {/* Additional Information */}
-      <section className="py-16 bg-ivory">
+      <section className="py-16 bg-soft-beige">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div className="fade-slide-up">

@@ -204,7 +204,7 @@
   }
 
   .hubspot-form-container .hs-form {
-    @apply space-y-6;
+    @apply space-y-8;
   }
 
   .hubspot-form-container .hs-form-field {
@@ -212,15 +212,21 @@
   }
 
   .hubspot-form-container .hs-form-field label {
-    @apply font-sans text-navy font-medium mb-2 block;
+    @apply font-sans text-navy font-semibold mb-3 block text-base;
   }
 
   .hubspot-form-container .hs-form-field input,
   .hubspot-form-container .hs-form-field textarea,
   .hubspot-form-container .hs-form-field select {
-    @apply w-full px-4 py-3 border border-navy/20 rounded-lg font-sans text-navy
-           focus:outline-none focus:ring-2 focus:ring-champagne focus:border-transparent
-           transition-all duration-200;
+    @apply w-full px-6 py-4 border-2 border-champagne/30 rounded-xl font-sans text-navy text-base
+           focus:outline-none focus:ring-2 focus:ring-champagne focus:border-champagne
+           transition-all duration-300 bg-ivory/50;
+  }
+
+  .hubspot-form-container .hs-form-field input:focus,
+  .hubspot-form-container .hs-form-field textarea:focus,
+  .hubspot-form-container .hs-form-field select:focus {
+    @apply bg-white shadow-lg;
   }
 
   .hubspot-form-container .hs-form-field textarea {
@@ -228,17 +234,17 @@
   }
 
   .hubspot-form-container .hs-submit {
-    @apply w-full;
+    @apply w-full mt-8;
   }
 
   .hubspot-form-container .hs-submit input[type="submit"] {
-    @apply w-full bg-champagne text-navy px-8 py-4 rounded-full font-sans font-medium 
+    @apply w-full bg-navy text-ivory px-8 py-4 rounded-full font-sans font-medium 
            tracking-[1.2px] uppercase text-sm transition-all duration-300 
-           hover:bg-gold hover:scale-105 shadow-lg cursor-pointer border-none;
+           hover:bg-champagne hover:text-navy hover:scale-105 shadow-lg cursor-pointer border-none;
   }
 
   .hubspot-form-container .hs-error-msgs {
-    @apply text-red-600 text-sm mt-1;
+    @apply text-red-600 text-sm mt-2;
   }
 
   /* Toast notification */

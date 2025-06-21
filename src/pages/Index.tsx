@@ -71,22 +71,14 @@ const Index = () => {
             incarnée
           </h3>
           
-          <div className="hero-text-line space-y-4">
-            <div className="inline-block">
-              <p className="font-sans text-2xl md:text-3xl text-ivory mb-8 italic">
-                Robes de mariée conçues pour vous.
-              </p>
-              <div className="space-y-4">
-                <Link to="/collection" className="inline-block luxury-button mr-4">
-                  Découvrez la collection
-                </Link>
-                <Link 
-                  to="/book-appointment" 
-                  className="inline-block bg-champagne text-navy px-8 py-4 rounded-full font-sans font-medium tracking-[1.2px] uppercase text-sm transition-all duration-300 hover:bg-gold hover:scale-105 shadow-lg"
-                >
-                  Book Your Appointment
-                </Link>
-              </div>
+          <div className="hero-text-line">
+            <p className="font-sans text-2xl md:text-3xl text-ivory mb-8 italic">
+              Robes de mariée conçues pour vous.
+            </p>
+            <div className="flex justify-center">
+              <Link to="/collection" className="inline-block luxury-button">
+                Découvrez la collection
+              </Link>
             </div>
           </div>
         </div>
