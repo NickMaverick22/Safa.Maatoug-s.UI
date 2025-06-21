@@ -50,24 +50,18 @@ const Contact = () => {
               </h2>
               <p className="fade-slide-up font-sans text-lg md:text-xl text-navy/70 leading-relaxed max-w-3xl mx-auto">
                 Pour toute demande d'information, prise de rendez-vous ou essayage sur mesure, 
-                réservez directement votre consultation ou contactez-nous par email.
+                réservez directement votre consultation.
               </p>
             </div>
 
             {/* Contact Options */}
-            <div className="fade-slide-up mb-12 space-y-6">
+            <div className="fade-slide-up mb-12">
               <a 
                 href="/book-appointment" 
                 className="bg-navy text-ivory px-12 py-4 rounded-full font-sans font-medium tracking-[1.2px] uppercase text-lg transition-all duration-300 hover:bg-champagne hover:text-navy inline-block"
               >
                 Book Your Appointment
               </a>
-              
-              <div className="text-navy/60">ou</div>
-              
-              <button onClick={handleEmailClick} className="bg-navy text-ivory px-12 py-4 rounded-full font-sans font-medium tracking-[1.2px] uppercase text-lg transition-all duration-300 hover:bg-champagne hover:text-navy">
-                contact@safamaatoug.com
-              </button>
             </div>
 
             {/* Additional Information */}
