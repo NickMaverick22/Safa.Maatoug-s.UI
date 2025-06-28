@@ -22,7 +22,7 @@ const Histoire = () => {
         </div>
         
         <div className="relative z-10 text-center">
-          <h1 className="fade-slide-up font-serif text-5xl md:text-7xl text-ivory font-bold">
+          <h1 className="fade-slide-up font-script text-5xl md:text-7xl text-ivory">
             Histoire
           </h1>
         </div>
@@ -42,7 +42,7 @@ const Histoire = () => {
             {/* Main content */}
             <div className="relative z-10 max-w-4xl mx-auto text-center">
               <div className="fade-slide-up mb-12">
-                <h2 className="font-serif text-4xl md:text-5xl text-navy mb-4">
+                <h2 className="font-script text-4xl md:text-5xl text-navy mb-4">
                   Lien Éternel
                 </h2>
                 <div className="animated-separator mx-auto"></div>
@@ -104,7 +104,7 @@ const Histoire = () => {
 
           {/* Mission & Values */}
           <div className="text-center mb-12">
-            <h3 className="fade-slide-up font-serif text-3xl md:text-4xl text-navy mb-16">
+            <h3 className="fade-slide-up font-script text-3xl md:text-4xl text-navy mb-16">
               Nos Valeurs
             </h3>
             <div className="animated-separator mx-auto mb-16"></div>
