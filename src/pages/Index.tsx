@@ -50,23 +50,23 @@ const Index = () => {
           <div className="hero-overlay"></div>
         </div>
         
-        {/* Hero Content with elegant script font */}
+        {/* Hero Content */}
         <div className="relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 
             style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.7)' }} 
-            className="hero-text-line font-script text-8xl md:text-[12rem] text-ivory mb-6"
+            className="hero-text-line font-serif text-8xl md:text-[12rem] text-ivory mb-6"
           >
             élégance
           </h1>
           <h2 
             style={{ textShadow: '1px 1px 6px rgba(0,0,0,0.6)' }} 
-            className="hero-text-line font-script text-6xl md:text-8xl text-ivory/95 mb-8"
+            className="hero-text-line font-serif text-6xl md:text-8xl text-ivory/95 mb-8"
           >
             intemporelle
           </h2>
           <h3 
             style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.5)' }} 
-            className="hero-text-line font-script text-4xl md:text-6xl text-ivory/90 mb-12"
+            className="hero-text-line font-serif text-4xl md:text-6xl text-ivory/90 mb-12"
           >
             incarnée
           </h3>
@@ -122,7 +122,7 @@ const Index = () => {
       <section className="py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="fade-slide-up font-script text-5xl md:text-6xl text-navy mb-6">collection</h2>
+            <h2 className="fade-slide-up font-serif text-5xl md:text-6xl text-navy mb-6">collection</h2>
             <p className="fade-slide-up font-sans text-lg text-navy/70 max-w-3xl mx-auto leading-relaxed">
               Un univers de grâce et de beauté, Découvrez notre collection, une symphonie enchantée. 
               Des robes qui célèbrent l'amour et l'élégance, Laissez-vous séduire par leur magie, sans résistance.
