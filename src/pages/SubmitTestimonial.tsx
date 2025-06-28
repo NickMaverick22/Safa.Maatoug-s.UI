@@ -38,10 +38,8 @@ const SubmitTestimonial = () => {
       });
 
       if (testimonial) {
-        toast.success('Votre témoignage a été soumis avec succès !');
-        setTimeout(() => {
-          navigate('/avis');
-        }, 2000);
+        // Navigate to thank you page instead of showing toast
+        navigate('/thank-you-testimonial');
       } else {
         toast.error('Erreur lors de la soumission. Veuillez réessayer.');
       }

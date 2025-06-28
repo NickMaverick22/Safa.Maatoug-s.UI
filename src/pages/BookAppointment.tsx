@@ -127,10 +127,8 @@ const BookAppointment = () => {
       });
 
       if (appointment) {
-        toast.success('Votre rendez-vous a été réservé avec succès !');
-        setTimeout(() => {
-          navigate('/contact');
-        }, 2000);
+        // Navigate to confirmation page instead of showing toast
+        navigate('/appointment-confirmation');
       } else {
         toast.error('Erreur lors de la réservation. Veuillez réessayer.');
       }
