@@ -1,73 +1,93 @@
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import { supabase } from './supabaseClient';
 import { User } from '../types/cms';
 
-const JWT_SECRET = 'safa-maatoug-cms-secret-key-2024';
-const ADMIN_EMAIL = 'admin@safamaatoug.com';
-const ADMIN_PASSWORD_HASH = '$2a$12$LQv3c1yqBwEHxv6HKk.2aO.jRuHkiDY31p8B4NfCAOtY8iKCOlRGy'; // 'admin123'
-
-// Mock user database - in production, this would be a real database
-const users: User[] = [
-  {
-    id: '1',
-    email: ADMIN_EMAIL,
-    name: 'Safa Maatoug',
-    role: 'admin',
-    createdAt: new Date('2024-01-01'),
-    lastLogin: new Date()
-  }
-];
-
 export const authenticateUser = async (email: string, password: string): Promise<User | null> => {
-  const user = users.find(u => u.email === email);
-  if (!user) return null;
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
 
-  // For demo purposes, check against hardcoded admin
-  if (email === ADMIN_EMAIL) {
-    const isValid = await bcrypt.compare(password, ADMIN_PASSWORD_HASH);
-    if (isValid) {
-      user.lastLogin = new Date();
+    if (error) {
+      console.error('Authentication error:', error);
+      return null;
+    }
+
+    if (data.session && data.user) {
+      // Convert Supabase user to our User type
+      const user: User = {
+        id: data.user.id,
+        email: data.user.email || '',
+        name: data.user.user_metadata?.name || data.user.email || 'Admin',
+        role: 'admin', // For now, all authenticated users are admins
+        createdAt: new Date(data.user.created_at),
+        lastLogin: new Date()
+      };
+      
       return user;
     }
-  }
 
-  return null;
-};
-
-export const generateToken = (user: User): string => {
-  return jwt.sign(
-    { 
-      id: user.id, 
-      email: user.email, 
-      role: user.role 
-    },
-    JWT_SECRET,
-    { expiresIn: '24h' }
-  );
-};
-
-export const verifyToken = (token: string): any => {
-  try {
-    return jwt.verify(token, JWT_SECRET);
+    return null;
   } catch (error) {
+    console.error('Authentication error:', error);
     return null;
   }
 };
 
+export const getCurrentUser = async (): Promise<User | null> => {
+  try {
+    const { data: { session }, error } = await supabase.auth.getSession();
+
+    if (error) {
+      console.error('Session error:', error);
+      return null;
+    }
+
+    if (session && session.user) {
+      const user: User = {
+        id: session.user.id,
+        email: session.user.email || '',
+        name: session.user.user_metadata?.name || session.user.email || 'Admin',
+        role: 'admin',
+        createdAt: new Date(session.user.created_at),
+        lastLogin: new Date()
+      };
+      
+      return user;
+    }
+
+    return null;
+  } catch (error) {
+    console.error('Get current user error:', error);
+    return null;
+  }
+};
+
+export const logout = async (): Promise<void> => {
+  try {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error('Logout error:', error);
+    }
+  } catch (error) {
+    console.error('Logout error:', error);
+  }
+};
+
+// Legacy function for backward compatibility - not used with Supabase
+export const generateToken = (user: User): string => {
+  // This is no longer needed with Supabase as it handles tokens automatically
+  return '';
+};
+
+// Legacy function for backward compatibility - not used with Supabase
+export const verifyToken = (token: string): any => {
+  // This is no longer needed with Supabase
+  return null;
+};
+
+// Legacy function for backward compatibility - not used with Supabase
 export const hashPassword = async (password: string): Promise<string> => {
-  return bcrypt.hash(password, 12);
-};
-
-export const getCurrentUser = (): User | null => {
-  const token = localStorage.getItem('cms_token');
-  if (!token) return null;
-
-  const decoded = verifyToken(token);
-  if (!decoded) return null;
-
-  return users.find(u => u.id === decoded.id) || null;
-};
-
-export const logout = (): void => {
-  localStorage.removeItem('cms_token');
+  // This is no longer needed with Supabase as it handles password hashing
+  return '';
 };

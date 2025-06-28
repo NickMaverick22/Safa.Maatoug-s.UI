@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { getCurrentUser, logout } from '../../lib/auth';
 import { User } from '../../types/cms';
@@ -8,17 +8,53 @@ interface CMSLayoutProps {
 }
 
 const CMSLayout: React.FC<CMSLayoutProps> = ({ children }) => {
-  const [user] = useState<User | null>(getCurrentUser());
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
-    navigate('/cms/login');
+  useEffect(() => {
+    const checkUser = async () => {
+      try {
+        const currentUser = await getCurrentUser();
+        setUser(currentUser);
+        
+        if (!currentUser) {
+          navigate('/cms/login');
+        }
+      } catch (error) {
+        console.error('Error checking user:', error);
+        navigate('/cms/login');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkUser();
+  }, [navigate]);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/cms/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+      navigate('/cms/login');
+    }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-soft-beige flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-champagne mx-auto mb-4"></div>
+          <p className="font-sans text-navy/70">Chargement...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!user) {
-    navigate('/cms/login');
     return null;
   }
 

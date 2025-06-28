@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { authenticateUser, generateToken } from '../../lib/auth';
+import { authenticateUser } from '../../lib/auth';
 import { toast } from '../../components/ui/sonner';
 
 const CMSLogin = () => {
@@ -17,8 +17,6 @@ const CMSLogin = () => {
       const user = await authenticateUser(email, password);
       
       if (user) {
-        const token = generateToken(user);
-        localStorage.setItem('cms_token', token);
         toast.success('Connexion réussie');
         navigate('/cms');
       } else {
@@ -89,10 +87,10 @@ const CMSLogin = () => {
 
           {/* Demo Credentials */}
           <div className="mt-8 p-4 bg-soft-beige rounded-lg">
-            <p className="font-sans text-xs text-navy/60 text-center mb-2">Identifiants de démonstration:</p>
+            <p className="font-sans text-xs text-navy/60 text-center mb-2">Pour accéder au CMS:</p>
             <p className="font-sans text-xs text-navy/80 text-center">
-              Email: admin@safamaatoug.com<br />
-              Mot de passe: admin123
+              Vous devez créer un utilisateur dans votre projet Supabase<br />
+              avec l'email: admin@safamaatoug.com
             </p>
           </div>
         </div>
