@@ -4,8 +4,6 @@ import Footer from '../components/Footer';
 import LuxuryAnimations from '../components/LuxuryAnimations';
 
 const Avis = () => {
-  const [isPaused, setIsPaused] = useState(false);
-
   const testimonials = [
     {
       id: 1,
@@ -83,40 +81,36 @@ const Avis = () => {
         </div>
       </section>
 
-      {/* Horizontal Scrolling Testimonials Carousel */}
-      <section className="py-24 bg-soft-beige overflow-hidden">
-        <div className="max-w-full">
-          <div 
-            className="testimonials-scroll flex gap-8 animate-scroll"
-            style={{
-              animationPlayState: isPaused ? 'paused' : 'running'
-            }}
-            onMouseEnter={() => setIsPaused(true)}
-            onMouseLeave={() => setIsPaused(false)}
-          >
-            {/* Duplicate testimonials for seamless loop */}
-            {[...testimonials, ...testimonials].map((testimonial, index) => (
-              <div key={`${testimonial.id}-${index}`} className="testimonial-card flex-shrink-0 w-80 md:w-96">
-                <div className="bg-ivory rounded-lg p-8 shadow-lg h-full flex flex-col">
+      {/* Grid Testimonials Section */}
+      <section className="py-24 bg-soft-beige">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <div 
+                key={testimonial.id} 
+                className="testimonial-card fade-slide-up"
+                style={{animationDelay: `${index * 150}ms`}}
+              >
+                <div className="bg-ivory rounded-lg p-6 shadow-lg h-full flex flex-col">
                   {/* Avatar */}
                   <div className="flex items-center mb-6">
                     <img
                       src={testimonial.avatar}
                       alt={testimonial.name}
-                      className="w-16 h-16 rounded-full object-cover border-2 border-champagne mr-4"
+                      className="w-12 h-12 rounded-full object-cover border-2 border-champagne mr-4"
                     />
                     <div>
-                      <p className="font-sans font-semibold text-navy text-lg">
+                      <p className="font-sans font-semibold text-navy text-base">
                         {testimonial.name}
                       </p>
-                      <p className="font-sans text-navy/60 text-sm uppercase tracking-[1.2px]">
+                      <p className="font-sans text-navy/60 text-xs uppercase tracking-[1.2px]">
                         {testimonial.date}
                       </p>
                     </div>
                   </div>
 
                   {/* Quote */}
-                  <blockquote className="font-serif text-lg text-navy leading-relaxed italic flex-grow">
+                  <blockquote className="font-serif text-base text-navy leading-relaxed italic flex-grow">
                     "{testimonial.quote}"
                   </blockquote>
                 </div>
