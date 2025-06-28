@@ -14,57 +14,77 @@ const Avis = () => {
   useEffect(() => {
     const loadTestimonials = async () => {
       try {
-        const data = await getTestimonials();
-        // Only show approved testimonials
-        const approvedTestimonials = data.filter(t => t.status === 'approved');
-        setTestimonials(approvedTestimonials);
-      } catch (error) {
-        console.error('Error loading testimonials:', error);
-        // Fallback to mock data if Supabase fails
-        setTestimonials([
+        // TEMPORARILY FORCING MOCK DATA FOR TESTING
+        // Comment out the Supabase call and use mock data directly
+        // const data = await getTestimonials();
+        // const approvedTestimonials = data.filter(t => t.status === 'approved');
+        // setTestimonials(approvedTestimonials);
+        
+        // Force mock testimonials for testing the carousel
+        const mockTestimonials = [
           {
             id: '1',
             name: 'L. Dupont',
             quote: 'Merci pour la robe parfaite ! Chaque détail était pensé, la qualité exceptionnelle. Je me suis sentie comme une princesse le jour J.',
-            status: 'approved',
+            status: 'approved' as const,
             submittedAt: new Date('2024-06-15')
           },
           {
             id: '2',
             name: 'M. Rousseau',
             quote: 'Une expérience magique du premier essayage au jour du mariage. L\'équipe a su comprendre mes envies et créer la robe de mes rêves.',
-            status: 'approved',
+            status: 'approved' as const,
             submittedAt: new Date('2024-05-20')
           },
           {
             id: '3',
             name: 'S. Martin',
             quote: 'Artisanat d\'exception, service impeccable. Ma robe était unique, comme moi. Merci pour avoir rendu mon mariage inoubliable.',
-            status: 'approved',
+            status: 'approved' as const,
             submittedAt: new Date('2024-04-15')
           },
           {
             id: '4',
             name: 'A. Moreau',
             quote: 'De la première consultation aux retouches finales, tout était parfait. L\'attention aux détails et la passion se ressentent dans chaque couture.',
-            status: 'approved',
+            status: 'approved' as const,
             submittedAt: new Date('2024-03-20')
           },
           {
             id: '5',
             name: 'C. Bernard',
             quote: 'Une robe qui m\'a fait vibrer dès le premier regard. L\'équipe a su transformer ma vision en réalité avec une élégance incomparable.',
-            status: 'approved',
+            status: 'approved' as const,
             submittedAt: new Date('2024-02-15')
           },
           {
             id: '6',
             name: 'E. Dubois',
             quote: 'Un service personnalisé exceptionnel. Chaque détail de ma robe reflétait parfaitement ma personnalité et mes goûts.',
-            status: 'approved',
+            status: 'approved' as const,
             submittedAt: new Date('2024-01-20')
+          },
+          {
+            id: '7',
+            name: 'F. Leroy',
+            quote: 'L\'atelier respire la passion et le savoir-faire. Ma robe était un rêve devenu réalité, merci pour cette création unique.',
+            status: 'approved' as const,
+            submittedAt: new Date('2024-01-10')
+          },
+          {
+            id: '8',
+            name: 'G. Petit',
+            quote: 'Professionnalisme et créativité au rendez-vous. Je recommande vivement pour toutes les futures mariées exigeantes.',
+            status: 'approved' as const,
+            submittedAt: new Date('2023-12-15')
           }
-        ]);
+        ];
+        
+        setTestimonials(mockTestimonials);
+      } catch (error) {
+        console.error('Error loading testimonials:', error);
+        // This fallback is now redundant since we're forcing mock data
+        setTestimonials([]);
       } finally {
         setLoading(false);
       }
@@ -81,7 +101,9 @@ const Avis = () => {
       "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?q=80&w=200&auto=format&fit=crop&crop=face",
       "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop&crop=face",
       "https://images.unsplash.com/photo-1464863979621-258859e62245?q=80&w=200&auto=format&fit=crop&crop=face",
-      "https://images.unsplash.com/photo-1524250502761-1ac6f2e30d43?q=80&w=200&auto=format&fit=crop&crop=face"
+      "https://images.unsplash.com/photo-1524250502761-1ac6f2e30d43?q=80&w=200&auto=format&fit=crop&crop=face",
+      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop&crop=face",
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop&crop=face"
     ];
     return avatars[index % avatars.length];
   };
