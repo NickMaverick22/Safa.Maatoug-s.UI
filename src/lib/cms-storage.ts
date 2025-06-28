@@ -1,69 +1,281 @@
+import { supabase } from './supabaseClient';
 import { Testimonial, Appointment, GalleryImage, CMSStats } from '../types/cms';
 
-// Mock data storage - in production, this would be a real database
-let testimonials: Testimonial[] = [
-  {
-    id: '1',
-    name: 'L. Dupont',
-    email: 'l.dupont@email.com',
-    date: 'Juin 2024',
-    quote: 'Merci pour la robe parfaite ! Chaque détail était pensé, la qualité exceptionnelle. Je me suis sentie comme une princesse le jour J.',
-    status: 'approved',
-    submittedAt: new Date('2024-06-15'),
-    reviewedAt: new Date('2024-06-16'),
-    reviewedBy: 'admin@safamaatoug.com'
-  },
-  {
-    id: '2',
-    name: 'M. Rousseau',
-    email: 'm.rousseau@email.com',
-    date: 'Mai 2024',
-    quote: 'Une expérience magique du premier essayage au jour du mariage. L\'équipe a su comprendre mes envies et créer la robe de mes rêves.',
-    status: 'approved',
-    submittedAt: new Date('2024-05-20'),
-    reviewedAt: new Date('2024-05-21'),
-    reviewedBy: 'admin@safamaatoug.com'
-  },
-  {
-    id: '3',
-    name: 'S. Martin',
-    email: 's.martin@email.com',
-    date: 'Avril 2024',
-    quote: 'Artisanat d\'exception, service impeccable. Ma robe était unique, comme moi. Merci pour avoir rendu mon mariage inoubliable.',
-    status: 'pending',
-    submittedAt: new Date('2024-12-20')
-  }
-];
+// Testimonials CRUD
+export const getTestimonials = async (): Promise<Testimonial[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('testimonials')
+      .select('*')
+      .order('created_at', { ascending: false });
 
-let appointments: Appointment[] = [
-  {
-    id: '1',
-    clientName: 'Marie Dubois',
-    clientEmail: 'marie.dubois@email.com',
-    clientPhone: '+33 6 12 34 56 78',
-    appointmentDate: new Date('2024-12-28'),
-    appointmentTime: '14:00',
-    service: 'consultation',
-    status: 'confirmed',
-    notes: 'Première consultation pour robe de mariée',
-    createdAt: new Date('2024-12-15'),
-    updatedAt: new Date('2024-12-15')
-  },
-  {
-    id: '2',
-    clientName: 'Sophie Laurent',
-    clientEmail: 'sophie.laurent@email.com',
-    clientPhone: '+33 6 98 76 54 32',
-    appointmentDate: new Date('2024-12-30'),
-    appointmentTime: '10:00',
-    service: 'fitting',
-    status: 'scheduled',
-    notes: 'Premier essayage',
-    createdAt: new Date('2024-12-18'),
-    updatedAt: new Date('2024-12-18')
-  }
-];
+    if (error) throw error;
 
+    return data.map(item => ({
+      id: item.id,
+      name: item.name,
+      email: item.email,
+      date: item.date,
+      quote: item.quote,
+      avatar: item.avatar,
+      status: item.status,
+      submittedAt: new Date(item.submitted_at),
+      reviewedAt: item.reviewed_at ? new Date(item.reviewed_at) : undefined,
+      reviewedBy: item.reviewed_by
+    }));
+  } catch (error) {
+    console.error('Error fetching testimonials:', error);
+    return [];
+  }
+};
+
+export const getTestimonialById = async (id: string): Promise<Testimonial | undefined> => {
+  try {
+    const { data, error } = await supabase
+      .from('testimonials')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+
+    return {
+      id: data.id,
+      name: data.name,
+      email: data.email,
+      date: data.date,
+      quote: data.quote,
+      avatar: data.avatar,
+      status: data.status,
+      submittedAt: new Date(data.submitted_at),
+      reviewedAt: data.reviewed_at ? new Date(data.reviewed_at) : undefined,
+      reviewedBy: data.reviewed_by
+    };
+  } catch (error) {
+    console.error('Error fetching testimonial:', error);
+    return undefined;
+  }
+};
+
+export const updateTestimonialStatus = async (
+  id: string, 
+  status: 'approved' | 'rejected', 
+  reviewedBy: string
+): Promise<boolean> => {
+  try {
+    const { error } = await supabase
+      .from('testimonials')
+      .update({
+        status,
+        reviewed_at: new Date().toISOString(),
+        reviewed_by: reviewedBy,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id);
+
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error('Error updating testimonial status:', error);
+    return false;
+  }
+};
+
+export const deleteTestimonial = async (id: string): Promise<boolean> => {
+  try {
+    const { error } = await supabase
+      .from('testimonials')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error('Error deleting testimonial:', error);
+    return false;
+  }
+};
+
+export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'submittedAt'>): Promise<Testimonial | null> => {
+  try {
+    const { data, error } = await supabase
+      .from('testimonials')
+      .insert({
+        name: testimonial.name,
+        email: testimonial.email,
+        date: testimonial.date,
+        quote: testimonial.quote,
+        avatar: testimonial.avatar,
+        status: testimonial.status || 'pending',
+        submitted_at: new Date().toISOString(),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return {
+      id: data.id,
+      name: data.name,
+      email: data.email,
+      date: data.date,
+      quote: data.quote,
+      avatar: data.avatar,
+      status: data.status,
+      submittedAt: new Date(data.submitted_at),
+      reviewedAt: data.reviewed_at ? new Date(data.reviewed_at) : undefined,
+      reviewedBy: data.reviewed_by
+    };
+  } catch (error) {
+    console.error('Error adding testimonial:', error);
+    return null;
+  }
+};
+
+// Appointments CRUD
+export const getAppointments = async (): Promise<Appointment[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('appointments')
+      .select('*')
+      .order('appointment_date', { ascending: true });
+
+    if (error) throw error;
+
+    return data.map(item => ({
+      id: item.id,
+      clientName: item.client_name,
+      clientEmail: item.client_email,
+      clientPhone: item.client_phone,
+      appointmentDate: new Date(item.appointment_date),
+      appointmentTime: item.appointment_time,
+      service: item.service,
+      status: item.status,
+      notes: item.notes,
+      createdAt: new Date(item.created_at),
+      updatedAt: new Date(item.updated_at)
+    }));
+  } catch (error) {
+    console.error('Error fetching appointments:', error);
+    return [];
+  }
+};
+
+export const getAppointmentById = async (id: string): Promise<Appointment | undefined> => {
+  try {
+    const { data, error } = await supabase
+      .from('appointments')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+
+    return {
+      id: data.id,
+      clientName: data.client_name,
+      clientEmail: data.client_email,
+      clientPhone: data.client_phone,
+      appointmentDate: new Date(data.appointment_date),
+      appointmentTime: data.appointment_time,
+      service: data.service,
+      status: data.status,
+      notes: data.notes,
+      createdAt: new Date(data.created_at),
+      updatedAt: new Date(data.updated_at)
+    };
+  } catch (error) {
+    console.error('Error fetching appointment:', error);
+    return undefined;
+  }
+};
+
+export const updateAppointment = async (id: string, updates: Partial<Appointment>): Promise<boolean> => {
+  try {
+    const updateData: any = {
+      updated_at: new Date().toISOString()
+    };
+
+    if (updates.clientName) updateData.client_name = updates.clientName;
+    if (updates.clientEmail) updateData.client_email = updates.clientEmail;
+    if (updates.clientPhone) updateData.client_phone = updates.clientPhone;
+    if (updates.appointmentDate) updateData.appointment_date = updates.appointmentDate.toISOString();
+    if (updates.appointmentTime) updateData.appointment_time = updates.appointmentTime;
+    if (updates.service) updateData.service = updates.service;
+    if (updates.status) updateData.status = updates.status;
+    if (updates.notes !== undefined) updateData.notes = updates.notes;
+
+    const { error } = await supabase
+      .from('appointments')
+      .update(updateData)
+      .eq('id', id);
+
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error('Error updating appointment:', error);
+    return false;
+  }
+};
+
+export const deleteAppointment = async (id: string): Promise<boolean> => {
+  try {
+    const { error } = await supabase
+      .from('appointments')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error('Error deleting appointment:', error);
+    return false;
+  }
+};
+
+export const addAppointment = async (appointment: Omit<Appointment, 'id' | 'createdAt' | 'updatedAt'>): Promise<Appointment | null> => {
+  try {
+    const { data, error } = await supabase
+      .from('appointments')
+      .insert({
+        client_name: appointment.clientName,
+        client_email: appointment.clientEmail,
+        client_phone: appointment.clientPhone,
+        appointment_date: appointment.appointmentDate.toISOString(),
+        appointment_time: appointment.appointmentTime,
+        service: appointment.service,
+        status: appointment.status || 'scheduled',
+        notes: appointment.notes,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return {
+      id: data.id,
+      clientName: data.client_name,
+      clientEmail: data.client_email,
+      clientPhone: data.client_phone,
+      appointmentDate: new Date(data.appointment_date),
+      appointmentTime: data.appointment_time,
+      service: data.service,
+      status: data.status,
+      notes: data.notes,
+      createdAt: new Date(data.created_at),
+      updatedAt: new Date(data.updated_at)
+    };
+  } catch (error) {
+    console.error('Error adding appointment:', error);
+    return null;
+  }
+};
+
+// Gallery Images CRUD (keeping mock data for now as requested)
 let galleryImages: GalleryImage[] = [
   {
     id: '1',
@@ -93,80 +305,6 @@ let galleryImages: GalleryImage[] = [
   }
 ];
 
-// Testimonials CRUD
-export const getTestimonials = (): Testimonial[] => testimonials;
-
-export const getTestimonialById = (id: string): Testimonial | undefined => {
-  return testimonials.find(t => t.id === id);
-};
-
-export const updateTestimonialStatus = (id: string, status: 'approved' | 'rejected', reviewedBy: string): boolean => {
-  const testimonial = testimonials.find(t => t.id === id);
-  if (testimonial) {
-    testimonial.status = status;
-    testimonial.reviewedAt = new Date();
-    testimonial.reviewedBy = reviewedBy;
-    return true;
-  }
-  return false;
-};
-
-export const deleteTestimonial = (id: string): boolean => {
-  const index = testimonials.findIndex(t => t.id === id);
-  if (index > -1) {
-    testimonials.splice(index, 1);
-    return true;
-  }
-  return false;
-};
-
-export const addTestimonial = (testimonial: Omit<Testimonial, 'id' | 'submittedAt'>): Testimonial => {
-  const newTestimonial: Testimonial = {
-    ...testimonial,
-    id: Date.now().toString(),
-    submittedAt: new Date()
-  };
-  testimonials.push(newTestimonial);
-  return newTestimonial;
-};
-
-// Appointments CRUD
-export const getAppointments = (): Appointment[] => appointments;
-
-export const getAppointmentById = (id: string): Appointment | undefined => {
-  return appointments.find(a => a.id === id);
-};
-
-export const updateAppointment = (id: string, updates: Partial<Appointment>): boolean => {
-  const appointment = appointments.find(a => a.id === id);
-  if (appointment) {
-    Object.assign(appointment, { ...updates, updatedAt: new Date() });
-    return true;
-  }
-  return false;
-};
-
-export const deleteAppointment = (id: string): boolean => {
-  const index = appointments.findIndex(a => a.id === id);
-  if (index > -1) {
-    appointments.splice(index, 1);
-    return true;
-  }
-  return false;
-};
-
-export const addAppointment = (appointment: Omit<Appointment, 'id' | 'createdAt' | 'updatedAt'>): Appointment => {
-  const newAppointment: Appointment = {
-    ...appointment,
-    id: Date.now().toString(),
-    createdAt: new Date(),
-    updatedAt: new Date()
-  };
-  appointments.push(newAppointment);
-  return newAppointment;
-};
-
-// Gallery Images CRUD
 export const getGalleryImages = (): GalleryImage[] => galleryImages;
 
 export const getGalleryImageById = (id: string): GalleryImage | undefined => {
@@ -202,15 +340,35 @@ export const addGalleryImage = (image: Omit<GalleryImage, 'id' | 'uploadedAt'>):
 };
 
 // Statistics
-export const getCMSStats = (): CMSStats => {
-  return {
-    totalTestimonials: testimonials.length,
-    pendingTestimonials: testimonials.filter(t => t.status === 'pending').length,
-    totalAppointments: appointments.length,
-    upcomingAppointments: appointments.filter(a => 
-      a.status === 'scheduled' || a.status === 'confirmed'
-    ).length,
-    totalImages: galleryImages.length,
-    storageUsed: galleryImages.reduce((total, img) => total + img.size, 0)
-  };
+export const getCMSStats = async (): Promise<CMSStats> => {
+  try {
+    const [testimonialsResult, appointmentsResult] = await Promise.all([
+      supabase.from('testimonials').select('status', { count: 'exact' }),
+      supabase.from('appointments').select('status', { count: 'exact' })
+    ]);
+
+    const testimonials = testimonialsResult.data || [];
+    const appointments = appointmentsResult.data || [];
+
+    return {
+      totalTestimonials: testimonials.length,
+      pendingTestimonials: testimonials.filter(t => t.status === 'pending').length,
+      totalAppointments: appointments.length,
+      upcomingAppointments: appointments.filter(a => 
+        a.status === 'scheduled' || a.status === 'confirmed'
+      ).length,
+      totalImages: galleryImages.length,
+      storageUsed: galleryImages.reduce((total, img) => total + img.size, 0)
+    };
+  } catch (error) {
+    console.error('Error fetching CMS stats:', error);
+    return {
+      totalTestimonials: 0,
+      pendingTestimonials: 0,
+      totalAppointments: 0,
+      upcomingAppointments: 0,
+      totalImages: galleryImages.length,
+      storageUsed: galleryImages.reduce((total, img) => total + img.size, 0)
+    };
+  }
 };

@@ -1,5 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 interface LightboxProps {
   images: Array<{
@@ -118,12 +118,12 @@ const Lightbox: React.FC<LightboxProps> = ({
             </div>
 
             <div className="pt-6">
-              <button
-                onClick={() => window.location.href = '/contact'}
+              <Link
+                to="/book-appointment"
                 className="luxury-button"
               >
                 Prendre rendez-vous
-              </button>
+              </Link>
             </div>
           </div>
         </div>

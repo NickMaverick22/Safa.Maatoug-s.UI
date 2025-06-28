@@ -9,6 +9,7 @@ import Collection from "./pages/Collection";
 import Avis from "./pages/Avis";
 import Contact from "./pages/Contact";
 import BookAppointment from "./pages/BookAppointment";
+import SubmitTestimonial from "./pages/SubmitTestimonial";
 import NotFound from "./pages/NotFound";
 import WhatsAppFloat from "./components/WhatsAppFloat";
 
@@ -35,6 +36,7 @@ const App = () => (
           <Route path="/avis" element={<Avis />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/book-appointment" element={<BookAppointment />} />
+          <Route path="/submit-testimonial" element={<SubmitTestimonial />} />
           
           {/* CMS Routes */}
           <Route path="/cms/login" element={<CMSLogin />} />

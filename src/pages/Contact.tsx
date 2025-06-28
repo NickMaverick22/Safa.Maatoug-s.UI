@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import LuxuryAnimations from '../components/LuxuryAnimations';
@@ -56,12 +57,12 @@ const Contact = () => {
 
             {/* Contact Options */}
             <div className="fade-slide-up mb-12">
-              <a 
-                href="/book-appointment" 
+              <Link 
+                to="/book-appointment" 
                 className="bg-navy text-ivory px-12 py-4 rounded-full font-sans font-medium tracking-[1.2px] uppercase text-lg transition-all duration-300 hover:bg-champagne hover:text-navy inline-block"
               >
                 Book Your Appointment
-              </a>
+              </Link>
             </div>
 
             {/* Additional Information */}
