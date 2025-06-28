@@ -173,6 +173,14 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
       );
     }
 
+    // Store current session to restore later if needed
+    const { data: { session: currentSession } } = await supabase.auth.getSession();
+    
+    // If there's an authenticated session, temporarily sign out to ensure anonymous submission
+    if (currentSession) {
+      await supabase.auth.signOut();
+    }
+
     // Ensure status is 'pending' for anonymous submissions as required by RLS policy
     const insertData = {
       name: testimonial.name.trim(),
@@ -187,6 +195,14 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
       .insert(insertData)
       .select()
       .single();
+
+    // Restore session if it existed before
+    if (currentSession) {
+      await supabase.auth.setSession({
+        access_token: currentSession.access_token,
+        refresh_token: currentSession.refresh_token
+      });
+    }
 
     if (error) {
       console.error('Supabase insert error:', error);
