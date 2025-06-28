@@ -25,8 +25,6 @@ const Avis = () => {
           {
             id: '1',
             name: 'L. Dupont',
-            email: 'l.dupont@email.com',
-            date: 'Juin 2024',
             quote: 'Merci pour la robe parfaite ! Chaque détail était pensé, la qualité exceptionnelle. Je me suis sentie comme une princesse le jour J.',
             status: 'approved',
             submittedAt: new Date('2024-06-15')
@@ -34,8 +32,6 @@ const Avis = () => {
           {
             id: '2',
             name: 'M. Rousseau',
-            email: 'm.rousseau@email.com',
-            date: 'Mai 2024',
             quote: 'Une expérience magique du premier essayage au jour du mariage. L\'équipe a su comprendre mes envies et créer la robe de mes rêves.',
             status: 'approved',
             submittedAt: new Date('2024-05-20')
@@ -43,8 +39,6 @@ const Avis = () => {
           {
             id: '3',
             name: 'S. Martin',
-            email: 's.martin@email.com',
-            date: 'Avril 2024',
             quote: 'Artisanat d\'exception, service impeccable. Ma robe était unique, comme moi. Merci pour avoir rendu mon mariage inoubliable.',
             status: 'approved',
             submittedAt: new Date('2024-04-15')
@@ -52,8 +46,6 @@ const Avis = () => {
           {
             id: '4',
             name: 'A. Moreau',
-            email: 'a.moreau@email.com',
-            date: 'Mars 2024',
             quote: 'De la première consultation aux retouches finales, tout était parfait. L\'attention aux détails et la passion se ressentent dans chaque couture.',
             status: 'approved',
             submittedAt: new Date('2024-03-20')
@@ -61,8 +53,6 @@ const Avis = () => {
           {
             id: '5',
             name: 'C. Bernard',
-            email: 'c.bernard@email.com',
-            date: 'Février 2024',
             quote: 'Une robe qui m\'a fait vibrer dès le premier regard. L\'équipe a su transformer ma vision en réalité avec une élégance incomparable.',
             status: 'approved',
             submittedAt: new Date('2024-02-15')
@@ -70,8 +60,6 @@ const Avis = () => {
           {
             id: '6',
             name: 'E. Dubois',
-            email: 'e.dubois@email.com',
-            date: 'Janvier 2024',
             quote: 'Un service personnalisé exceptionnel. Chaque détail de ma robe reflétait parfaitement ma personnalité et mes goûts.',
             status: 'approved',
             submittedAt: new Date('2024-01-20')
@@ -178,7 +166,7 @@ const Avis = () => {
                             {testimonial.name}
                           </p>
                           <p className="font-sans text-navy/60 text-xs uppercase tracking-[1.2px]">
-                            {testimonial.date}
+                            {new Date(testimonial.submittedAt).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
                           </p>
                         </div>
                       </div>
@@ -219,7 +207,7 @@ const Avis = () => {
                             {testimonial.name}
                           </p>
                           <p className="font-sans text-navy/60 text-xs uppercase tracking-[1.2px]">
-                            {testimonial.date}
+                            {new Date(testimonial.submittedAt).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
                           </p>
                         </div>
                       </div>

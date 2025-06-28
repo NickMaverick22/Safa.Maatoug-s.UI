@@ -11,8 +11,6 @@ import { useDebounce } from '../lib/performance';
 const SubmitTestimonial = () => {
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
-    date: '',
     quote: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -63,7 +61,7 @@ const SubmitTestimonial = () => {
     e.preventDefault();
     
     // Check rate limiting
-    const userIdentifier = `${formData.email}-testimonial`;
+    const userIdentifier = `${formData.name}-testimonial`;
     if (!formRateLimiter.isAllowed(userIdentifier)) {
       const remainingTime = Math.ceil(formRateLimiter.getRemainingTime(userIdentifier) / 1000 / 60);
       setIsRateLimited(true);
@@ -81,8 +79,6 @@ const SubmitTestimonial = () => {
     try {
       const testimonial = await addTestimonial({
         name: formData.name,
-        email: formData.email,
-        date: formData.date,
         quote: formData.quote,
         status: 'pending'
       });
@@ -158,79 +154,27 @@ const SubmitTestimonial = () => {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6" noValidate>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label htmlFor="name" className="block font-sans text-sm font-medium text-navy mb-2">
-                    Votre nom *
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    maxLength={100}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-champagne focus:border-transparent font-sans transition-colors duration-200 ${
-                      errors.name ? 'border-red-300 bg-red-50' : 'border-champagne/30'
-                    }`}
-                    placeholder="Marie Dupont"
-                    aria-describedby={errors.name ? 'name-error' : undefined}
-                  />
-                  {errors.name && (
-                    <p id="name-error" className="mt-1 text-sm text-red-600 font-sans">
-                      {errors.name}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <label htmlFor="email" className="block font-sans text-sm font-medium text-navy mb-2">
-                    Votre email *
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    maxLength={255}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-champagne focus:border-transparent font-sans transition-colors duration-200 ${
-                      errors.email ? 'border-red-300 bg-red-50' : 'border-champagne/30'
-                    }`}
-                    placeholder="marie@example.com"
-                    aria-describedby={errors.email ? 'email-error' : undefined}
-                  />
-                  {errors.email && (
-                    <p id="email-error" className="mt-1 text-sm text-red-600 font-sans">
-                      {errors.email}
-                    </p>
-                  )}
-                </div>
-              </div>
-
               <div>
-                <label htmlFor="date" className="block font-sans text-sm font-medium text-navy mb-2">
-                  Date de votre mariage *
+                <label htmlFor="name" className="block font-sans text-sm font-medium text-navy mb-2">
+                  Votre nom *
                 </label>
                 <input
                   type="text"
-                  id="date"
-                  name="date"
-                  value={formData.date}
+                  id="name"
+                  name="name"
+                  value={formData.name}
                   onChange={handleChange}
                   required
-                  maxLength={50}
+                  maxLength={100}
                   className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-champagne focus:border-transparent font-sans transition-colors duration-200 ${
-                    errors.date ? 'border-red-300 bg-red-50' : 'border-champagne/30'
+                    errors.name ? 'border-red-300 bg-red-50' : 'border-champagne/30'
                   }`}
-                  placeholder="Juin 2024"
-                  aria-describedby={errors.date ? 'date-error' : undefined}
+                  placeholder="Marie Dupont"
+                  aria-describedby={errors.name ? 'name-error' : undefined}
                 />
-                {errors.date && (
-                  <p id="date-error" className="mt-1 text-sm text-red-600 font-sans">
-                    {errors.date}
+                {errors.name && (
+                  <p id="name-error" className="mt-1 text-sm text-red-600 font-sans">
+                    {errors.name}
                   </p>
                 )}
               </div>

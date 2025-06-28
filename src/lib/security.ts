@@ -7,12 +7,6 @@ export const testimonialSchema = z.object({
     .min(2, 'Le nom doit contenir au moins 2 caractères')
     .max(100, 'Le nom ne peut pas dépasser 100 caractères')
     .regex(/^[a-zA-ZÀ-ÿ\s\-'\.]+$/, 'Le nom contient des caractères non autorisés'),
-  email: z.string()
-    .email('Format d\'email invalide')
-    .max(255, 'L\'email ne peut pas dépasser 255 caractères'),
-  date: z.string()
-    .min(1, 'La date est requise')
-    .max(50, 'La date ne peut pas dépasser 50 caractères'),
   quote: z.string()
     .min(10, 'Le témoignage doit contenir au moins 10 caractères')
     .max(1000, 'Le témoignage ne peut pas dépasser 1000 caractères')

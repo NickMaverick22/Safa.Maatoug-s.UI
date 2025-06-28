@@ -21,8 +21,6 @@ export const getTestimonials = async (): Promise<Testimonial[]> => {
     return data.map(item => ({
       id: item.id,
       name: item.name,
-      email: '', // Not stored in database
-      date: '', // Not stored in database
       quote: item.testimonial,
       avatar: '', // Not stored in database
       status: item.status,
@@ -71,8 +69,6 @@ export const getTestimonialById = async (id: string): Promise<Testimonial | unde
     return {
       id: data.id,
       name: data.name,
-      email: '', // Not stored in database
-      date: '', // Not stored in database
       quote: data.testimonial,
       avatar: '', // Not stored in database
       status: data.status,
@@ -191,8 +187,6 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
     return {
       id: data.id,
       name: data.name,
-      email: '', // Not stored in database
-      date: '', // Not stored in database
       quote: data.testimonial,
       avatar: '', // Not stored in database
       status: data.status,

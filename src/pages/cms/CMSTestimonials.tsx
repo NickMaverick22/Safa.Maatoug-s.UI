@@ -15,8 +15,14 @@ const CMSTestimonials = () => {
     loadTestimonials();
   }, []);
 
-  const loadTestimonials = () => {
-    setTestimonials(getTestimonials());
+  const loadTestimonials = async () => {
+    try {
+      const data = await getTestimonials();
+      setTestimonials(data);
+    } catch (error) {
+      console.error('Error loading testimonials:', error);
+      toast.error('Erreur lors du chargement des témoignages');
+    }
   };
 
   const filteredTestimonials = testimonials.filter(t => {
@@ -24,27 +30,37 @@ const CMSTestimonials = () => {
     return t.status === filter;
   });
 
-  const handleStatusUpdate = (id: string, status: 'approved' | 'rejected') => {
+  const handleStatusUpdate = async (id: string, status: 'approved' | 'rejected') => {
     if (!user) return;
     
-    const success = updateTestimonialStatus(id, status, user.email);
-    if (success) {
-      loadTestimonials();
-      toast.success(`Témoignage ${status === 'approved' ? 'approuvé' : 'rejeté'}`);
-      setSelectedTestimonial(null);
-    } else {
+    try {
+      const success = await updateTestimonialStatus(id, status, user.email);
+      if (success) {
+        loadTestimonials();
+        toast.success(`Témoignage ${status === 'approved' ? 'approuvé' : 'rejeté'}`);
+        setSelectedTestimonial(null);
+      } else {
+        toast.error('Erreur lors de la mise à jour');
+      }
+    } catch (error) {
+      console.error('Error updating testimonial status:', error);
       toast.error('Erreur lors de la mise à jour');
     }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer ce témoignage ?')) {
-      const success = deleteTestimonial(id);
-      if (success) {
-        loadTestimonials();
-        toast.success('Témoignage supprimé');
-        setSelectedTestimonial(null);
-      } else {
+      try {
+        const success = await deleteTestimonial(id);
+        if (success) {
+          loadTestimonials();
+          toast.success('Témoignage supprimé');
+          setSelectedTestimonial(null);
+        } else {
+          toast.error('Erreur lors de la suppression');
+        }
+      } catch (error) {
+        console.error('Error deleting testimonial:', error);
         toast.error('Erreur lors de la suppression');
       }
     }
@@ -117,7 +133,7 @@ const CMSTestimonials = () => {
                     {testimonial.name}
                   </h3>
                   <p className="font-sans text-sm text-navy/60">
-                    {testimonial.date}
+                    {new Date(testimonial.submittedAt).toLocaleDateString('fr-FR')}
                   </p>
                 </div>
                 {getStatusBadge(testimonial.status)}
@@ -160,7 +176,9 @@ const CMSTestimonials = () => {
                     {selectedTestimonial.name}
                   </h2>
                   <div className="flex items-center space-x-4">
-                    <span className="font-sans text-navy/70">{selectedTestimonial.email}</span>
+                    <span className="font-sans text-navy/70">
+                      Soumis le {new Date(selectedTestimonial.submittedAt).toLocaleDateString('fr-FR')}
+                    </span>
                     {getStatusBadge(selectedTestimonial.status)}
                   </div>
                 </div>
@@ -183,10 +201,6 @@ const CMSTestimonials = () => {
 
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="font-sans font-semibold text-navy">Date du mariage:</span>
-                    <p className="font-sans text-navy/70">{selectedTestimonial.date}</p>
-                  </div>
-                  <div>
                     <span className="font-sans font-semibold text-navy">Soumis le:</span>
                     <p className="font-sans text-navy/70">
                       {new Date(selectedTestimonial.submittedAt).toLocaleDateString('fr-FR')}
@@ -199,10 +213,6 @@ const CMSTestimonials = () => {
                         <p className="font-sans text-navy/70">
                           {new Date(selectedTestimonial.reviewedAt).toLocaleDateString('fr-FR')}
                         </p>
-                      </div>
-                      <div>
-                        <span className="font-sans font-semibold text-navy">Examiné par:</span>
-                        <p className="font-sans text-navy/70">{selectedTestimonial.reviewedBy}</p>
                       </div>
                     </>
                   )}

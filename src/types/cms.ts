@@ -10,8 +10,6 @@ export interface User {
 export interface Testimonial {
   id: string;
   name: string;
-  email: string;
-  date: string;
   quote: string;
   avatar?: string;
   status: 'pending' | 'approved' | 'rejected';
