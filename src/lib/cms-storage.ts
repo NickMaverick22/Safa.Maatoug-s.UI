@@ -164,19 +164,42 @@ export const deleteTestimonial = async (id: string): Promise<boolean> => {
 
 export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'submittedAt'>): Promise<Testimonial | null> => {
   try {
+    // Validate required fields according to RLS policy
+    if (!testimonial.name || !testimonial.quote) {
+      throw new SecureError(
+        'Le nom et le témoignage sont requis',
+        'Name and testimonial are required fields',
+        400
+      );
+    }
+
+    // Ensure status is 'pending' for anonymous submissions as required by RLS policy
+    const insertData = {
+      name: testimonial.name.trim(),
+      testimonial: testimonial.quote.trim(),
+      status: 'pending', // Force pending status for RLS policy compliance
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+
     const { data, error } = await supabase
       .from('testimonials')
-      .insert({
-        name: testimonial.name,
-        testimonial: testimonial.quote,
-        status: testimonial.status || 'pending',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      })
+      .insert(insertData)
       .select()
       .single();
 
     if (error) {
+      console.error('Supabase insert error:', error);
+      
+      // Handle specific RLS policy violation
+      if (error.code === '42501' || error.message.includes('row-level security policy')) {
+        throw new SecureError(
+          'Erreur de sécurité lors de la soumission. Veuillez vérifier que tous les champs sont remplis correctement.',
+          `RLS policy violation: ${error.message}`,
+          403
+        );
+      }
+      
       throw new SecureError(
         'Erreur lors de l\'ajout du témoignage',
         `Supabase error: ${error.message}`,
@@ -199,7 +222,11 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
     if (error instanceof SecureError) {
       throw error;
     }
-    return null;
+    throw new SecureError(
+      'Une erreur inattendue s\'est produite lors de la soumission',
+      `Unexpected error: ${error}`,
+      500
+    );
   }
 };
 

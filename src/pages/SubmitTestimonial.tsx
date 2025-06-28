@@ -74,13 +74,19 @@ const SubmitTestimonial = () => {
       return;
     }
 
+    // Additional validation for RLS policy compliance
+    if (!formData.name.trim() || !formData.quote.trim()) {
+      toast.error('Le nom et le témoignage sont requis');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
       const testimonial = await addTestimonial({
-        name: formData.name,
-        quote: formData.quote,
-        status: 'pending'
+        name: formData.name.trim(),
+        quote: formData.quote.trim(),
+        status: 'pending' // Explicitly set to pending for RLS policy
       });
 
       if (testimonial) {
