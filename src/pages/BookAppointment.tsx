@@ -155,35 +155,18 @@ const BookAppointment = () => {
       <Navigation />
       <LuxuryAnimations />
       
-      {/* Header Section */}
-      <section className="pt-32 pb-16">
+      {/* Simplified Header Section */}
+      <section className="pt-32 pb-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="relative mb-12">
-            {/* Large background text */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
-              <span className="font-serif text-6xl md:text-[8rem] lg:text-[10rem] text-champagne/5 font-bold select-none">
-                Rendez-vous
-              </span>
-            </div>
-            
-            {/* Main content */}
-            <div className="relative z-10">
-              <h1 className="fade-slide-up font-serif text-5xl md:text-6xl text-navy mb-8">
-                Réservez votre rendez-vous
-              </h1>
-              <div className="animated-separator mx-auto"></div>
-              
-              <p className="fade-slide-up font-sans text-xl text-navy/70 leading-relaxed max-w-3xl mx-auto mt-8">
-                Choisissez la date et l'heure qui vous conviennent pour votre consultation. 
-                Nous avons hâte de vous rencontrer et de créer ensemble votre robe de rêve.
-              </p>
-            </div>
-          </div>
+          <h1 className="fade-slide-up font-serif text-5xl md:text-6xl text-navy mb-8">
+            Réservez votre rendez-vous
+          </h1>
+          <div className="animated-separator mx-auto"></div>
         </div>
       </section>
 
       {/* Progress Indicator */}
-      <section className="py-8">
+      <section className="py-4">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-center space-x-4 mb-8">
             <div className={`flex items-center space-x-2 ${step === 'datetime' ? 'text-navy' : 'text-champagne'}`}>
@@ -203,7 +186,7 @@ const BookAppointment = () => {
               }`}>
                 2
               </div>
-              <span className="font-sans font-medium">Informations</span>
+              <span className="font-sans font-medium">Vos informations</span>
             </div>
           </div>
         </div>
@@ -211,7 +194,7 @@ const BookAppointment = () => {
 
       {/* Date & Time Selection */}
       {step === 'datetime' && (
-        <section className="py-16">
+        <section className="py-8">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Calendar Section */}
@@ -258,14 +241,22 @@ const BookAppointment = () => {
                 
                 {!selectedDate ? (
                   <div className="text-center py-8">
-                    <div className="text-4xl mb-4">📅</div>
+                    <div className="mb-4">
+                      <svg className="w-12 h-12 mx-auto text-champagne" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
                     <p className="font-sans text-navy/60">
                       Sélectionnez d'abord une date
                     </p>
                   </div>
                 ) : availableTimeSlotsForSelectedDate.length === 0 ? (
                   <div className="text-center py-8">
-                    <div className="text-4xl mb-4">⏰</div>
+                    <div className="mb-4">
+                      <svg className="w-12 h-12 mx-auto text-champagne" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
                     <p className="font-sans text-navy/60 text-center">
                       Aucun créneau disponible pour cette date
                     </p>
