@@ -55,6 +55,22 @@ const Avis = () => {
   const firstRowTestimonials = testimonials.slice(0, 3);
   const secondRowTestimonials = testimonials.slice(3, 6);
 
+  const handleAddTestimonial = () => {
+    // Open email client with pre-filled subject and body
+    const subject = encodeURIComponent("Partager mon témoignage - Safa Maatoug");
+    const body = encodeURIComponent(`Bonjour,
+
+J'aimerais partager mon expérience avec Safa Maatoug :
+
+Mon nom : 
+Date de mon mariage : 
+Mon témoignage : 
+
+Merci !`);
+    
+    window.open(`mailto:contact@safamaatoug.com?subject=${subject}&body=${body}`, '_blank');
+  };
+
   return (
     <div className="min-h-screen">
       <Navigation />
@@ -166,6 +182,45 @@ const Avis = () => {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Add Testimonial Section */}
+      <section className="py-16 bg-ivory">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="bg-soft-beige rounded-2xl p-8 md:p-12 shadow-lg">
+            <div className="mb-8">
+              <svg className="w-16 h-16 mx-auto mb-6 text-champagne" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+              
+              <h3 className="fade-slide-up font-serif text-3xl md:text-4xl text-navy mb-4">
+                Partagez votre expérience
+              </h3>
+              <div className="animated-separator mx-auto mb-6"></div>
+              
+              <p className="fade-slide-up font-sans text-lg text-navy/70 leading-relaxed max-w-2xl mx-auto mb-8">
+                Vous avez vécu une expérience exceptionnelle avec nous ? Nous serions honorés de connaître votre histoire 
+                et de la partager avec nos futures mariées.
+              </p>
+            </div>
+
+            <div className="fade-slide-up">
+              <button
+                onClick={handleAddTestimonial}
+                className="bg-navy text-ivory px-8 py-4 rounded-full font-sans font-medium tracking-[1.2px] uppercase text-sm transition-all duration-300 hover:bg-champagne hover:text-navy hover:scale-105 shadow-lg inline-flex items-center gap-3"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                Ajouter mon témoignage
+              </button>
+            </div>
+
+            <div className="mt-6 text-sm text-navy/60 font-sans">
+              <p>Votre témoignage sera examiné avant publication</p>
+            </div>
           </div>
         </div>
       </section>
