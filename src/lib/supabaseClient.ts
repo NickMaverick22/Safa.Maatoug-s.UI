@@ -17,42 +17,24 @@ export interface Database {
         Row: {
           id: string;
           name: string;
-          email: string;
-          date: string;
-          quote: string;
-          avatar?: string;
+          testimonial: string;
           status: 'pending' | 'approved' | 'rejected';
-          submitted_at: string;
-          reviewed_at?: string;
-          reviewed_by?: string;
           created_at: string;
           updated_at: string;
         };
         Insert: {
           id?: string;
           name: string;
-          email: string;
-          date: string;
-          quote: string;
-          avatar?: string;
+          testimonial: string;
           status?: 'pending' | 'approved' | 'rejected';
-          submitted_at?: string;
-          reviewed_at?: string;
-          reviewed_by?: string;
           created_at?: string;
           updated_at?: string;
         };
         Update: {
           id?: string;
           name?: string;
-          email?: string;
-          date?: string;
-          quote?: string;
-          avatar?: string;
+          testimonial?: string;
           status?: 'pending' | 'approved' | 'rejected';
-          submitted_at?: string;
-          reviewed_at?: string;
-          reviewed_by?: string;
           created_at?: string;
           updated_at?: string;
         };

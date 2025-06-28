@@ -21,14 +21,14 @@ export const getTestimonials = async (): Promise<Testimonial[]> => {
     return data.map(item => ({
       id: item.id,
       name: item.name,
-      email: item.email,
-      date: item.date,
-      quote: item.quote,
-      avatar: item.avatar,
+      email: '', // Not stored in database
+      date: '', // Not stored in database
+      quote: item.testimonial,
+      avatar: '', // Not stored in database
       status: item.status,
-      submittedAt: new Date(item.submitted_at),
-      reviewedAt: item.reviewed_at ? new Date(item.reviewed_at) : undefined,
-      reviewedBy: item.reviewed_by
+      submittedAt: new Date(item.created_at),
+      reviewedAt: item.updated_at ? new Date(item.updated_at) : undefined,
+      reviewedBy: '' // Not stored in database
     }));
   } catch (error) {
     console.error('Error fetching testimonials:', error);
@@ -71,14 +71,14 @@ export const getTestimonialById = async (id: string): Promise<Testimonial | unde
     return {
       id: data.id,
       name: data.name,
-      email: data.email,
-      date: data.date,
-      quote: data.quote,
-      avatar: data.avatar,
+      email: '', // Not stored in database
+      date: '', // Not stored in database
+      quote: data.testimonial,
+      avatar: '', // Not stored in database
       status: data.status,
-      submittedAt: new Date(data.submitted_at),
-      reviewedAt: data.reviewed_at ? new Date(data.reviewed_at) : undefined,
-      reviewedBy: data.reviewed_by
+      submittedAt: new Date(data.created_at),
+      reviewedAt: data.updated_at ? new Date(data.updated_at) : undefined,
+      reviewedBy: '' // Not stored in database
     };
   } catch (error) {
     console.error('Error fetching testimonial:', error);
@@ -113,8 +113,6 @@ export const updateTestimonialStatus = async (
       .from('testimonials')
       .update({
         status,
-        reviewed_at: new Date().toISOString(),
-        reviewed_by: reviewedBy,
         updated_at: new Date().toISOString()
       })
       .eq('id', id);
@@ -174,12 +172,8 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
       .from('testimonials')
       .insert({
         name: testimonial.name,
-        email: testimonial.email,
-        date: testimonial.date,
-        quote: testimonial.quote,
-        avatar: testimonial.avatar,
+        testimonial: testimonial.quote,
         status: testimonial.status || 'pending',
-        submitted_at: new Date().toISOString(),
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       })
@@ -197,14 +191,14 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
     return {
       id: data.id,
       name: data.name,
-      email: data.email,
-      date: data.date,
-      quote: data.quote,
-      avatar: data.avatar,
+      email: '', // Not stored in database
+      date: '', // Not stored in database
+      quote: data.testimonial,
+      avatar: '', // Not stored in database
       status: data.status,
-      submittedAt: new Date(data.submitted_at),
-      reviewedAt: data.reviewed_at ? new Date(data.reviewed_at) : undefined,
-      reviewedBy: data.reviewed_by
+      submittedAt: new Date(data.created_at),
+      reviewedAt: data.updated_at ? new Date(data.updated_at) : undefined,
+      reviewedBy: '' // Not stored in database
     };
   } catch (error) {
     console.error('Error adding testimonial:', error);
