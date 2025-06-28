@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import PageTransition from "./components/PageTransition";
 import Index from "./pages/Index";
 import Histoire from "./pages/Histoire";
 import Collection from "./pages/Collection";
@@ -28,26 +29,28 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<Index />} />
-          <Route path="/histoire" element={<Histoire />} />
-          <Route path="/collection" element={<Collection />} />
-          <Route path="/avis" element={<Avis />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/book-appointment" element={<BookAppointment />} />
-          <Route path="/submit-testimonial" element={<SubmitTestimonial />} />
-          
-          {/* CMS Routes */}
-          <Route path="/cms/login" element={<CMSLogin />} />
-          <Route path="/cms" element={<CMSDashboard />} />
-          <Route path="/cms/testimonials" element={<CMSTestimonials />} />
-          <Route path="/cms/appointments" element={<CMSAppointments />} />
-          <Route path="/cms/gallery" element={<CMSGallery />} />
-          
-          {/* Catch-all route */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <PageTransition>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<Index />} />
+            <Route path="/histoire" element={<Histoire />} />
+            <Route path="/collection" element={<Collection />} />
+            <Route path="/avis" element={<Avis />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/book-appointment" element={<BookAppointment />} />
+            <Route path="/submit-testimonial" element={<SubmitTestimonial />} />
+            
+            {/* CMS Routes */}
+            <Route path="/cms/login" element={<CMSLogin />} />
+            <Route path="/cms" element={<CMSDashboard />} />
+            <Route path="/cms/testimonials" element={<CMSTestimonials />} />
+            <Route path="/cms/appointments" element={<CMSAppointments />} />
+            <Route path="/cms/gallery" element={<CMSGallery />} />
+            
+            {/* Catch-all route */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </PageTransition>
         <WhatsAppFloat />
       </BrowserRouter>
     </TooltipProvider>

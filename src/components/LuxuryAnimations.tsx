@@ -1,16 +1,17 @@
-
 import { useEffect } from 'react';
+import { useScrollToTop } from '../hooks/useScrollToTop';
 
 const LuxuryAnimations = () => {
-  useEffect(() => {
-    // SCROLL TO TOP ON PAGE LOAD
-    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  // Use the scroll to top hook
+  useScrollToTop();
 
-    // Initialize scroll-triggered animations
+  useEffect(() => {
+    // Initialize scroll-triggered animations with enhanced performance
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry, index) => {
           if (entry.isIntersecting) {
+            // Add staggered animation delay
             setTimeout(() => {
               entry.target.classList.add('animate');
             }, index * 100);
@@ -18,7 +19,10 @@ const LuxuryAnimations = () => {
           }
         });
       },
-      { threshold: 0.1, rootMargin: '0px 0px -10% 0px' }
+      { 
+        threshold: 0.1, 
+        rootMargin: '0px 0px -50px 0px' // Trigger animation earlier
+      }
     );
 
     // Observe all fade-slide-up elements
@@ -29,7 +33,31 @@ const LuxuryAnimations = () => {
     const separators = document.querySelectorAll('.animated-separator');
     separators.forEach((separator) => observer.observe(separator));
 
-    return () => observer.disconnect();
+    // Enhanced scroll reveal for other elements
+    const scrollRevealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+            scrollRevealObserver.unobserve(entry.target);
+          }
+        });
+      },
+      { 
+        threshold: 0.1,
+        rootMargin: '0px 0px -30px 0px'
+      }
+    );
+
+    // Observe scroll reveal elements
+    const scrollRevealElements = document.querySelectorAll('.scroll-reveal');
+    scrollRevealElements.forEach((element) => scrollRevealObserver.observe(element));
+
+    // Cleanup
+    return () => {
+      observer.disconnect();
+      scrollRevealObserver.disconnect();
+    };
   }, []);
 
   return null;
