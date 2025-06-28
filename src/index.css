@@ -228,6 +228,21 @@
       min-height: 600px;
     }
   }
+
+  /* Custom Calendar Styles */
+  .rdp-custom .rdp-day_selected {
+    background-color: #0F1C33 !important;
+    color: white !important;
+  }
+
+  .rdp-custom .rdp-day_selected:hover {
+    background-color: #0F1C33 !important;
+    color: white !important;
+  }
+
+  .rdp-custom .rdp-day_selected .rdp-day_button {
+    color: white !important;
+  }
 }
 
 /* Minimal keyframe animations */
