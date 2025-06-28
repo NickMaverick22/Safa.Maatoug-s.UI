@@ -6,6 +6,8 @@ import Footer from '../components/Footer';
 import LuxuryAnimations from '../components/LuxuryAnimations';
 import { addAppointment, getAppointments } from '../lib/cms-storage';
 import { toast } from '../components/ui/sonner';
+import { appointmentSchema, formRateLimiter, sanitizeInput, SecureError } from '../lib/security';
+import { useDebounce, PerformanceMonitor } from '../lib/performance';
 import { Appointment } from '../types/cms';
 import 'react-day-picker/dist/style.css';
 
@@ -22,7 +24,10 @@ const BookAppointment = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [existingAppointments, setExistingAppointments] = useState<Appointment[]>([]);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isRateLimited, setIsRateLimited] = useState(false);
   const navigate = useNavigate();
+  const performanceMonitor = PerformanceMonitor.getInstance();
 
   // Available time slots (admin configurable in real implementation)
   const availableTimeSlots = [
@@ -43,14 +48,31 @@ const BookAppointment = () => {
 
   const loadExistingAppointments = async () => {
     try {
+      performanceMonitor.startTiming('loadAppointments');
       const appointments = await getAppointments();
       setExistingAppointments(appointments.filter(apt => 
         apt.status === 'scheduled' || apt.status === 'confirmed'
       ));
     } catch (error) {
       console.error('Error loading appointments:', error);
+      toast.error('Erreur lors du chargement des créneaux disponibles');
+    } finally {
+      performanceMonitor.endTiming('loadAppointments');
     }
   };
+
+  // Debounced validation
+  const debouncedValidation = useDebounce((field: string, value: string) => {
+    try {
+      const fieldSchema = appointmentSchema.shape[field as keyof typeof appointmentSchema.shape];
+      if (fieldSchema) {
+        fieldSchema.parse(value);
+        setErrors(prev => ({ ...prev, [field]: '' }));
+      }
+    } catch (error: any) {
+      setErrors(prev => ({ ...prev, [field]: error.errors[0]?.message || 'Erreur de validation' }));
+    }
+  }, 300);
 
   const getAvailableTimeSlotsForDate = (date: Date): string[] => {
     if (!date) return [];
@@ -90,10 +112,15 @@ const BookAppointment = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+    const sanitizedValue = sanitizeInput(value);
+    
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: sanitizedValue
     }));
+
+    // Trigger debounced validation
+    debouncedValidation(name, sanitizedValue);
   };
 
   const handleDateTimeConfirm = () => {
@@ -104,6 +131,21 @@ const BookAppointment = () => {
     setStep('form');
   };
 
+  const validateForm = (): boolean => {
+    try {
+      appointmentSchema.parse(formData);
+      setErrors({});
+      return true;
+    } catch (error: any) {
+      const newErrors: Record<string, string> = {};
+      error.errors.forEach((err: any) => {
+        newErrors[err.path[0]] = err.message;
+      });
+      setErrors(newErrors);
+      return false;
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -112,9 +154,25 @@ const BookAppointment = () => {
       return;
     }
 
+    // Check rate limiting
+    const userIdentifier = `${formData.clientEmail}-appointment`;
+    if (!formRateLimiter.isAllowed(userIdentifier)) {
+      const remainingTime = Math.ceil(formRateLimiter.getRemainingTime(userIdentifier) / 1000 / 60);
+      setIsRateLimited(true);
+      toast.error(`Trop de tentatives. Veuillez attendre ${remainingTime} minutes.`);
+      return;
+    }
+
+    if (!validateForm()) {
+      toast.error('Veuillez corriger les erreurs dans le formulaire');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
+      performanceMonitor.startTiming('createAppointment');
+      
       const appointment = await addAppointment({
         clientName: formData.clientName,
         clientEmail: formData.clientEmail,
@@ -130,13 +188,21 @@ const BookAppointment = () => {
         // Navigate to confirmation page instead of showing toast
         navigate('/appointment-confirmation');
       } else {
-        toast.error('Erreur lors de la réservation. Veuillez réessayer.');
+        throw new SecureError(
+          'Erreur lors de la réservation. Veuillez réessayer.',
+          'Failed to create appointment in database'
+        );
       }
     } catch (error) {
       console.error('Error booking appointment:', error);
-      toast.error('Erreur lors de la réservation. Veuillez réessayer.');
+      if (error instanceof SecureError) {
+        toast.error(error.userMessage);
+      } else {
+        toast.error('Une erreur inattendue s\'est produite. Veuillez réessayer.');
+      }
     } finally {
       setIsSubmitting(false);
+      performanceMonitor.endTiming('createAppointment');
     }
   };
 
@@ -327,7 +393,20 @@ const BookAppointment = () => {
                 </div>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              {isRateLimited && (
+                <div className="mb-6 p-4 bg-red-100 border border-red-200 rounded-lg">
+                  <div className="flex items-center">
+                    <svg className="w-5 h-5 text-red-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                    </svg>
+                    <span className="text-red-800 font-sans text-sm">
+                      Trop de tentatives de réservation. Veuillez attendre avant de réessayer.
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} className="space-y-6" noValidate>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label htmlFor="clientName" className="block font-sans text-sm font-medium text-navy mb-2">
@@ -340,9 +419,18 @@ const BookAppointment = () => {
                       value={formData.clientName}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 border border-champagne/30 rounded-lg focus:ring-2 focus:ring-champagne focus:border-transparent font-sans"
+                      maxLength={100}
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-champagne focus:border-transparent font-sans transition-colors duration-200 ${
+                        errors.clientName ? 'border-red-300 bg-red-50' : 'border-champagne/30'
+                      }`}
                       placeholder="Marie Dupont"
+                      aria-describedby={errors.clientName ? 'clientName-error' : undefined}
                     />
+                    {errors.clientName && (
+                      <p id="clientName-error" className="mt-1 text-sm text-red-600 font-sans">
+                        {errors.clientName}
+                      </p>
+                    )}
                   </div>
 
                   <div>
@@ -356,9 +444,18 @@ const BookAppointment = () => {
                       value={formData.clientEmail}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 border border-champagne/30 rounded-lg focus:ring-2 focus:ring-champagne focus:border-transparent font-sans"
+                      maxLength={255}
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-champagne focus:border-transparent font-sans transition-colors duration-200 ${
+                        errors.clientEmail ? 'border-red-300 bg-red-50' : 'border-champagne/30'
+                      }`}
                       placeholder="marie@example.com"
+                      aria-describedby={errors.clientEmail ? 'clientEmail-error' : undefined}
                     />
+                    {errors.clientEmail && (
+                      <p id="clientEmail-error" className="mt-1 text-sm text-red-600 font-sans">
+                        {errors.clientEmail}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -373,9 +470,18 @@ const BookAppointment = () => {
                     value={formData.clientPhone}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 border border-champagne/30 rounded-lg focus:ring-2 focus:ring-champagne focus:border-transparent font-sans"
+                    maxLength={20}
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-champagne focus:border-transparent font-sans transition-colors duration-200 ${
+                      errors.clientPhone ? 'border-red-300 bg-red-50' : 'border-champagne/30'
+                    }`}
                     placeholder="+33 6 12 34 56 78"
+                    aria-describedby={errors.clientPhone ? 'clientPhone-error' : undefined}
                   />
+                  {errors.clientPhone && (
+                    <p id="clientPhone-error" className="mt-1 text-sm text-red-600 font-sans">
+                      {errors.clientPhone}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -400,7 +506,7 @@ const BookAppointment = () => {
 
                 <div>
                   <label htmlFor="notes" className="block font-sans text-sm font-medium text-navy mb-2">
-                    Notes (optionnel)
+                    Notes (optionnel) ({formData.notes.length}/500)
                   </label>
                   <textarea
                     id="notes"
@@ -408,9 +514,18 @@ const BookAppointment = () => {
                     value={formData.notes}
                     onChange={handleChange}
                     rows={3}
-                    className="w-full px-4 py-3 border border-champagne/30 rounded-lg focus:ring-2 focus:ring-champagne focus:border-transparent font-sans resize-none"
+                    maxLength={500}
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-champagne focus:border-transparent font-sans resize-none transition-colors duration-200 ${
+                      errors.notes ? 'border-red-300 bg-red-50' : 'border-champagne/30'
+                    }`}
                     placeholder="Informations supplémentaires..."
+                    aria-describedby={errors.notes ? 'notes-error' : undefined}
                   />
+                  {errors.notes && (
+                    <p id="notes-error" className="mt-1 text-sm text-red-600 font-sans">
+                      {errors.notes}
+                    </p>
+                  )}
                 </div>
 
                 {/* Submit Section */}
@@ -437,7 +552,7 @@ const BookAppointment = () => {
                     </button>
                     <button
                       type="submit"
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || isRateLimited || Object.values(errors).some(error => error)}
                       className="px-8 py-3 bg-navy text-ivory rounded-lg font-sans font-medium hover:bg-champagne hover:text-navy transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isSubmitting ? 'Réservation en cours...' : 'Confirmer le rendez-vous'}

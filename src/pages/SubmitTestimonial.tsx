@@ -5,6 +5,8 @@ import Footer from '../components/Footer';
 import LuxuryAnimations from '../components/LuxuryAnimations';
 import { addTestimonial } from '../lib/cms-storage';
 import { toast } from '../components/ui/sonner';
+import { testimonialSchema, formRateLimiter, sanitizeInput, SecureError } from '../lib/security';
+import { useDebounce } from '../lib/performance';
 
 const SubmitTestimonial = () => {
   const [formData, setFormData] = useState({
@@ -14,18 +16,66 @@ const SubmitTestimonial = () => {
     quote: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isRateLimited, setIsRateLimited] = useState(false);
   const navigate = useNavigate();
+
+  // Debounced validation
+  const debouncedValidation = useDebounce((field: string, value: string) => {
+    try {
+      const fieldSchema = testimonialSchema.shape[field as keyof typeof testimonialSchema.shape];
+      fieldSchema.parse(value);
+      setErrors(prev => ({ ...prev, [field]: '' }));
+    } catch (error: any) {
+      setErrors(prev => ({ ...prev, [field]: error.errors[0]?.message || 'Erreur de validation' }));
+    }
+  }, 300);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+    const sanitizedValue = sanitizeInput(value);
+    
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: sanitizedValue
     }));
+
+    // Trigger debounced validation
+    debouncedValidation(name, sanitizedValue);
+  };
+
+  const validateForm = (): boolean => {
+    try {
+      testimonialSchema.parse(formData);
+      setErrors({});
+      return true;
+    } catch (error: any) {
+      const newErrors: Record<string, string> = {};
+      error.errors.forEach((err: any) => {
+        newErrors[err.path[0]] = err.message;
+      });
+      setErrors(newErrors);
+      return false;
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Check rate limiting
+    const userIdentifier = `${formData.email}-testimonial`;
+    if (!formRateLimiter.isAllowed(userIdentifier)) {
+      const remainingTime = Math.ceil(formRateLimiter.getRemainingTime(userIdentifier) / 1000 / 60);
+      setIsRateLimited(true);
+      toast.error(`Trop de tentatives. Veuillez attendre ${remainingTime} minutes.`);
+      return;
+    }
+
+    if (!validateForm()) {
+      toast.error('Veuillez corriger les erreurs dans le formulaire');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -41,11 +91,18 @@ const SubmitTestimonial = () => {
         // Navigate to thank you page instead of showing toast
         navigate('/thank-you-testimonial');
       } else {
-        toast.error('Erreur lors de la soumission. Veuillez réessayer.');
+        throw new SecureError(
+          'Erreur lors de la soumission. Veuillez réessayer.',
+          'Failed to create testimonial in database'
+        );
       }
     } catch (error) {
       console.error('Error submitting testimonial:', error);
-      toast.error('Erreur lors de la soumission. Veuillez réessayer.');
+      if (error instanceof SecureError) {
+        toast.error(error.userMessage);
+      } else {
+        toast.error('Une erreur inattendue s\'est produite. Veuillez réessayer.');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -87,7 +144,20 @@ const SubmitTestimonial = () => {
       <section className="py-16">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-soft-beige rounded-2xl p-8 md:p-12 shadow-xl">
-            <form onSubmit={handleSubmit} className="space-y-6">
+            {isRateLimited && (
+              <div className="mb-6 p-4 bg-red-100 border border-red-200 rounded-lg">
+                <div className="flex items-center">
+                  <svg className="w-5 h-5 text-red-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                  </svg>
+                  <span className="text-red-800 font-sans text-sm">
+                    Trop de tentatives de soumission. Veuillez attendre avant de réessayer.
+                  </span>
+                </div>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-6" noValidate>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="name" className="block font-sans text-sm font-medium text-navy mb-2">
@@ -100,9 +170,18 @@ const SubmitTestimonial = () => {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 border border-champagne/30 rounded-lg focus:ring-2 focus:ring-champagne focus:border-transparent font-sans"
+                    maxLength={100}
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-champagne focus:border-transparent font-sans transition-colors duration-200 ${
+                      errors.name ? 'border-red-300 bg-red-50' : 'border-champagne/30'
+                    }`}
                     placeholder="Marie Dupont"
+                    aria-describedby={errors.name ? 'name-error' : undefined}
                   />
+                  {errors.name && (
+                    <p id="name-error" className="mt-1 text-sm text-red-600 font-sans">
+                      {errors.name}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -116,9 +195,18 @@ const SubmitTestimonial = () => {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 border border-champagne/30 rounded-lg focus:ring-2 focus:ring-champagne focus:border-transparent font-sans"
+                    maxLength={255}
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-champagne focus:border-transparent font-sans transition-colors duration-200 ${
+                      errors.email ? 'border-red-300 bg-red-50' : 'border-champagne/30'
+                    }`}
                     placeholder="marie@example.com"
+                    aria-describedby={errors.email ? 'email-error' : undefined}
                   />
+                  {errors.email && (
+                    <p id="email-error" className="mt-1 text-sm text-red-600 font-sans">
+                      {errors.email}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -133,14 +221,23 @@ const SubmitTestimonial = () => {
                   value={formData.date}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border border-champagne/30 rounded-lg focus:ring-2 focus:ring-champagne focus:border-transparent font-sans"
+                  maxLength={50}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-champagne focus:border-transparent font-sans transition-colors duration-200 ${
+                    errors.date ? 'border-red-300 bg-red-50' : 'border-champagne/30'
+                  }`}
                   placeholder="Juin 2024"
+                  aria-describedby={errors.date ? 'date-error' : undefined}
                 />
+                {errors.date && (
+                  <p id="date-error" className="mt-1 text-sm text-red-600 font-sans">
+                    {errors.date}
+                  </p>
+                )}
               </div>
 
               <div>
                 <label htmlFor="quote" className="block font-sans text-sm font-medium text-navy mb-2">
-                  Votre témoignage *
+                  Votre témoignage * ({formData.quote.length}/1000)
                 </label>
                 <textarea
                   id="quote"
@@ -149,9 +246,18 @@ const SubmitTestimonial = () => {
                   onChange={handleChange}
                   required
                   rows={6}
-                  className="w-full px-4 py-3 border border-champagne/30 rounded-lg focus:ring-2 focus:ring-champagne focus:border-transparent font-sans resize-none"
+                  maxLength={1000}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-champagne focus:border-transparent font-sans resize-none transition-colors duration-200 ${
+                    errors.quote ? 'border-red-300 bg-red-50' : 'border-champagne/30'
+                  }`}
                   placeholder="Partagez votre expérience avec Safa Maatoug..."
+                  aria-describedby={errors.quote ? 'quote-error' : undefined}
                 />
+                {errors.quote && (
+                  <p id="quote-error" className="mt-1 text-sm text-red-600 font-sans">
+                    {errors.quote}
+                  </p>
+                )}
               </div>
 
               <div className="bg-ivory rounded-lg p-4">
@@ -176,7 +282,7 @@ const SubmitTestimonial = () => {
                 </button>
                 <button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isRateLimited || Object.values(errors).some(error => error)}
                   className="flex-1 bg-navy text-ivory px-6 py-3 rounded-lg font-sans font-medium hover:bg-champagne hover:text-navy transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? 'Envoi en cours...' : 'Envoyer mon témoignage'}

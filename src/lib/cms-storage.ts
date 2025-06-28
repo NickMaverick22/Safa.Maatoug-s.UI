@@ -1,7 +1,8 @@
 import { supabase } from './supabaseClient';
 import { Testimonial, Appointment, GalleryImage, CMSStats } from '../types/cms';
+import { SecureError } from './security';
 
-// Testimonials CRUD
+// Testimonials CRUD with enhanced error handling
 export const getTestimonials = async (): Promise<Testimonial[]> => {
   try {
     const { data, error } = await supabase
@@ -9,7 +10,13 @@ export const getTestimonials = async (): Promise<Testimonial[]> => {
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      throw new SecureError(
+        'Erreur lors du chargement des témoignages',
+        `Supabase error: ${error.message}`,
+        500
+      );
+    }
 
     return data.map(item => ({
       id: item.id,
@@ -25,19 +32,41 @@ export const getTestimonials = async (): Promise<Testimonial[]> => {
     }));
   } catch (error) {
     console.error('Error fetching testimonials:', error);
-    return [];
+    if (error instanceof SecureError) {
+      throw error;
+    }
+    throw new SecureError(
+      'Erreur lors du chargement des témoignages',
+      `Unexpected error: ${error}`,
+      500
+    );
   }
 };
 
 export const getTestimonialById = async (id: string): Promise<Testimonial | undefined> => {
   try {
+    // Validate UUID format
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(id)) {
+      throw new SecureError('ID invalide', 'Invalid UUID format', 400);
+    }
+
     const { data, error } = await supabase
       .from('testimonials')
       .select('*')
       .eq('id', id)
       .single();
 
-    if (error) throw error;
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return undefined; // Not found
+      }
+      throw new SecureError(
+        'Erreur lors du chargement du témoignage',
+        `Supabase error: ${error.message}`,
+        500
+      );
+    }
 
     return {
       id: data.id,
@@ -53,7 +82,14 @@ export const getTestimonialById = async (id: string): Promise<Testimonial | unde
     };
   } catch (error) {
     console.error('Error fetching testimonial:', error);
-    return undefined;
+    if (error instanceof SecureError) {
+      throw error;
+    }
+    throw new SecureError(
+      'Erreur lors du chargement du témoignage',
+      `Unexpected error: ${error}`,
+      500
+    );
   }
 };
 
@@ -63,6 +99,16 @@ export const updateTestimonialStatus = async (
   reviewedBy: string
 ): Promise<boolean> => {
   try {
+    // Validate inputs
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(id)) {
+      throw new SecureError('ID invalide', 'Invalid UUID format', 400);
+    }
+
+    if (!['approved', 'rejected'].includes(status)) {
+      throw new SecureError('Statut invalide', 'Invalid status value', 400);
+    }
+
     const { error } = await supabase
       .from('testimonials')
       .update({
@@ -73,25 +119,51 @@ export const updateTestimonialStatus = async (
       })
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      throw new SecureError(
+        'Erreur lors de la mise à jour du statut',
+        `Supabase error: ${error.message}`,
+        500
+      );
+    }
+    
     return true;
   } catch (error) {
     console.error('Error updating testimonial status:', error);
+    if (error instanceof SecureError) {
+      throw error;
+    }
     return false;
   }
 };
 
 export const deleteTestimonial = async (id: string): Promise<boolean> => {
   try {
+    // Validate UUID format
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(id)) {
+      throw new SecureError('ID invalide', 'Invalid UUID format', 400);
+    }
+
     const { error } = await supabase
       .from('testimonials')
       .delete()
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      throw new SecureError(
+        'Erreur lors de la suppression',
+        `Supabase error: ${error.message}`,
+        500
+      );
+    }
+    
     return true;
   } catch (error) {
     console.error('Error deleting testimonial:', error);
+    if (error instanceof SecureError) {
+      throw error;
+    }
     return false;
   }
 };
@@ -114,7 +186,13 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw new SecureError(
+        'Erreur lors de l\'ajout du témoignage',
+        `Supabase error: ${error.message}`,
+        500
+      );
+    }
 
     return {
       id: data.id,
@@ -130,11 +208,14 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
     };
   } catch (error) {
     console.error('Error adding testimonial:', error);
+    if (error instanceof SecureError) {
+      throw error;
+    }
     return null;
   }
 };
 
-// Appointments CRUD
+// Appointments CRUD with enhanced error handling
 export const getAppointments = async (): Promise<Appointment[]> => {
   try {
     const { data, error } = await supabase
@@ -142,7 +223,13 @@ export const getAppointments = async (): Promise<Appointment[]> => {
       .select('*')
       .order('appointment_date', { ascending: true });
 
-    if (error) throw error;
+    if (error) {
+      throw new SecureError(
+        'Erreur lors du chargement des rendez-vous',
+        `Supabase error: ${error.message}`,
+        500
+      );
+    }
 
     return data.map(item => ({
       id: item.id,
@@ -159,19 +246,41 @@ export const getAppointments = async (): Promise<Appointment[]> => {
     }));
   } catch (error) {
     console.error('Error fetching appointments:', error);
-    return [];
+    if (error instanceof SecureError) {
+      throw error;
+    }
+    throw new SecureError(
+      'Erreur lors du chargement des rendez-vous',
+      `Unexpected error: ${error}`,
+      500
+    );
   }
 };
 
 export const getAppointmentById = async (id: string): Promise<Appointment | undefined> => {
   try {
+    // Validate UUID format
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(id)) {
+      throw new SecureError('ID invalide', 'Invalid UUID format', 400);
+    }
+
     const { data, error } = await supabase
       .from('appointments')
       .select('*')
       .eq('id', id)
       .single();
 
-    if (error) throw error;
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return undefined; // Not found
+      }
+      throw new SecureError(
+        'Erreur lors du chargement du rendez-vous',
+        `Supabase error: ${error.message}`,
+        500
+      );
+    }
 
     return {
       id: data.id,
@@ -188,12 +297,25 @@ export const getAppointmentById = async (id: string): Promise<Appointment | unde
     };
   } catch (error) {
     console.error('Error fetching appointment:', error);
-    return undefined;
+    if (error instanceof SecureError) {
+      throw error;
+    }
+    throw new SecureError(
+      'Erreur lors du chargement du rendez-vous',
+      `Unexpected error: ${error}`,
+      500
+    );
   }
 };
 
 export const updateAppointment = async (id: string, updates: Partial<Appointment>): Promise<boolean> => {
   try {
+    // Validate UUID format
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(id)) {
+      throw new SecureError('ID invalide', 'Invalid UUID format', 400);
+    }
+
     const updateData: any = {
       updated_at: new Date().toISOString()
     };
@@ -212,25 +334,51 @@ export const updateAppointment = async (id: string, updates: Partial<Appointment
       .update(updateData)
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      throw new SecureError(
+        'Erreur lors de la mise à jour du rendez-vous',
+        `Supabase error: ${error.message}`,
+        500
+      );
+    }
+    
     return true;
   } catch (error) {
     console.error('Error updating appointment:', error);
+    if (error instanceof SecureError) {
+      throw error;
+    }
     return false;
   }
 };
 
 export const deleteAppointment = async (id: string): Promise<boolean> => {
   try {
+    // Validate UUID format
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(id)) {
+      throw new SecureError('ID invalide', 'Invalid UUID format', 400);
+    }
+
     const { error } = await supabase
       .from('appointments')
       .delete()
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      throw new SecureError(
+        'Erreur lors de la suppression du rendez-vous',
+        `Supabase error: ${error.message}`,
+        500
+      );
+    }
+    
     return true;
   } catch (error) {
     console.error('Error deleting appointment:', error);
+    if (error instanceof SecureError) {
+      throw error;
+    }
     return false;
   }
 };
@@ -254,7 +402,13 @@ export const addAppointment = async (appointment: Omit<Appointment, 'id' | 'crea
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw new SecureError(
+        'Erreur lors de la création du rendez-vous',
+        `Supabase error: ${error.message}`,
+        500
+      );
+    }
 
     return {
       id: data.id,
@@ -271,6 +425,9 @@ export const addAppointment = async (appointment: Omit<Appointment, 'id' | 'crea
     };
   } catch (error) {
     console.error('Error adding appointment:', error);
+    if (error instanceof SecureError) {
+      throw error;
+    }
     return null;
   }
 };
@@ -339,7 +496,7 @@ export const addGalleryImage = (image: Omit<GalleryImage, 'id' | 'uploadedAt'>):
   return newImage;
 };
 
-// Statistics
+// Statistics with enhanced error handling
 export const getCMSStats = async (): Promise<CMSStats> => {
   try {
     const [testimonialsResult, appointmentsResult] = await Promise.all([

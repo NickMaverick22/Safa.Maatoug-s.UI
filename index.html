@@ -11,21 +11,37 @@
     <meta name="description" content="Haute couture bridal - Robes de mariée conçues pour vous. Découvrez notre collection d'élégance intemporelle." />
     <meta name="author" content="Safa Maatoug" />
 
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.gpteng.co; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-Frame-Options" content="DENY" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+    <!-- Open Graph -->
     <meta property="og:title" content="Safa Maatoug - Élégance Intemporelle Incarnée" />
     <meta property="og:description" content="Haute couture bridal - Robes de mariée conçues pour vous" />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="/images/hero-home.jpg" />
+    <meta property="og:url" content="https://safamaatoug.com" />
 
+    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content="/images/hero-home.jpg" />
     
-    <!-- PRELOAD + LOAD BODONI MODA -->
+    <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Font loading with display=swap for better performance -->
     <link
       href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,700;1,400;1,700&family=Montserrat:wght@300;400;500;600&display=swap"
       rel="stylesheet"
     />
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/lovable-uploads/bdb13012-59ce-422b-8158-5a780a8fa555.png" as="image" />
+    <link rel="preload" href="/lovable-uploads/6254dd8b-8e1d-44e8-af43-adb58b41fa97.png" as="image" />
     
     <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
@@ -40,6 +56,18 @@
       window.addEventListener('DOMContentLoaded', () => {
         window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
       });
+      
+      // Performance monitoring
+      if ('performance' in window) {
+        window.addEventListener('load', () => {
+          setTimeout(() => {
+            const perfData = performance.getEntriesByType('navigation')[0];
+            if (perfData && perfData.loadEventEnd > 3000) {
+              console.warn('Slow page load detected:', perfData.loadEventEnd + 'ms');
+            }
+          }, 0);
+        });
+      }
     </script>
   </body>
 </html>
