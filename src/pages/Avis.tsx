@@ -4,6 +4,8 @@ import Footer from '../components/Footer';
 import LuxuryAnimations from '../components/LuxuryAnimations';
 
 const Avis = () => {
+  const [isPaused, setIsPaused] = useState(false);
+
   const testimonials = [
     {
       id: 1,
@@ -49,6 +51,10 @@ const Avis = () => {
     }
   ];
 
+  // Split testimonials into two rows
+  const firstRowTestimonials = testimonials.slice(0, 3);
+  const secondRowTestimonials = testimonials.slice(3, 6);
+
   return (
     <div className="min-h-screen">
       <Navigation />
@@ -81,23 +87,67 @@ const Avis = () => {
         </div>
       </section>
 
-      {/* Grid Testimonials Section */}
-      <section className="py-24 bg-soft-beige">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <div 
-                key={testimonial.id} 
-                className="testimonial-card fade-slide-up"
-                style={{animationDelay: `${index * 150}ms`}}
-              >
+      {/* Two-Row Animated Testimonials */}
+      <section className="py-24 bg-soft-beige overflow-hidden">
+        <div className="space-y-8">
+          {/* First Row - Scrolling Left to Right */}
+          <div 
+            className="testimonials-scroll-right flex gap-6"
+            style={{
+              animationPlayState: isPaused ? 'paused' : 'running'
+            }}
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+          >
+            {/* Duplicate testimonials for seamless loop */}
+            {[...firstRowTestimonials, ...firstRowTestimonials, ...firstRowTestimonials].map((testimonial, index) => (
+              <div key={`row1-${testimonial.id}-${index}`} className="testimonial-card flex-shrink-0 w-72">
                 <div className="bg-ivory rounded-lg p-6 shadow-lg h-full flex flex-col">
                   {/* Avatar */}
-                  <div className="flex items-center mb-6">
+                  <div className="flex items-center mb-4">
                     <img
                       src={testimonial.avatar}
                       alt={testimonial.name}
-                      className="w-12 h-12 rounded-full object-cover border-2 border-champagne mr-4"
+                      className="w-12 h-12 rounded-full object-cover border-2 border-champagne mr-3"
+                    />
+                    <div>
+                      <p className="font-sans font-semibold text-navy text-base">
+                        {testimonial.name}
+                      </p>
+                      <p className="font-sans text-navy/60 text-xs uppercase tracking-[1.2px]">
+                        {testimonial.date}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Quote */}
+                  <blockquote className="font-serif text-base text-navy leading-relaxed italic flex-grow">
+                    "{testimonial.quote}"
+                  </blockquote>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Second Row - Scrolling Right to Left */}
+          <div 
+            className="testimonials-scroll-left flex gap-6"
+            style={{
+              animationPlayState: isPaused ? 'paused' : 'running'
+            }}
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+          >
+            {/* Duplicate testimonials for seamless loop */}
+            {[...secondRowTestimonials, ...secondRowTestimonials, ...secondRowTestimonials].map((testimonial, index) => (
+              <div key={`row2-${testimonial.id}-${index}`} className="testimonial-card flex-shrink-0 w-72">
+                <div className="bg-ivory rounded-lg p-6 shadow-lg h-full flex flex-col">
+                  {/* Avatar */}
+                  <div className="flex items-center mb-4">
+                    <img
+                      src={testimonial.avatar}
+                      alt={testimonial.name}
+                      className="w-12 h-12 rounded-full object-cover border-2 border-champagne mr-3"
                     />
                     <div>
                       <p className="font-sans font-semibold text-navy text-base">

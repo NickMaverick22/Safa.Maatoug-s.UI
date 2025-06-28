@@ -193,9 +193,13 @@
     @apply w-full;
   }
 
-  /* Testimonials scroll animation - optimized */
-  .testimonials-scroll {
-    animation: scroll 60s linear infinite;
+  /* Two-row testimonials scroll animations */
+  .testimonials-scroll-right {
+    animation: scrollRight 80s linear infinite;
+  }
+
+  .testimonials-scroll-left {
+    animation: scrollLeft 80s linear infinite;
   }
 
   /* Toast notification */
@@ -238,9 +242,14 @@
   }
 }
 
-@keyframes scroll {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+@keyframes scrollRight {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(0%); }
+}
+
+@keyframes scrollLeft {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-100%); }
 }
 
 /* Optimized scrollbar */
