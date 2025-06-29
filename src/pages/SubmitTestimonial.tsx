@@ -74,18 +74,21 @@ const SubmitTestimonial = () => {
       return;
     }
 
-    // Additional validation for required fields
-    if (!formData.name.trim() || !formData.quote.trim()) {
+    // Additional validation for required fields and lengths
+    const trimmedName = formData.name.trim();
+    const trimmedQuote = formData.quote.trim();
+
+    if (!trimmedName || !trimmedQuote) {
       toast.error('Le nom et le témoignage sont requis');
       return;
     }
 
-    if (formData.name.trim().length < 2) {
+    if (trimmedName.length < 2) {
       toast.error('Le nom doit contenir au moins 2 caractères');
       return;
     }
 
-    if (formData.quote.trim().length < 10) {
+    if (trimmedQuote.length < 10) {
       toast.error('Le témoignage doit contenir au moins 10 caractères');
       return;
     }
@@ -94,13 +97,13 @@ const SubmitTestimonial = () => {
 
     try {
       console.log('Submitting testimonial with data:', {
-        name: formData.name.trim(),
-        quote: formData.quote.trim()
+        name: trimmedName,
+        quote: trimmedQuote
       });
 
       const testimonial = await addTestimonial({
-        name: formData.name.trim(),
-        quote: formData.quote.trim(),
+        name: trimmedName,
+        quote: trimmedQuote,
         status: 'pending' // Explicitly set to pending
       });
 
@@ -125,6 +128,8 @@ const SubmitTestimonial = () => {
       setIsSubmitting(false);
     }
   };
+
+  const isFormValid = formData.name.trim().length >= 2 && formData.quote.trim().length >= 10;
 
   return (
     <div className="min-h-screen bg-ivory">
@@ -195,8 +200,11 @@ const SubmitTestimonial = () => {
                   placeholder="Marie Dupont"
                   aria-describedby={errors.name ? 'name-error' : undefined}
                 />
-                <div className="mt-1 text-xs text-navy/60">
-                  {formData.name.length}/100 caractères
+                <div className="mt-1 text-xs text-navy/60 flex justify-between">
+                  <span>{formData.name.length}/100 caractères</span>
+                  {formData.name.length >= 2 && (
+                    <span className="text-green-600">✓ Valide</span>
+                  )}
                 </div>
                 {errors.name && (
                   <p id="name-error" className="mt-1 text-sm text-red-600 font-sans">
@@ -224,8 +232,11 @@ const SubmitTestimonial = () => {
                   placeholder="Partagez votre expérience avec Safa Maatoug..."
                   aria-describedby={errors.quote ? 'quote-error' : undefined}
                 />
-                <div className="mt-1 text-xs text-navy/60">
-                  {formData.quote.length}/1000 caractères
+                <div className="mt-1 text-xs text-navy/60 flex justify-between">
+                  <span>{formData.quote.length}/1000 caractères</span>
+                  {formData.quote.length >= 10 && (
+                    <span className="text-green-600">✓ Valide</span>
+                  )}
                 </div>
                 {errors.quote && (
                   <p id="quote-error" className="mt-1 text-sm text-red-600 font-sans">
@@ -256,7 +267,7 @@ const SubmitTestimonial = () => {
                 </button>
                 <button
                   type="submit"
-                  disabled={isSubmitting || isRateLimited || Object.values(errors).some(error => error) || !formData.name.trim() || !formData.quote.trim()}
+                  disabled={isSubmitting || isRateLimited || Object.values(errors).some(error => error) || !isFormValid}
                   className="flex-1 bg-navy text-ivory px-6 py-3 rounded-lg font-sans font-medium hover:bg-champagne hover:text-navy transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? 'Envoi en cours...' : 'Envoyer mon témoignage'}
