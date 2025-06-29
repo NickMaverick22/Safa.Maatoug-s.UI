@@ -11,7 +11,18 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase environment variables');
 }
 
-const anonSupabase = createClient(supabaseUrl, supabaseAnonKey);
+// Create anonymous client with explicit configuration
+const anonSupabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: false,
+    autoRefreshToken: false,
+  },
+  global: {
+    headers: {
+      'Authorization': `Bearer ${supabaseAnonKey}`,
+    },
+  },
+});
 
 // Testimonials CRUD with enhanced error handling
 export const getTestimonials = async (): Promise<Testimonial[]> => {
@@ -186,8 +197,11 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
       );
     }
 
-    // Validate field lengths to match RLS policy requirements
-    if (testimonial.name.trim().length < 2 || testimonial.name.trim().length > 100) {
+    // Trim and validate field lengths
+    const trimmedName = testimonial.name.trim();
+    const trimmedQuote = testimonial.quote.trim();
+
+    if (trimmedName.length < 2 || trimmedName.length > 100) {
       throw new SecureError(
         'Le nom doit contenir entre 2 et 100 caractères',
         'Name length validation failed',
@@ -195,7 +209,7 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
       );
     }
 
-    if (testimonial.quote.trim().length < 10 || testimonial.quote.trim().length > 1000) {
+    if (trimmedQuote.length < 10 || trimmedQuote.length > 1000) {
       throw new SecureError(
         'Le témoignage doit contenir entre 10 et 1000 caractères',
         'Testimonial length validation failed',
@@ -203,23 +217,19 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
       );
     }
 
-    // Store current session to restore later if needed
-    const { data: { session: currentSession } } = await supabase.auth.getSession();
-    console.log('Current session before submission:', currentSession ? 'authenticated' : 'anonymous');
-
     // Prepare insert data - ensure status is 'pending' for RLS policy compliance
     const insertData = {
-      name: testimonial.name.trim(),
-      testimonial: testimonial.quote.trim(),
-      status: 'pending', // Force pending status for RLS policy compliance
+      name: trimmedName,
+      testimonial: trimmedQuote,
+      status: 'pending',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };
 
     console.log('Insert data:', insertData);
+    console.log('Using anonymous client for submission');
 
     // Use the anonymous client for testimonial submission
-    // This ensures the request is always made with the 'anon' role
     const { data, error } = await anonSupabase
       .from('testimonials')
       .insert(insertData)
