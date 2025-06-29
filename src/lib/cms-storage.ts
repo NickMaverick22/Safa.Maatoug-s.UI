@@ -1,6 +1,17 @@
 import { supabase } from './supabaseClient';
+import { createClient } from '@supabase/supabase-js';
 import { Testimonial, Appointment, GalleryImage, CMSStats } from '../types/cms';
 import { SecureError } from './security';
+
+// Create a dedicated anonymous client for public operations
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Missing Supabase environment variables');
+}
+
+const anonSupabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Testimonials CRUD with enhanced error handling
 export const getTestimonials = async (): Promise<Testimonial[]> => {
@@ -195,13 +206,6 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
     // Store current session to restore later if needed
     const { data: { session: currentSession } } = await supabase.auth.getSession();
     console.log('Current session before submission:', currentSession ? 'authenticated' : 'anonymous');
-    
-    // If there's an authenticated session, temporarily sign out to ensure anonymous submission
-    // This is required because the RLS policy only allows 'anon' role to insert testimonials
-    if (currentSession) {
-      console.log('Temporarily signing out authenticated user for anonymous submission');
-      await supabase.auth.signOut();
-    }
 
     // Prepare insert data - ensure status is 'pending' for RLS policy compliance
     const insertData = {
@@ -214,25 +218,13 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
 
     console.log('Insert data:', insertData);
 
-    const { data, error } = await supabase
+    // Use the anonymous client for testimonial submission
+    // This ensures the request is always made with the 'anon' role
+    const { data, error } = await anonSupabase
       .from('testimonials')
       .insert(insertData)
       .select()
       .single();
-
-    // Restore session if it existed before
-    if (currentSession) {
-      console.log('Restoring previous authenticated session');
-      try {
-        await supabase.auth.setSession({
-          access_token: currentSession.access_token,
-          refresh_token: currentSession.refresh_token
-        });
-      } catch (sessionError) {
-        console.warn('Failed to restore session:', sessionError);
-        // Don't throw here as the testimonial was successfully submitted
-      }
-    }
 
     if (error) {
       console.error('Supabase insert error:', error);
