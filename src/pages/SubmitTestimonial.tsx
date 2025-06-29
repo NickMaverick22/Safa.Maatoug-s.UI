@@ -74,22 +74,38 @@ const SubmitTestimonial = () => {
       return;
     }
 
-    // Additional validation for RLS policy compliance
+    // Additional validation for required fields
     if (!formData.name.trim() || !formData.quote.trim()) {
       toast.error('Le nom et le témoignage sont requis');
+      return;
+    }
+
+    if (formData.name.trim().length < 2) {
+      toast.error('Le nom doit contenir au moins 2 caractères');
+      return;
+    }
+
+    if (formData.quote.trim().length < 10) {
+      toast.error('Le témoignage doit contenir au moins 10 caractères');
       return;
     }
 
     setIsSubmitting(true);
 
     try {
+      console.log('Submitting testimonial with data:', {
+        name: formData.name.trim(),
+        quote: formData.quote.trim()
+      });
+
       const testimonial = await addTestimonial({
         name: formData.name.trim(),
         quote: formData.quote.trim(),
-        status: 'pending' // Explicitly set to pending for RLS policy
+        status: 'pending' // Explicitly set to pending
       });
 
       if (testimonial) {
+        console.log('Testimonial submitted successfully:', testimonial);
         // Navigate to thank you page instead of showing toast
         navigate('/thank-you-testimonial');
       } else {
@@ -162,7 +178,7 @@ const SubmitTestimonial = () => {
             <form onSubmit={handleSubmit} className="space-y-6" noValidate>
               <div>
                 <label htmlFor="name" className="block font-sans text-sm font-medium text-navy mb-2">
-                  Votre nom *
+                  Votre nom * (minimum 2 caractères)
                 </label>
                 <input
                   type="text"
@@ -171,6 +187,7 @@ const SubmitTestimonial = () => {
                   value={formData.name}
                   onChange={handleChange}
                   required
+                  minLength={2}
                   maxLength={100}
                   className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-champagne focus:border-transparent font-sans transition-colors duration-200 ${
                     errors.name ? 'border-red-300 bg-red-50' : 'border-champagne/30'
@@ -178,6 +195,9 @@ const SubmitTestimonial = () => {
                   placeholder="Marie Dupont"
                   aria-describedby={errors.name ? 'name-error' : undefined}
                 />
+                <div className="mt-1 text-xs text-navy/60">
+                  {formData.name.length}/100 caractères
+                </div>
                 {errors.name && (
                   <p id="name-error" className="mt-1 text-sm text-red-600 font-sans">
                     {errors.name}
@@ -187,7 +207,7 @@ const SubmitTestimonial = () => {
 
               <div>
                 <label htmlFor="quote" className="block font-sans text-sm font-medium text-navy mb-2">
-                  Votre témoignage * ({formData.quote.length}/1000)
+                  Votre témoignage * (minimum 10 caractères)
                 </label>
                 <textarea
                   id="quote"
@@ -195,6 +215,7 @@ const SubmitTestimonial = () => {
                   value={formData.quote}
                   onChange={handleChange}
                   required
+                  minLength={10}
                   rows={6}
                   maxLength={1000}
                   className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-champagne focus:border-transparent font-sans resize-none transition-colors duration-200 ${
@@ -203,6 +224,9 @@ const SubmitTestimonial = () => {
                   placeholder="Partagez votre expérience avec Safa Maatoug..."
                   aria-describedby={errors.quote ? 'quote-error' : undefined}
                 />
+                <div className="mt-1 text-xs text-navy/60">
+                  {formData.quote.length}/1000 caractères
+                </div>
                 {errors.quote && (
                   <p id="quote-error" className="mt-1 text-sm text-red-600 font-sans">
                     {errors.quote}
@@ -232,7 +256,7 @@ const SubmitTestimonial = () => {
                 </button>
                 <button
                   type="submit"
-                  disabled={isSubmitting || isRateLimited || Object.values(errors).some(error => error)}
+                  disabled={isSubmitting || isRateLimited || Object.values(errors).some(error => error) || !formData.name.trim() || !formData.quote.trim()}
                   className="flex-1 bg-navy text-ivory px-6 py-3 rounded-lg font-sans font-medium hover:bg-champagne hover:text-navy transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? 'Envoi en cours...' : 'Envoyer mon témoignage'}

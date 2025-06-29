@@ -11,6 +11,7 @@ export const getTestimonials = async (): Promise<Testimonial[]> => {
       .order('created_at', { ascending: false });
 
     if (error) {
+      console.error('Supabase error fetching testimonials:', error);
       throw new SecureError(
         'Erreur lors du chargement des témoignages',
         `Supabase error: ${error.message}`,
@@ -164,7 +165,11 @@ export const deleteTestimonial = async (id: string): Promise<boolean> => {
 
 export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'submittedAt'>): Promise<Testimonial | null> => {
   try {
-    // Validate required fields according to RLS policy
+    console.log('Adding testimonial with data:', testimonial);
+    console.log('Supabase URL:', import.meta.env.VITE_SUPABASE_URL);
+    console.log('Supabase anon key (first 10 chars):', import.meta.env.VITE_SUPABASE_ANON_KEY?.slice(0, 10));
+
+    // Validate required fields
     if (!testimonial.name || !testimonial.quote) {
       throw new SecureError(
         'Le nom et le témoignage sont requis',
@@ -173,22 +178,20 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
       );
     }
 
-    // Store current session to restore later if needed
-    const { data: { session: currentSession } } = await supabase.auth.getSession();
-    
-    // If there's an authenticated session, temporarily sign out to ensure anonymous submission
-    if (currentSession) {
-      await supabase.auth.signOut();
-    }
-
-    // Ensure status is 'pending' for anonymous submissions as required by RLS policy
+    // Prepare insert data with explicit field mapping
     const insertData = {
       name: testimonial.name.trim(),
       testimonial: testimonial.quote.trim(),
-      status: 'pending', // Force pending status for RLS policy compliance
+      status: 'pending', // Always set to pending for new submissions
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };
+
+    console.log('Insert data:', insertData);
+
+    // Check current session
+    const { data: { session } } = await supabase.auth.getSession();
+    console.log('Current session:', session ? 'authenticated' : 'anonymous');
 
     const { data, error } = await supabase
       .from('testimonials')
@@ -196,23 +199,23 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
       .select()
       .single();
 
-    // Restore session if it existed before
-    if (currentSession) {
-      await supabase.auth.setSession({
-        access_token: currentSession.access_token,
-        refresh_token: currentSession.refresh_token
-      });
-    }
-
     if (error) {
       console.error('Supabase insert error:', error);
       
-      // Handle specific RLS policy violation
+      // Handle specific error cases
       if (error.code === '42501' || error.message.includes('row-level security policy')) {
         throw new SecureError(
           'Erreur de sécurité lors de la soumission. Veuillez vérifier que tous les champs sont remplis correctement.',
           `RLS policy violation: ${error.message}`,
           403
+        );
+      }
+      
+      if (error.code === '23502') {
+        throw new SecureError(
+          'Données manquantes. Veuillez remplir tous les champs requis.',
+          `Missing required field: ${error.message}`,
+          400
         );
       }
       
@@ -222,6 +225,8 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
         500
       );
     }
+
+    console.log('Successfully inserted testimonial:', data);
 
     return {
       id: data.id,
