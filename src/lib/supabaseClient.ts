@@ -80,7 +80,6 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
-        Update: {
           id?: string;
           client_name?: string;
           client_email?: string;
@@ -89,10 +88,35 @@ export interface Database {
           appointment_time?: string;
           service?: 'consultation' | 'fitting' | 'final-fitting' | 'delivery';
           status?: 'scheduled' | 'confirmed' | 'completed' | 'cancelled' | 'rescheduled';
-          notes?: string;
           created_at?: string;
           updated_at?: string;
         };
+      };
+    };
+    testimonials2: {
+      Row: {
+        id: string;
+        name: string;
+        testimonial: string;
+        created_at: string;
+        updated_at: string;
+        user_id: string | null;
+      };
+      Insert: {
+        id?: string;
+        name: string;
+        testimonial: string;
+        created_at?: string;
+        updated_at?: string;
+        user_id?: string | null;
+      };
+      Update: {
+        id?: string;
+        name?: string;
+        testimonial?: string;
+        created_at?: string;
+        updated_at?: string;
+        user_id?: string | null;
       };
     };
   };

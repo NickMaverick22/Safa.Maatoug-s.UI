@@ -7,7 +7,16 @@ const CMSDashboard = () => {
   const [stats, setStats] = useState<CMSStats | null>(null);
 
   useEffect(() => {
-    setStats(getCMSStats());
+    const loadStats = async () => {
+      try {
+        const statsData = await getCMSStats();
+        setStats(statsData);
+      } catch (error) {
+        console.error('Error loading stats:', error);
+      }
+    };
+    
+    loadStats();
   }, []);
 
   const formatFileSize = (bytes: number): string => {

@@ -34,7 +34,7 @@ const createAnonymousRequest = async (tableName: string, data: any) => {
 export const getTestimonials = async (): Promise<Testimonial[]> => {
   try {
     const { data, error } = await supabase
-      .from('testimonials')
+      .from('testimonials2')
       .select('*')
       .order('created_at', { ascending: false });
 
@@ -76,7 +76,7 @@ export const getTestimonialById = async (id: string): Promise<Testimonial | unde
     }
 
     const { data, error } = await supabase
-      .from('testimonials')
+      .from('testimonials2')
       .select('*')
       .eq('id', id)
       .single();
@@ -122,7 +122,7 @@ export const deleteTestimonial = async (id: string): Promise<boolean> => {
     }
 
     const { error } = await supabase
-      .from('testimonials')
+      .from('testimonials2')
       .delete()
       .eq('id', id);
 
@@ -184,7 +184,7 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
 
     // Use Supabase client for insertion
     const { data, error } = await supabase
-      .from('testimonials')
+      .from('testimonials2')
       .insert(insertData)
       .select()
       .single();
@@ -504,7 +504,7 @@ export const addGalleryImage = (image: Omit<GalleryImage, 'id' | 'uploadedAt'>):
 export const getCMSStats = async (): Promise<CMSStats> => {
   try {
     const [testimonialsResult, appointmentsResult] = await Promise.all([
-      supabase.from('testimonials').select('*', { count: 'exact' }),
+      supabase.from('testimonials2').select('*', { count: 'exact' }),
       supabase.from('appointments').select('status', { count: 'exact' })
     ]);
 

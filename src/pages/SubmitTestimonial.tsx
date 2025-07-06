@@ -116,7 +116,7 @@ const SubmitTestimonial = () => {
         navigate('/thank-you-testimonial');
       } else {
         throw new SecureError(
-          'Erreur lors de la soumission. Veuillez réessayer.',
+          'Erreur lors de l\'ajout du témoignage. Veuillez réessayer.',
           'Failed to create testimonial in database'
         );
       }

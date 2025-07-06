@@ -54,13 +54,11 @@ const ThankYouTestimonial = () => {
               <div className="fade-slide-up space-y-6 text-lg text-navy/80 leading-relaxed">
                 <p className="font-sans">
                   Nous avons bien reçu votre précieux témoignage et nous vous en remercions du fond du cœur. 
-                  Chaque mot que vous partagez nous inspire et nous motive à continuer d'offrir l'excellence 
-                  que vous méritez.
+                  Votre témoignage est maintenant visible sur notre site et inspire d'autres futures mariées.
                 </p>
                 
                 <p className="font-sans">
-                  Votre témoignage est maintenant visible sur notre page d'avis, permettant à d'autres 
-                  futures mariées de découvrir votre expérience unique avec nous.
+                  Merci de partager votre expérience unique avec nous et de faire confiance à notre savoir-faire.
                 </p>
               </div>
             </div>
