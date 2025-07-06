@@ -231,7 +231,7 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
       name: trimmedName,
       testimonial: trimmedQuote,
       status: 'pending',
-      user_id: null,
+      user_id: null, // Explicitly set to null for anonymous submissions
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };
@@ -288,7 +288,8 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
       status: data.status,
       submittedAt: new Date(data.created_at),
       reviewedAt: data.updated_at ? new Date(data.updated_at) : undefined,
-      reviewedBy: '' // Not stored in database
+      reviewedBy: '', // Not stored in database
+      userId: data.user_id
     };
   } catch (error) {
     console.error('Error adding testimonial:', error);
