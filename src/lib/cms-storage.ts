@@ -97,7 +97,8 @@ export const getTestimonialById = async (id: string): Promise<Testimonial | unde
       status: data.status,
       submittedAt: new Date(data.created_at),
       reviewedAt: data.updated_at ? new Date(data.updated_at) : undefined,
-      reviewedBy: '' // Not stored in database
+      reviewedBy: '', // Not stored in database
+      userId: data.user_id
     };
   } catch (error) {
     console.error('Error fetching testimonial:', error);
