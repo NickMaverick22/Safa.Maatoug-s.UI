@@ -14,9 +14,9 @@ const Collection = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadCollections = () => {
+    const loadCollections = async () => {
       try {
-        const data = getCollections();
+        const data = await getCollections();
         setCollections(data);
       } catch (error) {
         console.error('Error loading collections:', error);
@@ -27,6 +27,7 @@ const Collection = () => {
 
     loadCollections();
   }, []);
+
   const dresses = [
     {
       id: 1,
@@ -183,6 +184,7 @@ const Collection = () => {
       </div>
     );
   }
+
   return (
     <>
       <Navigation />

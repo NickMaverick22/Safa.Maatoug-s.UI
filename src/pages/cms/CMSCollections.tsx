@@ -5,15 +5,18 @@ import {
   addCollection, 
   updateCollection, 
   deleteCollection,
-  getCollectionById 
+  getCollectionById,
+  getGalleryImages
 } from '../../lib/cms-storage';
-import { Collection } from '../../types/cms';
+import { Collection, GalleryImage } from '../../types/cms';
 import { toast } from '../../components/ui/sonner';
 
 const CMSCollections = () => {
   const [collections, setCollections] = useState<Collection[]>([]);
+  const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
   const [selectedCollection, setSelectedCollection] = useState<Collection | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [showImageSelector, setShowImageSelector] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -24,13 +27,29 @@ const CMSCollections = () => {
 
   useEffect(() => {
     loadCollections();
+    loadGalleryImages();
   }, []);
 
-  const loadCollections = () => {
-    setCollections(getAllCollections());
+  const loadCollections = async () => {
+    try {
+      const data = await getAllCollections();
+      setCollections(data);
+    } catch (error) {
+      console.error('Error loading collections:', error);
+      toast.error('Erreur lors du chargement des collections');
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const loadGalleryImages = async () => {
+    try {
+      const data = await getGalleryImages();
+      setGalleryImages(data.filter(img => img.category === 'collection'));
+    } catch (error) {
+      console.error('Error loading gallery images:', error);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!formData.name.trim() || !formData.description.trim()) {
@@ -41,7 +60,7 @@ const CMSCollections = () => {
     try {
       if (selectedCollection) {
         // Update existing collection
-        const success = updateCollection(selectedCollection.id, formData);
+        const success = await updateCollection(selectedCollection.id, formData);
         if (success) {
           toast.success('Collection mise à jour');
           loadCollections();
@@ -51,12 +70,17 @@ const CMSCollections = () => {
         }
       } else {
         // Create new collection
-        addCollection(formData);
-        toast.success('Collection créée');
-        loadCollections();
-        resetForm();
+        const newCollection = await addCollection(formData);
+        if (newCollection) {
+          toast.success('Collection créée');
+          loadCollections();
+          resetForm();
+        } else {
+          toast.error('Erreur lors de la création');
+        }
       }
     } catch (error) {
+      console.error('Error saving collection:', error);
       toast.error('Erreur lors de la sauvegarde');
     }
   };
@@ -85,32 +109,44 @@ const CMSCollections = () => {
     setIsCreating(true);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer cette collection ?')) {
-      const success = deleteCollection(id);
-      if (success) {
-        toast.success('Collection supprimée');
-        loadCollections();
-      } else {
+      try {
+        const success = await deleteCollection(id);
+        if (success) {
+          toast.success('Collection supprimée');
+          loadCollections();
+        } else {
+          toast.error('Erreur lors de la suppression');
+        }
+      } catch (error) {
+        console.error('Error deleting collection:', error);
         toast.error('Erreur lors de la suppression');
       }
     }
   };
 
-  const addImageToCollection = () => {
-    const imageUrl = prompt('URL de l\'image:');
-    if (imageUrl) {
+  const addImageToCollection = (imageUrl: string) => {
+    if (!formData.images.includes(imageUrl)) {
       setFormData(prev => ({
         ...prev,
         images: [...prev.images, imageUrl]
       }));
     }
+    setShowImageSelector(false);
   };
 
   const removeImageFromCollection = (index: number) => {
     setFormData(prev => ({
       ...prev,
       images: prev.images.filter((_, i) => i !== index)
+    }));
+  };
+
+  const setCoverImage = (imageUrl: string) => {
+    setFormData(prev => ({
+      ...prev,
+      coverImage: imageUrl
     }));
   };
 
@@ -234,13 +270,29 @@ const CMSCollections = () => {
                   <label className="block font-sans text-sm font-medium text-navy mb-2">
                     Image de couverture
                   </label>
-                  <input
-                    type="url"
-                    value={formData.coverImage}
-                    onChange={(e) => setFormData(prev => ({ ...prev, coverImage: e.target.value }))}
-                    className="w-full px-4 py-3 border border-champagne/30 rounded-lg focus:ring-2 focus:ring-champagne focus:border-transparent font-sans"
-                    placeholder="https://..."
-                  />
+                  <div className="flex gap-2">
+                    <input
+                      type="url"
+                      value={formData.coverImage}
+                      onChange={(e) => setFormData(prev => ({ ...prev, coverImage: e.target.value }))}
+                      className="flex-1 px-4 py-3 border border-champagne/30 rounded-lg focus:ring-2 focus:ring-champagne focus:border-transparent font-sans"
+                      placeholder="https://..."
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowImageSelector(true)}
+                      className="bg-champagne text-navy px-4 py-3 rounded-lg font-sans text-sm hover:bg-gold transition-colors duration-200"
+                    >
+                      Choisir
+                    </button>
+                  </div>
+                  {formData.coverImage && (
+                    <img
+                      src={formData.coverImage}
+                      alt="Aperçu"
+                      className="mt-2 w-32 h-24 object-cover rounded-lg"
+                    />
+                  )}
                 </div>
               </div>
 
@@ -265,7 +317,7 @@ const CMSCollections = () => {
                   </label>
                   <button
                     type="button"
-                    onClick={addImageToCollection}
+                    onClick={() => setShowImageSelector(true)}
                     className="bg-champagne text-navy px-4 py-2 rounded-lg font-sans text-sm hover:bg-gold transition-colors duration-200"
                   >
                     Ajouter une image
@@ -321,6 +373,67 @@ const CMSCollections = () => {
                 </button>
               </div>
             </form>
+          </div>
+        )}
+
+        {/* Image Selector Modal */}
+        {showImageSelector && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-ivory rounded-xl max-w-6xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="font-serif text-2xl text-navy">Choisir une image</h2>
+                  <button
+                    onClick={() => setShowImageSelector(false)}
+                    className="text-navy/60 hover:text-navy text-2xl"
+                  >
+                    ×
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {galleryImages.map((image) => (
+                    <div
+                      key={image.id}
+                      className="relative group cursor-pointer"
+                      onClick={() => addImageToCollection(image.url)}
+                    >
+                      <img
+                        src={image.url}
+                        alt={image.alt}
+                        className="w-full aspect-[3/4] object-cover rounded-lg hover:opacity-80 transition-opacity duration-200"
+                      />
+                      <div className="absolute inset-0 bg-navy/0 group-hover:bg-navy/20 transition-colors duration-200 rounded-lg flex items-center justify-center">
+                        <span className="text-ivory opacity-0 group-hover:opacity-100 transition-opacity duration-200 font-sans text-sm">
+                          Sélectionner
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setCoverImage(image.url);
+                          setShowImageSelector(false);
+                        }}
+                        className="absolute top-2 left-2 bg-champagne text-navy px-2 py-1 rounded text-xs font-sans opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                      >
+                        Couverture
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                {galleryImages.length === 0 && (
+                  <div className="text-center py-12">
+                    <div className="text-6xl mb-4">🖼️</div>
+                    <h3 className="font-serif text-xl text-navy mb-2">Aucune image</h3>
+                    <p className="font-sans text-navy/60">
+                      Ajoutez des images à la galerie pour les utiliser dans vos collections
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         )}
       </div>

@@ -12,9 +12,9 @@ const Index = () => {
 
   useEffect(() => {
     // Load collections
-    const loadCollections = () => {
+    const loadCollections = async () => {
       try {
-        const data = getCollections();
+        const data = await getCollections();
         setCollections(data.slice(0, 3)); // Show first 3 collections
       } catch (error) {
         console.error('Error loading collections:', error);

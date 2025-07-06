@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import CMSLayout from '../../components/cms/CMSLayout';
-import { getGalleryImages, updateGalleryImage, deleteGalleryImage, addGalleryImage } from '../../lib/cms-storage';
+import { 
+  getGalleryImages, 
+  updateGalleryImage, 
+  deleteGalleryImage, 
+  addGalleryImage 
+} from '../../lib/cms-storage';
 import { getCurrentUser } from '../../lib/auth';
 import { GalleryImage } from '../../types/cms';
 import { toast } from '../../components/ui/sonner';
@@ -16,10 +21,14 @@ const CMSGallery = () => {
     loadImages();
   }, []);
 
-  const loadImages = () => {
-    setImages(getGalleryImages().sort((a, b) => 
-      new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
-    ));
+  const loadImages = async () => {
+    try {
+      const data = await getGalleryImages();
+      setImages(data);
+    } catch (error) {
+      console.error('Error loading images:', error);
+      toast.error('Erreur lors du chargement des images');
+    }
   };
 
   const filteredImages = images.filter(img => {
@@ -27,25 +36,35 @@ const CMSGallery = () => {
     return img.category === filter;
   });
 
-  const handleImageUpdate = (id: string, updates: Partial<GalleryImage>) => {
-    const success = updateGalleryImage(id, updates);
-    if (success) {
-      loadImages();
-      toast.success('Image mise à jour');
-      setSelectedImage(null);
-    } else {
+  const handleImageUpdate = async (id: string, updates: Partial<GalleryImage>) => {
+    try {
+      const success = await updateGalleryImage(id, updates);
+      if (success) {
+        loadImages();
+        toast.success('Image mise à jour');
+        setSelectedImage(null);
+      } else {
+        toast.error('Erreur lors de la mise à jour');
+      }
+    } catch (error) {
+      console.error('Error updating image:', error);
       toast.error('Erreur lors de la mise à jour');
     }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer cette image ?')) {
-      const success = deleteGalleryImage(id);
-      if (success) {
-        loadImages();
-        toast.success('Image supprimée');
-        setSelectedImage(null);
-      } else {
+      try {
+        const success = await deleteGalleryImage(id);
+        if (success) {
+          loadImages();
+          toast.success('Image supprimée');
+          setSelectedImage(null);
+        } else {
+          toast.error('Erreur lors de la suppression');
+        }
+      } catch (error) {
+        console.error('Error deleting image:', error);
         toast.error('Erreur lors de la suppression');
       }
     }
@@ -59,31 +78,41 @@ const CMSGallery = () => {
 
     try {
       for (const file of Array.from(files)) {
-        // In a real implementation, you would upload to a cloud storage service
-        // For demo purposes, we'll simulate the upload
-        const mockUrl = URL.createObjectURL(file);
-        
-        const newImage: Omit<GalleryImage, 'id' | 'uploadedAt'> = {
-          filename: file.name,
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+          toast.error(`${file.name} n'est pas une image valide`);
+          continue;
+        }
+
+        // Validate file size (max 10MB)
+        if (file.size > 10 * 1024 * 1024) {
+          toast.error(`${file.name} est trop volumineux (max 10MB)`);
+          continue;
+        }
+
+        const imageData = {
           originalName: file.name,
-          url: mockUrl,
           alt: file.name.replace(/\.[^/.]+$/, ''),
-          category: 'collection',
+          category: 'collection' as const,
           tags: [],
-          uploadedBy: user.email,
-          size: file.size,
-          dimensions: { width: 800, height: 1200 } // Mock dimensions
+          uploadedBy: user.email
         };
 
-        addGalleryImage(newImage);
+        const newImage = await addGalleryImage(file, imageData);
+        if (!newImage) {
+          toast.error(`Erreur lors du téléchargement de ${file.name}`);
+        }
       }
 
       loadImages();
-      toast.success(`${files.length} image(s) ajoutée(s)`);
+      toast.success(`${files.length} image(s) téléchargée(s)`);
     } catch (error) {
+      console.error('Error uploading files:', error);
       toast.error('Erreur lors du téléchargement');
     } finally {
       setIsUploading(false);
+      // Reset file input
+      event.target.value = '';
     }
   };
 

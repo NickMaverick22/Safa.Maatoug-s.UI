@@ -2,6 +2,43 @@ import { supabase } from './supabaseClient';
 import { Testimonial, Appointment, GalleryImage, CMSStats, Collection, CollectionImage } from '../types/cms';
 import { SecureError } from './security';
 
+// Upload file to Supabase Storage
+export const uploadFile = async (file: File, path: string): Promise<string> => {
+  try {
+    const { data, error } = await supabase.storage
+      .from('safa-maatoug-images')
+      .upload(path, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+
+    if (error) {
+      throw new SecureError(
+        'Erreur lors du téléchargement du fichier',
+        `Storage error: ${error.message}`,
+        500
+      );
+    }
+
+    // Get public URL
+    const { data: urlData } = supabase.storage
+      .from('safa-maatoug-images')
+      .getPublicUrl(data.path);
+
+    return urlData.publicUrl;
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    if (error instanceof SecureError) {
+      throw error;
+    }
+    throw new SecureError(
+      'Erreur lors du téléchargement du fichier',
+      `Unexpected error: ${error}`,
+      500
+    );
+  }
+};
+
 // Simple function to create anonymous request
 const createAnonymousRequest = async (tableName: string, data: any) => {
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -436,162 +473,510 @@ export const addAppointment = async (appointment: Omit<Appointment, 'id' | 'crea
   }
 };
 
-// Gallery Images CRUD (keeping mock data for now as requested)
-let galleryImages: GalleryImage[] = [
-  {
-    id: '1',
-    filename: '88c2ef1d-431e-419a-ba66-607284097b92.png',
-    originalName: 'etoile-azure.png',
-    url: '/lovable-uploads/88c2ef1d-431e-419a-ba66-607284097b92.png',
-    alt: 'Étoile Azure - Plumes et Éclats',
-    category: 'collection',
-    tags: ['haute-couture', 'plumes', 'bleu'],
-    uploadedAt: new Date('2024-01-15'),
-    uploadedBy: 'admin@safamaatoug.com',
-    size: 2048576,
-    dimensions: { width: 800, height: 1200 }
-  },
-  {
-    id: '2',
-    filename: '6254dd8b-8e1d-44e8-af43-adb58b41fa97.png',
-    originalName: 'lumiere-champagne.png',
-    url: '/lovable-uploads/6254dd8b-8e1d-44e8-af43-adb58b41fa97.png',
-    alt: 'Lumière Champagne',
-    category: 'collection',
-    tags: ['ceremonie', 'champagne', 'tulle'],
-    uploadedAt: new Date('2024-01-20'),
-    uploadedBy: 'admin@safamaatoug.com',
-    size: 1876543,
-    dimensions: { width: 800, height: 1200 }
+// Gallery Images CRUD with Supabase integration
+export const getGalleryImages = async (): Promise<GalleryImage[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('gallery_images')
+      .select('*')
+      .order('uploaded_at', { ascending: false });
+
+    if (error) {
+      throw new SecureError(
+        'Erreur lors du chargement des images',
+        `Supabase error: ${error.message}`,
+        500
+      );
+    }
+
+    return data.map(item => ({
+      id: item.id,
+      filename: item.filename,
+      originalName: item.original_name,
+      url: item.url,
+      alt: item.alt,
+      category: item.category,
+      tags: item.tags || [],
+      uploadedAt: new Date(item.uploaded_at),
+      uploadedBy: item.uploaded_by || '',
+      size: item.size || 0,
+      dimensions: item.dimensions || { width: 0, height: 0 }
+    }));
+  } catch (error) {
+    console.error('Error fetching gallery images:', error);
+    if (error instanceof SecureError) {
+      throw error;
+    }
+    throw new SecureError(
+      'Erreur lors du chargement des images',
+      `Unexpected error: ${error}`,
+      500
+    );
   }
-];
-
-export const getGalleryImages = (): GalleryImage[] => galleryImages;
-
-export const getGalleryImageById = (id: string): GalleryImage | undefined => {
-  return galleryImages.find(img => img.id === id);
 };
 
-export const updateGalleryImage = (id: string, updates: Partial<GalleryImage>): boolean => {
-  const image = galleryImages.find(img => img.id === id);
-  if (image) {
-    Object.assign(image, updates);
+export const getGalleryImageById = async (id: string): Promise<GalleryImage | undefined> => {
+  try {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(id)) {
+      throw new SecureError('ID invalide', 'Invalid UUID format', 400);
+    }
+
+    const { data, error } = await supabase
+      .from('gallery_images')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return undefined;
+      }
+      throw new SecureError(
+        'Erreur lors du chargement de l\'image',
+        `Supabase error: ${error.message}`,
+        500
+      );
+    }
+
+    return {
+      id: data.id,
+      filename: data.filename,
+      originalName: data.original_name,
+      url: data.url,
+      alt: data.alt,
+      category: data.category,
+      tags: data.tags || [],
+      uploadedAt: new Date(data.uploaded_at),
+      uploadedBy: data.uploaded_by || '',
+      size: data.size || 0,
+      dimensions: data.dimensions || { width: 0, height: 0 }
+    };
+  } catch (error) {
+    console.error('Error fetching gallery image:', error);
+    if (error instanceof SecureError) {
+      throw error;
+    }
+    throw new SecureError(
+      'Erreur lors du chargement de l\'image',
+      `Unexpected error: ${error}`,
+      500
+    );
+  }
+};
+
+export const updateGalleryImage = async (id: string, updates: Partial<GalleryImage>): Promise<boolean> => {
+  try {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(id)) {
+      throw new SecureError('ID invalide', 'Invalid UUID format', 400);
+    }
+
+    const updateData: any = {};
+    if (updates.alt) updateData.alt = updates.alt;
+    if (updates.category) updateData.category = updates.category;
+    if (updates.tags) updateData.tags = updates.tags;
+
+    const { error } = await supabase
+      .from('gallery_images')
+      .update(updateData)
+      .eq('id', id);
+
+    if (error) {
+      throw new SecureError(
+        'Erreur lors de la mise à jour de l\'image',
+        `Supabase error: ${error.message}`,
+        500
+      );
+    }
+    
     return true;
+  } catch (error) {
+    console.error('Error updating gallery image:', error);
+    if (error instanceof SecureError) {
+      throw error;
+    }
+    return false;
   }
-  return false;
 };
 
-export const deleteGalleryImage = (id: string): boolean => {
-  const index = galleryImages.findIndex(img => img.id === id);
-  if (index > -1) {
-    galleryImages.splice(index, 1);
+export const deleteGalleryImage = async (id: string): Promise<boolean> => {
+  try {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(id)) {
+      throw new SecureError('ID invalide', 'Invalid UUID format', 400);
+    }
+
+    const { error } = await supabase
+      .from('gallery_images')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      throw new SecureError(
+        'Erreur lors de la suppression de l\'image',
+        `Supabase error: ${error.message}`,
+        500
+      );
+    }
+    
     return true;
+  } catch (error) {
+    console.error('Error deleting gallery image:', error);
+    if (error instanceof SecureError) {
+      throw error;
+    }
+    return false;
   }
-  return false;
 };
 
-export const addGalleryImage = (image: Omit<GalleryImage, 'id' | 'uploadedAt'>): GalleryImage => {
-  const newImage: GalleryImage = {
-    ...image,
-    id: Date.now().toString(),
-    uploadedAt: new Date()
-  };
-  galleryImages.push(newImage);
-  return newImage;
-};
+export const addGalleryImage = async (file: File, imageData: Omit<GalleryImage, 'id' | 'uploadedAt' | 'url' | 'filename' | 'size'>): Promise<GalleryImage | null> => {
+  try {
+    // Generate unique filename
+    const fileExtension = file.name.split('.').pop();
+    const filename = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExtension}`;
+    const path = `gallery/${filename}`;
 
-// Collections CRUD
-let collections: Collection[] = [
-  {
-    id: '1',
-    name: 'Haute Couture 2024',
-    description: 'Notre collection exclusive de robes haute couture pour 2024, alliant tradition et modernité.',
-    coverImage: '/lovable-uploads/88c2ef1d-431e-419a-ba66-607284097b92.png',
-    images: [
-      '/lovable-uploads/88c2ef1d-431e-419a-ba66-607284097b92.png',
-      '/lovable-uploads/f231d151-f79a-45c9-99b4-aff96b6b9a6b.png',
-      '/lovable-uploads/751c5221-23b0-45db-ae85-970443bf024e.png'
-    ],
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-15'),
-    isActive: true
-  },
-  {
-    id: '2',
-    name: 'Cérémonie Élégante',
-    description: 'Des créations raffinées pour vos cérémonies les plus importantes.',
-    coverImage: '/lovable-uploads/6254dd8b-8e1d-44e8-af43-adb58b41fa97.png',
-    images: [
-      '/lovable-uploads/6254dd8b-8e1d-44e8-af43-adb58b41fa97.png',
-      '/lovable-uploads/b7d5454b-f7aa-42e9-a591-a5636043dad3.png',
-      '/lovable-uploads/8630b707-80e4-4ccb-a99e-6ab29491ce9e.png'
-    ],
-    createdAt: new Date('2024-02-01'),
-    updatedAt: new Date('2024-02-10'),
-    isActive: true
-  },
-  {
-    id: '3',
-    name: 'Mariage Civil',
-    description: 'Des robes parfaites pour votre mariage civil, alliant simplicité et élégance.',
-    coverImage: '/lovable-uploads/2c7222b1-a23a-4739-8373-3dfadc9633e5.png',
-    images: [
-      '/lovable-uploads/2c7222b1-a23a-4739-8373-3dfadc9633e5.png',
-      '/lovable-uploads/4c0ac742-ef06-42c2-b9f0-b01290af4dd2.png'
-    ],
-    createdAt: new Date('2024-03-01'),
-    updatedAt: new Date('2024-03-05'),
-    isActive: true
+    // Upload file to storage
+    const url = await uploadFile(file, path);
+
+    // Get image dimensions (basic implementation)
+    const dimensions = await new Promise<{ width: number; height: number }>((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        resolve({ width: img.width, height: img.height });
+      };
+      img.onerror = () => {
+        resolve({ width: 800, height: 1200 }); // Default dimensions
+      };
+      img.src = URL.createObjectURL(file);
+    });
+
+    // Insert into database
+    const { data, error } = await supabase
+      .from('gallery_images')
+      .insert({
+        filename,
+        original_name: file.name,
+        url,
+        alt: imageData.alt,
+        category: imageData.category,
+        tags: imageData.tags || [],
+        uploaded_by: imageData.uploadedBy,
+        size: file.size,
+        dimensions
+      })
+      .select()
+      .single();
+
+    if (error) {
+      throw new SecureError(
+        'Erreur lors de l\'ajout de l\'image',
+        `Supabase error: ${error.message}`,
+        500
+      );
+    }
+
+    return {
+      id: data.id,
+      filename: data.filename,
+      originalName: data.original_name,
+      url: data.url,
+      alt: data.alt,
+      category: data.category,
+      tags: data.tags || [],
+      uploadedAt: new Date(data.uploaded_at),
+      uploadedBy: data.uploaded_by || '',
+      size: data.size || 0,
+      dimensions: data.dimensions || { width: 0, height: 0 }
+    };
+  } catch (error) {
+    console.error('Error adding gallery image:', error);
+    if (error instanceof SecureError) {
+      throw error;
+    }
+    return null;
   }
-];
-
-export const getCollections = (): Collection[] => collections.filter(c => c.isActive);
-
-export const getAllCollections = (): Collection[] => collections;
-
-export const getCollectionById = (id: string): Collection | undefined => {
-  return collections.find(c => c.id === id);
 };
 
-export const addCollection = (collection: Omit<Collection, 'id' | 'createdAt' | 'updatedAt'>): Collection => {
-  const newCollection: Collection = {
-    ...collection,
-    id: Date.now().toString(),
-    createdAt: new Date(),
-    updatedAt: new Date()
-  };
-  collections.push(newCollection);
-  return newCollection;
+// Collections CRUD with Supabase integration
+export const getCollections = async (): Promise<Collection[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('collections')
+      .select(`
+        *,
+        collection_images (
+          order_index,
+          gallery_images (
+            url
+          )
+        )
+      `)
+      .eq('is_active', true)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      throw new SecureError(
+        'Erreur lors du chargement des collections',
+        `Supabase error: ${error.message}`,
+        500
+      );
+    }
+
+    return data.map(item => ({
+      id: item.id,
+      name: item.name,
+      description: item.description,
+      coverImage: item.cover_image_url || '',
+      images: item.collection_images
+        .sort((a: any, b: any) => a.order_index - b.order_index)
+        .map((ci: any) => ci.gallery_images.url),
+      createdAt: new Date(item.created_at),
+      updatedAt: new Date(item.updated_at),
+      isActive: item.is_active
+    }));
+  } catch (error) {
+    console.error('Error fetching collections:', error);
+    if (error instanceof SecureError) {
+      throw error;
+    }
+    throw new SecureError(
+      'Erreur lors du chargement des collections',
+      `Unexpected error: ${error}`,
+      500
+    );
+  }
 };
 
-export const updateCollection = (id: string, updates: Partial<Collection>): boolean => {
-  const collection = collections.find(c => c.id === id);
-  if (collection) {
-    Object.assign(collection, { ...updates, updatedAt: new Date() });
+export const getAllCollections = async (): Promise<Collection[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('collections')
+      .select(`
+        *,
+        collection_images (
+          order_index,
+          gallery_images (
+            url
+          )
+        )
+      `)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      throw new SecureError(
+        'Erreur lors du chargement des collections',
+        `Supabase error: ${error.message}`,
+        500
+      );
+    }
+
+    return data.map(item => ({
+      id: item.id,
+      name: item.name,
+      description: item.description,
+      coverImage: item.cover_image_url || '',
+      images: item.collection_images
+        .sort((a: any, b: any) => a.order_index - b.order_index)
+        .map((ci: any) => ci.gallery_images.url),
+      createdAt: new Date(item.created_at),
+      updatedAt: new Date(item.updated_at),
+      isActive: item.is_active
+    }));
+  } catch (error) {
+    console.error('Error fetching all collections:', error);
+    if (error instanceof SecureError) {
+      throw error;
+    }
+    throw new SecureError(
+      'Erreur lors du chargement des collections',
+      `Unexpected error: ${error}`,
+      500
+    );
+  }
+};
+
+export const getCollectionById = async (id: string): Promise<Collection | undefined> => {
+  try {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(id)) {
+      throw new SecureError('ID invalide', 'Invalid UUID format', 400);
+    }
+
+    const { data, error } = await supabase
+      .from('collections')
+      .select(`
+        *,
+        collection_images (
+          order_index,
+          gallery_images (
+            url
+          )
+        )
+      `)
+      .eq('id', id)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return undefined;
+      }
+      throw new SecureError(
+        'Erreur lors du chargement de la collection',
+        `Supabase error: ${error.message}`,
+        500
+      );
+    }
+
+    return {
+      id: data.id,
+      name: data.name,
+      description: data.description,
+      coverImage: data.cover_image_url || '',
+      images: data.collection_images
+        .sort((a: any, b: any) => a.order_index - b.order_index)
+        .map((ci: any) => ci.gallery_images.url),
+      createdAt: new Date(data.created_at),
+      updatedAt: new Date(data.updated_at),
+      isActive: data.is_active
+    };
+  } catch (error) {
+    console.error('Error fetching collection:', error);
+    if (error instanceof SecureError) {
+      throw error;
+    }
+    throw new SecureError(
+      'Erreur lors du chargement de la collection',
+      `Unexpected error: ${error}`,
+      500
+    );
+  }
+};
+
+export const addCollection = async (collection: Omit<Collection, 'id' | 'createdAt' | 'updatedAt'>): Promise<Collection | null> => {
+  try {
+    const { data, error } = await supabase
+      .from('collections')
+      .insert({
+        name: collection.name,
+        description: collection.description,
+        cover_image_url: collection.coverImage,
+        is_active: collection.isActive
+      })
+      .select()
+      .single();
+
+    if (error) {
+      throw new SecureError(
+        'Erreur lors de la création de la collection',
+        `Supabase error: ${error.message}`,
+        500
+      );
+    }
+
+    return {
+      id: data.id,
+      name: data.name,
+      description: data.description,
+      coverImage: data.cover_image_url || '',
+      images: [],
+      createdAt: new Date(data.created_at),
+      updatedAt: new Date(data.updated_at),
+      isActive: data.is_active
+    };
+  } catch (error) {
+    console.error('Error adding collection:', error);
+    if (error instanceof SecureError) {
+      throw error;
+    }
+    return null;
+  }
+};
+
+export const updateCollection = async (id: string, updates: Partial<Collection>): Promise<boolean> => {
+  try {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(id)) {
+      throw new SecureError('ID invalide', 'Invalid UUID format', 400);
+    }
+
+    const updateData: any = {
+      updated_at: new Date().toISOString()
+    };
+
+    if (updates.name) updateData.name = updates.name;
+    if (updates.description) updateData.description = updates.description;
+    if (updates.coverImage) updateData.cover_image_url = updates.coverImage;
+    if (updates.isActive !== undefined) updateData.is_active = updates.isActive;
+
+    const { error } = await supabase
+      .from('collections')
+      .update(updateData)
+      .eq('id', id);
+
+    if (error) {
+      throw new SecureError(
+        'Erreur lors de la mise à jour de la collection',
+        `Supabase error: ${error.message}`,
+        500
+      );
+    }
+    
     return true;
+  } catch (error) {
+    console.error('Error updating collection:', error);
+    if (error instanceof SecureError) {
+      throw error;
+    }
+    return false;
   }
-  return false;
 };
 
-export const deleteCollection = (id: string): boolean => {
-  const index = collections.findIndex(c => c.id === id);
-  if (index > -1) {
-    collections.splice(index, 1);
+export const deleteCollection = async (id: string): Promise<boolean> => {
+  try {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(id)) {
+      throw new SecureError('ID invalide', 'Invalid UUID format', 400);
+    }
+
+    const { error } = await supabase
+      .from('collections')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      throw new SecureError(
+        'Erreur lors de la suppression de la collection',
+        `Supabase error: ${error.message}`,
+        500
+      );
+    }
+    
     return true;
+  } catch (error) {
+    console.error('Error deleting collection:', error);
+    if (error instanceof SecureError) {
+      throw error;
+    }
+    return false;
   }
-  return false;
 };
 
 // Statistics with enhanced error handling
 export const getCMSStats = async (): Promise<CMSStats> => {
   try {
-    const [testimonialsResult, appointmentsResult] = await Promise.all([
+    const [testimonialsResult, appointmentsResult, galleryResult, collectionsResult] = await Promise.all([
       supabase.from('testimonials2').select('*', { count: 'exact' }),
-      supabase.from('appointments').select('status', { count: 'exact' })
+      supabase.from('appointments').select('status', { count: 'exact' }),
+      supabase.from('gallery_images').select('size', { count: 'exact' }),
+      supabase.from('collections').select('*', { count: 'exact' })
     ]);
 
     const testimonials = testimonialsResult.data || [];
     const appointments = appointmentsResult.data || [];
+    const images = galleryResult.data || [];
+    const collections = collectionsResult.data || [];
 
     return {
       totalTestimonials: testimonials.length,
@@ -600,8 +985,8 @@ export const getCMSStats = async (): Promise<CMSStats> => {
       upcomingAppointments: appointments.filter(a => 
         a.status === 'scheduled' || a.status === 'confirmed'
       ).length,
-      totalImages: galleryImages.length,
-      storageUsed: galleryImages.reduce((total, img) => total + img.size, 0)
+      totalImages: images.length,
+      storageUsed: images.reduce((total, img) => total + (img.size || 0), 0)
     };
   } catch (error) {
     console.error('Error fetching CMS stats:', error);
@@ -610,8 +995,8 @@ export const getCMSStats = async (): Promise<CMSStats> => {
       pendingTestimonials: 0,
       totalAppointments: 0,
       upcomingAppointments: 0,
-      totalImages: galleryImages.length,
-      storageUsed: galleryImages.reduce((total, img) => total + img.size, 0)
+      totalImages: 0,
+      storageUsed: 0
     };
   }
 };
