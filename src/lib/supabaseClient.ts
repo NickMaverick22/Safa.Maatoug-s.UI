@@ -21,6 +21,7 @@ export interface Database {
           status: 'pending' | 'approved' | 'rejected';
           created_at: string;
           updated_at: string;
+          user_id: string | null;
         };
         Insert: {
           id?: string;
@@ -29,6 +30,7 @@ export interface Database {
           status?: 'pending' | 'approved' | 'rejected';
           created_at?: string;
           updated_at?: string;
+          user_id?: string | null;
         };
         Update: {
           id?: string;
@@ -37,6 +39,7 @@ export interface Database {
           status?: 'pending' | 'approved' | 'rejected';
           created_at?: string;
           updated_at?: string;
+          user_id?: string | null;
         };
       };
       appointments: {

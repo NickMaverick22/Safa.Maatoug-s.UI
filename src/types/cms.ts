@@ -16,6 +16,7 @@ export interface Testimonial {
   submittedAt: Date;
   reviewedAt?: Date;
   reviewedBy?: string;
+  userId?: string | null;
 }
 
 export interface Appointment {

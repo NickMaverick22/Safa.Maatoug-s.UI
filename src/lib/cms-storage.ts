@@ -48,7 +48,8 @@ export const getTestimonials = async (): Promise<Testimonial[]> => {
       status: item.status,
       submittedAt: new Date(item.created_at),
       reviewedAt: item.updated_at ? new Date(item.updated_at) : undefined,
-      reviewedBy: '' // Not stored in database
+      reviewedBy: '', // Not stored in database
+      userId: item.user_id
     }));
   } catch (error) {
     console.error('Error fetching testimonials:', error);
@@ -229,6 +230,7 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
       name: trimmedName,
       testimonial: trimmedQuote,
       status: 'pending',
+      user_id: null,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };
