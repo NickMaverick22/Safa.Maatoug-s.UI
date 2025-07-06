@@ -80,6 +80,7 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
+        Update: {
           id?: string;
           client_name?: string;
           client_email?: string;
