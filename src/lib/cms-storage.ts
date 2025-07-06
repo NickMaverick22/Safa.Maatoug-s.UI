@@ -51,10 +51,7 @@ export const getTestimonials = async (): Promise<Testimonial[]> => {
       name: item.name,
       quote: item.testimonial,
       avatar: '', // Not stored in database
-      status: item.status,
       submittedAt: new Date(item.created_at),
-      reviewedAt: item.updated_at ? new Date(item.updated_at) : undefined,
-      reviewedBy: '', // Not stored in database
       userId: item.user_id
     }));
   } catch (error) {
@@ -100,10 +97,7 @@ export const getTestimonialById = async (id: string): Promise<Testimonial | unde
       name: data.name,
       quote: data.testimonial,
       avatar: '', // Not stored in database
-      status: data.status,
       submittedAt: new Date(data.created_at),
-      reviewedAt: data.updated_at ? new Date(data.updated_at) : undefined,
-      reviewedBy: '', // Not stored in database
       userId: data.user_id
     };
   } catch (error) {
@@ -116,48 +110,6 @@ export const getTestimonialById = async (id: string): Promise<Testimonial | unde
       `Unexpected error: ${error}`,
       500
     );
-  }
-};
-
-export const updateTestimonialStatus = async (
-  id: string, 
-  status: 'approved' | 'rejected', 
-  reviewedBy: string
-): Promise<boolean> => {
-  try {
-    // Validate inputs
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    if (!uuidRegex.test(id)) {
-      throw new SecureError('ID invalide', 'Invalid UUID format', 400);
-    }
-
-    if (!['approved', 'rejected'].includes(status)) {
-      throw new SecureError('Statut invalide', 'Invalid status value', 400);
-    }
-
-    const { error } = await supabase
-      .from('testimonials')
-      .update({
-        status,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', id);
-
-    if (error) {
-      throw new SecureError(
-        'Erreur lors de la mise à jour du statut',
-        `Supabase error: ${error.message}`,
-        500
-      );
-    }
-    
-    return true;
-  } catch (error) {
-    console.error('Error updating testimonial status:', error);
-    if (error instanceof SecureError) {
-      throw error;
-    }
-    return false;
   }
 };
 
@@ -223,54 +175,44 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
       );
     }
 
-    // Use direct fetch for anonymous submission
+    // Prepare insert data
     const insertData = {
       name: trimmedName,
       testimonial: trimmedQuote,
-      status: 'pending',
       user_id: null
     };
 
-    const data = await createAnonymousRequest('testimonials', insertData);
-    
-    if (!data || !Array.isArray(data) || data.length === 0) {
+    // Use Supabase client for insertion
+    const { data, error } = await supabase
+      .from('testimonials')
+      .insert(insertData)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Supabase insert error:', error);
       throw new SecureError(
-        'Erreur lors de la soumission',
-        'No data returned from insert',
+        'Erreur lors de l\'ajout du témoignage',
+        `Supabase error: ${error.message}`,
         500
       );
     }
 
-    const insertedRecord = data[0];
-
     return {
-      id: insertedRecord.id,
-      name: insertedRecord.name,
-      quote: insertedRecord.testimonial,
+      id: data.id,
+      name: data.name,
+      quote: data.testimonial,
       avatar: '',
-      status: insertedRecord.status,
-      submittedAt: new Date(insertedRecord.created_at),
-      reviewedAt: null,
-      reviewedBy: '',
-      userId: insertedRecord.user_id
+      submittedAt: new Date(data.created_at),
+      userId: data.user_id
     };
   } catch (error) {
     console.error('Full error adding testimonial:', error);
     if (error instanceof SecureError) {
       throw error;
     }
-    
-    // Handle specific HTTP errors
-    if (error instanceof Error && error.message.includes('HTTP 403')) {
-      throw new SecureError(
-        'Erreur de permissions. Veuillez vérifier que tous les champs sont correctement remplis.',
-        'RLS policy violation',
-        403
-      );
-    }
-    
     throw new SecureError(
-      'Erreur inattendue',
+      'Une erreur inattendue s\'est produite lors de la soumission',
       `Unexpected error: ${error}`,
       500
     );
@@ -562,7 +504,7 @@ export const addGalleryImage = (image: Omit<GalleryImage, 'id' | 'uploadedAt'>):
 export const getCMSStats = async (): Promise<CMSStats> => {
   try {
     const [testimonialsResult, appointmentsResult] = await Promise.all([
-      supabase.from('testimonials').select('status', { count: 'exact' }),
+      supabase.from('testimonials').select('*', { count: 'exact' }),
       supabase.from('appointments').select('status', { count: 'exact' })
     ]);
 
@@ -571,7 +513,7 @@ export const getCMSStats = async (): Promise<CMSStats> => {
 
     return {
       totalTestimonials: testimonials.length,
-      pendingTestimonials: testimonials.filter(t => t.status === 'pending').length,
+      pendingTestimonials: 0, // No longer using status
       totalAppointments: appointments.length,
       upcomingAppointments: appointments.filter(a => 
         a.status === 'scheduled' || a.status === 'confirmed'
