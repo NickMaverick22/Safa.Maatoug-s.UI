@@ -12,7 +12,10 @@ export interface Testimonial {
   name: string;
   quote: string;
   avatar?: string;
+  status: 'pending' | 'approved' | 'rejected';
   submittedAt: Date;
+  reviewedAt?: Date;
+  reviewedBy?: string;
   userId?: string | null;
 }
 
