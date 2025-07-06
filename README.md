@@ -57,6 +57,7 @@ A luxury bridal couture showcase website built with React, TypeScript, and Tailw
 ### Prerequisites
 - Node.js (v16 or higher)
 - npm or yarn
+- Supabase account and project
 
 ### Installation
 
@@ -71,15 +72,46 @@ cd safa-maatoug-website
 npm install
 ```
 
-3. Start the development server:
+3. Set up environment variables:
+```bash
+cp .env.example .env
+# Add your Supabase URL and anon key to .env
+```
+
+4. Apply database migrations:
+```bash
+# Run the migration file in your Supabase SQL editor
+# File: supabase/migrations/create_testimonials_final.sql
+```
+
+5. Start the development server:
 ```bash
 npm run dev
 ```
 
-4. Build for production:
+6. Build for production:
 ```bash
 npm run build
 ```
+
+## 🗄️ Database Setup
+
+The project uses Supabase as the backend database. To set up the database:
+
+1. Create a new Supabase project
+2. Copy your project URL and anon key to the `.env` file
+3. Run the migration file `supabase/migrations/create_testimonials_final.sql` in your Supabase SQL editor
+4. The migration will create:
+   - `testimonials` table with proper RLS policies
+   - `appointments` table (if not exists)
+   - Necessary functions and triggers
+
+### Database Features
+
+- **Row Level Security (RLS)**: Ensures data security
+- **Anonymous Submissions**: Allows unauthenticated users to submit testimonials
+- **Admin Approval**: All testimonials require admin approval before being public
+- **Automatic Timestamps**: Created and updated timestamps are managed automatically
 
 ## 📱 Pages Overview
 

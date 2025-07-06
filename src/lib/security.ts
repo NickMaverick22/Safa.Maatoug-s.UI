@@ -6,10 +6,12 @@ export const testimonialSchema = z.object({
   name: z.string()
     .min(2, 'Le nom doit contenir au moins 2 caractères')
     .max(100, 'Le nom ne peut pas dépasser 100 caractères')
-    .regex(/^[a-zA-ZÀ-ÿ\s\-'\.]+$/, 'Le nom contient des caractères non autorisés'),
+    .regex(/^[a-zA-ZÀ-ÿ\s\-'\.]+$/, 'Le nom contient des caractères non autorisés')
+    .transform(val => val.trim()),
   quote: z.string()
     .min(10, 'Le témoignage doit contenir au moins 10 caractères')
     .max(1000, 'Le témoignage ne peut pas dépasser 1000 caractères')
+    .transform(val => val.trim())
 });
 
 export const appointmentSchema = z.object({

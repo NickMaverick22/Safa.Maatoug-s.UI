@@ -93,23 +93,26 @@ const SubmitTestimonial = () => {
       return;
     }
 
+    if (trimmedName.length > 100) {
+      toast.error('Le nom ne peut pas dépasser 100 caractères');
+      return;
+    }
+
+    if (trimmedQuote.length > 1000) {
+      toast.error('Le témoignage ne peut pas dépasser 1000 caractères');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      console.log('Submitting testimonial with data:', {
-        name: trimmedName,
-        quote: trimmedQuote
-      });
-
       const testimonial = await addTestimonial({
         name: trimmedName,
         quote: trimmedQuote,
-        status: 'pending' // Explicitly set to pending
+        status: 'pending'
       });
 
       if (testimonial) {
-        console.log('Testimonial submitted successfully:', testimonial);
-        // Navigate to thank you page instead of showing toast
         navigate('/thank-you-testimonial');
       } else {
         throw new SecureError(
@@ -118,7 +121,6 @@ const SubmitTestimonial = () => {
         );
       }
     } catch (error) {
-      console.error('Error submitting testimonial:', error);
       if (error instanceof SecureError) {
         toast.error(error.userMessage);
       } else {

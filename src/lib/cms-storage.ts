@@ -186,13 +186,20 @@ export const deleteTestimonial = async (id: string): Promise<boolean> => {
 
 export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'submittedAt'>): Promise<Testimonial | null> => {
   try {
-    console.log('Adding testimonial with data:', testimonial);
-
     // Validate required fields
     if (!testimonial.name || !testimonial.quote) {
       throw new SecureError(
         'Le nom et le témoignage sont requis',
         'Name and testimonial are required fields',
+        400
+      );
+    }
+
+    // Additional validation to ensure we meet RLS policy requirements
+    if (!testimonial.name.trim() || !testimonial.quote.trim()) {
+      throw new SecureError(
+        'Le nom et le témoignage ne peuvent pas être vides',
+        'Empty name or testimonial after trimming',
         400
       );
     }
@@ -225,9 +232,6 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };
-
-    console.log('Insert data:', insertData);
-    console.log('Using anonymous client for submission');
 
     // Use the anonymous client for testimonial submission
     const { data, error } = await anonSupabase
@@ -272,8 +276,6 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
         500
       );
     }
-
-    console.log('Successfully inserted testimonial:', data);
 
     return {
       id: data.id,
