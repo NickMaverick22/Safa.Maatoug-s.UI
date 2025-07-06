@@ -166,102 +166,32 @@ export const deleteTestimonial = async (id: string): Promise<boolean> => {
 
 export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'submittedAt'>): Promise<Testimonial | null> => {
   try {
-    // Validate required fields
-    if (!testimonial.name || !testimonial.quote) {
+    // Validate required fields more strictly
+    if (!testimonial.name?.trim() || !testimonial.quote?.trim()) {
       throw new SecureError(
-        'Le nom et le témoignage sont requis',
-        'Name and testimonial are required fields',
+        'Tous les champs sont obligatoires',
+        'Name and testimonial must not be empty',
         400
       );
     }
 
-    // Additional validation to ensure we meet RLS policy requirements
-    if (!testimonial.name.trim() || !testimonial.quote.trim()) {
-      throw new SecureError(
-        'Le nom et le témoignage ne peuvent pas être vides',
-        'Empty name or testimonial after trimming',
-        400
-      );
-    }
-
-    // Trim and validate field lengths
-    const trimmedName = testimonial.name.trim();
-    const trimmedQuote = testimonial.quote.trim();
-
-    if (trimmedName.length < 2 || trimmedName.length > 100) {
-      throw new SecureError(
-        'Le nom doit contenir entre 2 et 100 caractères',
-        'Name length validation failed',
-        400
-      );
-    }
-
-    if (trimmedQuote.length < 10 || trimmedQuote.length > 1000) {
-      throw new SecureError(
-        'Le témoignage doit contenir entre 10 et 1000 caractères',
-        'Testimonial length validation failed',
-        400
-      );
-    }
-
-    // Prepare insert data - ensure status is 'pending' for RLS policy compliance
-    const insertData = {
-      name: trimmedName,
-      testimonial: trimmedQuote,
-      status: 'pending',
-      user_id: testimonial.userId || null, // Handle case where userId might be undefined
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    };
-
-    // Use the main supabase client for testimonial submission
-    // The RLS policy should allow anonymous inserts with status='pending'
     const { data, error } = await supabase
       .from('testimonials')
-      .insert(insertData)
-      .select()
+      .insert({
+        name: testimonial.name.trim(),
+        testimonial: testimonial.quote.trim(),
+        status: 'pending', // Explicitly set required status
+        user_id: testimonial.userId || null // Handle undefined/null cases
+      })
+      .select('*')
       .single();
 
     if (error) {
-      if (error.code === 'PGRST204') { // Schema cache error
-        // Force schema refresh by querying the table structure
-        await supabase.rpc('get_testimonials_structure');
-        // Retry the insert
-        return addTestimonial(testimonial);
-      }
-      console.error('Supabase insert error:', error);
-      
-      // Handle specific RLS policy violation
-      if (error.code === '42501' || error.message.includes('row-level security policy')) {
-        throw new SecureError(
-          'Erreur de sécurité lors de la soumission. Veuillez vérifier que tous les champs sont remplis correctement.',
-          `RLS policy violation: ${error.message}`,
-          403
-        );
-      }
-      
-      // Handle missing required fields
-      if (error.code === '23502') {
-        throw new SecureError(
-          'Données manquantes. Veuillez remplir tous les champs requis.',
-          `Missing required field: ${error.message}`,
-          400
-        );
-      }
-      
-      // Handle check constraint violations
-      if (error.code === '23514') {
-        throw new SecureError(
-          'Les données ne respectent pas les critères requis. Vérifiez la longueur de vos textes.',
-          `Check constraint violation: ${error.message}`,
-          400
-        );
-      }
-      
+      console.error('Detailed Supabase error:', error);
       throw new SecureError(
-        'Erreur lors de l\'ajout du témoignage',
-        `Supabase error: ${error.message}`,
-        500
+        'Erreur de soumission',
+        `RLS validation failed: ${error.message}`,
+        403
       );
     }
 
@@ -272,18 +202,18 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
       avatar: '', // Not stored in database
       status: data.status,
       submittedAt: new Date(data.created_at),
-      reviewedAt: data.updated_at ? new Date(data.updated_at) : undefined,
+      reviewedAt: null,
       reviewedBy: '', // Not stored in database
       userId: data.user_id
     };
   } catch (error) {
-    console.error('Error adding testimonial:', error);
+    console.error('Full error adding testimonial:', error);
     if (error instanceof SecureError) {
       throw error;
     }
     throw new SecureError(
-      'Une erreur inattendue s\'est produite lors de la soumission',
-      `Unexpected error: ${error}`,
+      'Erreur inattendue',
+      'Une erreur inattendue est survenue',
       500
     );
   }
