@@ -13,10 +13,16 @@ const CMSAppointments = () => {
     loadAppointments();
   }, []);
 
-  const loadAppointments = () => {
-    setAppointments(getAppointments().sort((a, b) => 
-      new Date(a.appointmentDate).getTime() - new Date(b.appointmentDate).getTime()
-    ));
+  const loadAppointments = async () => {
+    try {
+      const appointmentsData = await getAppointments();
+      setAppointments(appointmentsData.sort((a, b) => 
+        new Date(a.appointmentDate).getTime() - new Date(b.appointmentDate).getTime()
+      ));
+    } catch (error) {
+      console.error('Error loading appointments:', error);
+      toast.error('Erreur lors du chargement des rendez-vous');
+    }
   };
 
   const filteredAppointments = appointments.filter(a => {
@@ -24,25 +30,35 @@ const CMSAppointments = () => {
     return a.status === filter;
   });
 
-  const handleStatusUpdate = (id: string, status: Appointment['status']) => {
-    const success = updateAppointment(id, { status });
-    if (success) {
-      loadAppointments();
-      toast.success('Statut mis à jour');
-      setSelectedAppointment(null);
-    } else {
+  const handleStatusUpdate = async (id: string, status: Appointment['status']) => {
+    try {
+      const success = await updateAppointment(id, { status });
+      if (success) {
+        await loadAppointments();
+        toast.success('Statut mis à jour');
+        setSelectedAppointment(null);
+      } else {
+        toast.error('Erreur lors de la mise à jour');
+      }
+    } catch (error) {
+      console.error('Error updating appointment:', error);
       toast.error('Erreur lors de la mise à jour');
     }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer ce rendez-vous ?')) {
-      const success = deleteAppointment(id);
-      if (success) {
-        loadAppointments();
-        toast.success('Rendez-vous supprimé');
-        setSelectedAppointment(null);
-      } else {
+      try {
+        const success = await deleteAppointment(id);
+        if (success) {
+          await loadAppointments();
+          toast.success('Rendez-vous supprimé');
+          setSelectedAppointment(null);
+        } else {
+          toast.error('Erreur lors de la suppression');
+        }
+      } catch (error) {
+        console.error('Error deleting appointment:', error);
         toast.error('Erreur lors de la suppression');
       }
     }
