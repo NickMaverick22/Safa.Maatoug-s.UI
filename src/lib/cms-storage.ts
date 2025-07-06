@@ -1,28 +1,6 @@
 import { supabase } from './supabaseClient';
-import { createClient } from '@supabase/supabase-js';
 import { Testimonial, Appointment, GalleryImage, CMSStats } from '../types/cms';
 import { SecureError } from './security';
-
-// Create a dedicated anonymous client for public operations
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
-}
-
-// Create anonymous client with explicit configuration
-const anonSupabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: false,
-    autoRefreshToken: false,
-  },
-  global: {
-    headers: {
-      'Authorization': `Bearer ${supabaseAnonKey}`,
-    },
-  },
-});
 
 // Testimonials CRUD with enhanced error handling
 export const getTestimonials = async (): Promise<Testimonial[]> => {
@@ -236,8 +214,9 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
       updated_at: new Date().toISOString()
     };
 
-    // Use the anonymous client for testimonial submission
-    const { data, error } = await anonSupabase
+    // Use the main supabase client for testimonial submission
+    // The RLS policy should allow anonymous inserts with status='pending'
+    const { data, error } = await supabase
       .from('testimonials')
       .insert(insertData)
       .select()
