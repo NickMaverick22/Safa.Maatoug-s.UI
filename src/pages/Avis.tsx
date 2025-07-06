@@ -15,8 +15,9 @@ const Avis = () => {
     const loadTestimonials = async () => {
       try {
         const data = await getTestimonials();
-        // Show all testimonials
-        setTestimonials(data);
+        // Only show approved testimonials
+        const approvedTestimonials = data.filter(t => t.status === 'approved');
+        setTestimonials(approvedTestimonials);
       } catch (error) {
         console.error('Error loading testimonials:', error);
         // Fallback to mock data if Supabase fails
@@ -25,48 +26,56 @@ const Avis = () => {
             id: '1',
             name: 'L. Dupont',
             quote: 'Merci pour la robe parfaite ! Chaque détail était pensé, la qualité exceptionnelle. Je me suis sentie comme une princesse le jour J.',
+            status: 'approved',
             submittedAt: new Date('2024-06-15')
           },
           {
             id: '2',
             name: 'M. Rousseau',
             quote: 'Une expérience magique du premier essayage au jour du mariage. L\'équipe a su comprendre mes envies et créer la robe de mes rêves.',
+            status: 'approved',
             submittedAt: new Date('2024-05-20')
           },
           {
             id: '3',
             name: 'S. Martin',
             quote: 'Artisanat d\'exception, service impeccable. Ma robe était unique, comme moi. Merci pour avoir rendu mon mariage inoubliable.',
+            status: 'approved',
             submittedAt: new Date('2024-04-15')
           },
           {
             id: '4',
             name: 'A. Moreau',
             quote: 'De la première consultation aux retouches finales, tout était parfait. L\'attention aux détails et la passion se ressentent dans chaque couture.',
+            status: 'approved',
             submittedAt: new Date('2024-03-20')
           },
           {
             id: '5',
             name: 'C. Bernard',
             quote: 'Une robe qui m\'a fait vibrer dès le premier regard. L\'équipe a su transformer ma vision en réalité avec une élégance incomparable.',
+            status: 'approved',
             submittedAt: new Date('2024-02-15')
           },
           {
             id: '6',
             name: 'E. Dubois',
             quote: 'Un service personnalisé exceptionnel. Chaque détail de ma robe reflétait parfaitement ma personnalité et mes goûts.',
+            status: 'approved',
             submittedAt: new Date('2024-01-20')
           },
           {
             id: '7',
             name: 'F. Leroy',
             quote: 'L\'atelier respire la passion et le savoir-faire. Ma robe était un rêve devenu réalité, merci pour cette création unique.',
+            status: 'approved',
             submittedAt: new Date('2024-01-10')
           },
           {
             id: '8',
             name: 'G. Petit',
             quote: 'Professionnalisme et créativité au rendez-vous. Je recommande vivement pour toutes les futures mariées exigeantes.',
+            status: 'approved',
             submittedAt: new Date('2023-12-15')
           }
         ]);

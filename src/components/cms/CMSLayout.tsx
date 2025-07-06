@@ -61,7 +61,7 @@ const CMSLayout: React.FC<CMSLayoutProps> = ({ children }) => {
   const menuItems = [
     { path: '/cms', label: 'Dashboard', icon: '📊' },
     { path: '/cms/collections', label: 'Collections', icon: '👗' },
-    { path: '/cms/testimonials', label: 'Témoignages', icon: '💬' },
+    { path: '/cms/testimonials', label: 'Témoignages', icon: '💬', badge: 'pendingTestimonials' },
     { path: '/cms/appointments', label: 'Rendez-vous', icon: '📅' },
     { path: '/cms/gallery', label: 'Galerie', icon: '🖼️' },
   ];

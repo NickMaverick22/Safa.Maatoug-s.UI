@@ -88,7 +88,10 @@ export const getTestimonials = async (): Promise<Testimonial[]> => {
       name: item.name,
       quote: item.testimonial,
       avatar: '', // Not stored in database
+      status: item.status || 'pending',
       submittedAt: new Date(item.created_at),
+      reviewedAt: item.updated_at ? new Date(item.updated_at) : undefined,
+      reviewedBy: '', // Not stored in database
       userId: item.user_id
     }));
   } catch (error) {
@@ -133,8 +136,12 @@ export const getTestimonialById = async (id: string): Promise<Testimonial | unde
       id: data.id,
       name: data.name,
       quote: data.testimonial,
+      status: data.status || 'pending',
       avatar: '', // Not stored in database
+      status: data.status || 'pending',
       submittedAt: new Date(data.created_at),
+      reviewedAt: data.updated_at ? new Date(data.updated_at) : undefined,
+      reviewedBy: '', // Not stored in database
       userId: data.user_id
     };
   } catch (error) {
@@ -216,6 +223,7 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
     const insertData = {
       name: trimmedName,
       testimonial: trimmedQuote,
+      status: 'pending',
       user_id: null
     };
 
@@ -241,6 +249,8 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
       quote: data.testimonial,
       avatar: '',
       submittedAt: new Date(data.created_at),
+      reviewedAt: data.updated_at ? new Date(data.updated_at) : undefined,
+      reviewedBy: '', // Not stored in database
       userId: data.user_id
     };
   } catch (error) {
@@ -980,7 +990,7 @@ export const getCMSStats = async (): Promise<CMSStats> => {
 
     return {
       totalTestimonials: testimonials.length,
-      pendingTestimonials: 0, // No longer using status
+      pendingTestimonials: testimonials.filter(t => t.status === 'pending').length,
       totalAppointments: appointments.length,
       upcomingAppointments: appointments.filter(a => 
         a.status === 'scheduled' || a.status === 'confirmed'

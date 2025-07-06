@@ -116,7 +116,7 @@ const SubmitTestimonial = () => {
         navigate('/thank-you-testimonial');
       } else {
         throw new SecureError(
-          'Erreur lors de l\'ajout du témoignage. Veuillez réessayer.',
+          'Erreur lors de la soumission. Veuillez réessayer.',
           'Failed to create testimonial in database'
         );
       }
@@ -254,7 +254,7 @@ const SubmitTestimonial = () => {
                   </svg>
                   <div className="text-sm text-navy/70 font-sans">
                     <p className="font-medium text-navy mb-1">Note importante :</p>
-                    <p>Votre témoignage sera publié directement sur notre site. Merci de rester respectueux et authentique.</p>
+                    <p>Votre témoignage sera examiné par notre équipe avant publication. Nous nous réservons le droit de modifier ou de ne pas publier certains témoignages.</p>
                   </div>
                 </div>
               </div>

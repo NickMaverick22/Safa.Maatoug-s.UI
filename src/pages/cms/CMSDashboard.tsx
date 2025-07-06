@@ -135,7 +135,7 @@ const CMSDashboard = () => {
               <span className="text-2xl">💬</span>
               <div>
                 <h3 className="font-sans font-semibold text-navy">Gérer les témoignages</h3>
-                <p className="font-sans text-sm text-navy/60">Voir et supprimer</p>
+                <p className="font-sans text-sm text-navy/60">Approuver ou rejeter</p>
               </div>
             </a>
             

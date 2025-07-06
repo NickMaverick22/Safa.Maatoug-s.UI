@@ -99,6 +99,7 @@ export interface Database {
         id: string;
         name: string;
         testimonial: string;
+        status: 'pending' | 'approved' | 'rejected';
         created_at: string;
         updated_at: string;
         user_id: string | null;
@@ -107,6 +108,7 @@ export interface Database {
         id?: string;
         name: string;
         testimonial: string;
+        status?: 'pending' | 'approved' | 'rejected';
         created_at?: string;
         updated_at?: string;
         user_id?: string | null;
@@ -115,6 +117,7 @@ export interface Database {
         id?: string;
         name?: string;
         testimonial?: string;
+        status?: 'pending' | 'approved' | 'rejected';
         created_at?: string;
         updated_at?: string;
         user_id?: string | null;

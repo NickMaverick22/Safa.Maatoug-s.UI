@@ -54,11 +54,14 @@ const ThankYouTestimonial = () => {
               <div className="fade-slide-up space-y-6 text-lg text-navy/80 leading-relaxed">
                 <p className="font-sans">
                   Nous avons bien reçu votre précieux témoignage et nous vous en remercions du fond du cœur. 
-                  Votre témoignage est maintenant visible sur notre site et inspire d'autres futures mariées.
+                  Chaque mot que vous partagez nous inspire et nous motive à continuer d'offrir l'excellence 
+                  que vous méritez.
                 </p>
                 
                 <p className="font-sans">
-                  Merci de partager votre expérience unique avec nous et de faire confiance à notre savoir-faire.
+                  Notre équipe examinera votre témoignage avec attention et il sera publié prochainement 
+                  sur notre page d'avis, permettant à d'autres futures mariées de découvrir votre 
+                  expérience unique avec nous.
                 </p>
               </div>
             </div>
@@ -69,12 +72,12 @@ const ThankYouTestimonial = () => {
                 <svg className="w-6 h-6 text-champagne" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span className="font-sans text-navy font-medium">Votre témoignage est publié</span>
+                <span className="font-sans text-navy font-medium">Prochaines étapes</span>
               </div>
               <div className="text-sm text-navy/70 font-sans space-y-2">
-                <p>• Votre témoignage est maintenant visible sur notre site</p>
-                <p>• Il apparaît sur notre page d'avis</p>
-                <p>• Merci de partager votre expérience avec nous</p>
+                <p>• Examen de votre témoignage par notre équipe</p>
+                <p>• Publication sur notre page d'avis sous 48-72 heures</p>
+                <p>• Notification par email une fois publié</p>
               </div>
             </div>
 
