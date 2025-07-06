@@ -209,7 +209,7 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
       name: trimmedName,
       testimonial: trimmedQuote,
       status: 'pending',
-      user_id: null, // Explicitly set to null for anonymous submissions
+      user_id: testimonial.userId || null, // Handle case where userId might be undefined
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };
@@ -223,6 +223,12 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
       .single();
 
     if (error) {
+      if (error.code === 'PGRST204') { // Schema cache error
+        // Force schema refresh by querying the table structure
+        await supabase.rpc('get_testimonials_structure');
+        // Retry the insert
+        return addTestimonial(testimonial);
+      }
       console.error('Supabase insert error:', error);
       
       // Handle specific RLS policy violation
