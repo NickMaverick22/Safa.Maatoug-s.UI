@@ -20,6 +20,7 @@ import WhatsAppFloat from "./components/WhatsAppFloat";
 // CMS Pages
 import CMSLogin from "./pages/cms/CMSLogin";
 import CMSDashboard from "./pages/cms/CMSDashboard";
+import CMSCollections from "./pages/cms/CMSCollections";
 import CMSTestimonials from "./pages/cms/CMSTestimonials";
 import CMSAppointments from "./pages/cms/CMSAppointments";
 import CMSGallery from "./pages/cms/CMSGallery";
@@ -64,6 +65,7 @@ const App = () => (
               {/* CMS Routes */}
               <Route path="/cms/login" element={<CMSLogin />} />
               <Route path="/cms" element={<CMSDashboard />} />
+              <Route path="/cms/collections" element={<CMSCollections />} />
               <Route path="/cms/testimonials" element={<CMSTestimonials />} />
               <Route path="/cms/appointments" element={<CMSAppointments />} />
               <Route path="/cms/gallery" element={<CMSGallery />} />

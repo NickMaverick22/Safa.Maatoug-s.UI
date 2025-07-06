@@ -55,3 +55,23 @@ export interface CMSStats {
   totalImages: number;
   storageUsed: number;
 }
+
+export interface Collection {
+  id: string;
+  name: string;
+  description: string;
+  coverImage: string;
+  images: string[];
+  createdAt: Date;
+  updatedAt: Date;
+  isActive: boolean;
+}
+
+export interface CollectionImage {
+  id: string;
+  collectionId: string;
+  url: string;
+  alt: string;
+  order: number;
+  uploadedAt: Date;
+}

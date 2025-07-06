@@ -4,9 +4,25 @@ import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import LuxuryAnimations from '../components/LuxuryAnimations';
 import OptimizedImage from '../components/OptimizedImage';
+import { getCollections } from '../lib/cms-storage';
+import { Collection } from '../types/cms';
 
 const Index = () => {
+  const [collections, setCollections] = React.useState<Collection[]>([]);
+
   useEffect(() => {
+    // Load collections
+    const loadCollections = () => {
+      try {
+        const data = getCollections();
+        setCollections(data.slice(0, 3)); // Show first 3 collections
+      } catch (error) {
+        console.error('Error loading collections:', error);
+      }
+    };
+
+    loadCollections();
+
     // Preload critical images
     const criticalImages = [
       '/lovable-uploads/6254dd8b-8e1d-44e8-af43-adb58b41fa97.png',
@@ -130,7 +146,31 @@ const Index = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
+            {collections.length > 0 ? collections.map((collection, index) => (
+              <div 
+                key={collection.id} 
+                className="fade-slide-up gallery-card group relative overflow-hidden bg-white shadow-lg" 
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <OptimizedImage
+                  src={collection.coverImage}
+                  alt={collection.name}
+                  className="w-full h-full object-cover"
+                  aspectRatio="[3/4]"
+                  priority={index === 0}
+                />
+                <div className="overlay">
+                  <div className="overlay-content">
+                    <h3 className="font-serif text-xl text-ivory mb-2">
+                      {collection.name}
+                    </h3>
+                    <p className="font-sans text-sm text-ivory/80 uppercase tracking-wide">
+                      Découvrez
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )) : [
               {
                 image: "/lovable-uploads/88c2ef1d-431e-419a-ba66-607284097b92.png",
                 title: "Étoile Azure - Plumes et Éclats"

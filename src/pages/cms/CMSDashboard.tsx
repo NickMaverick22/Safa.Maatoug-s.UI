@@ -118,13 +118,24 @@ const CMSDashboard = () => {
           <h2 className="font-serif text-2xl text-navy mb-6">Actions rapides</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <a
+              href="/cms/collections"
+              className="flex items-center space-x-3 p-4 bg-soft-beige rounded-lg hover:bg-champagne/20 transition-colors duration-200"
+            >
+              <span className="text-2xl">👗</span>
+              <div>
+                <h3 className="font-sans font-semibold text-navy">Gérer les collections</h3>
+                <p className="font-sans text-sm text-navy/60">Créer et organiser</p>
+              </div>
+            </a>
+            
+            <a
               href="/cms/testimonials"
               className="flex items-center space-x-3 p-4 bg-soft-beige rounded-lg hover:bg-champagne/20 transition-colors duration-200"
             >
               <span className="text-2xl">💬</span>
               <div>
                 <h3 className="font-sans font-semibold text-navy">Gérer les témoignages</h3>
-                <p className="font-sans text-sm text-navy/60">Approuver ou rejeter</p>
+                <p className="font-sans text-sm text-navy/60">Voir et supprimer</p>
               </div>
             </a>
             

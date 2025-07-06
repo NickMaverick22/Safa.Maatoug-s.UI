@@ -1,5 +1,5 @@
 import { supabase } from './supabaseClient';
-import { Testimonial, Appointment, GalleryImage, CMSStats } from '../types/cms';
+import { Testimonial, Appointment, GalleryImage, CMSStats, Collection, CollectionImage } from '../types/cms';
 import { SecureError } from './security';
 
 // Simple function to create anonymous request
@@ -498,6 +498,88 @@ export const addGalleryImage = (image: Omit<GalleryImage, 'id' | 'uploadedAt'>):
   };
   galleryImages.push(newImage);
   return newImage;
+};
+
+// Collections CRUD
+let collections: Collection[] = [
+  {
+    id: '1',
+    name: 'Haute Couture 2024',
+    description: 'Notre collection exclusive de robes haute couture pour 2024, alliant tradition et modernité.',
+    coverImage: '/lovable-uploads/88c2ef1d-431e-419a-ba66-607284097b92.png',
+    images: [
+      '/lovable-uploads/88c2ef1d-431e-419a-ba66-607284097b92.png',
+      '/lovable-uploads/f231d151-f79a-45c9-99b4-aff96b6b9a6b.png',
+      '/lovable-uploads/751c5221-23b0-45db-ae85-970443bf024e.png'
+    ],
+    createdAt: new Date('2024-01-01'),
+    updatedAt: new Date('2024-01-15'),
+    isActive: true
+  },
+  {
+    id: '2',
+    name: 'Cérémonie Élégante',
+    description: 'Des créations raffinées pour vos cérémonies les plus importantes.',
+    coverImage: '/lovable-uploads/6254dd8b-8e1d-44e8-af43-adb58b41fa97.png',
+    images: [
+      '/lovable-uploads/6254dd8b-8e1d-44e8-af43-adb58b41fa97.png',
+      '/lovable-uploads/b7d5454b-f7aa-42e9-a591-a5636043dad3.png',
+      '/lovable-uploads/8630b707-80e4-4ccb-a99e-6ab29491ce9e.png'
+    ],
+    createdAt: new Date('2024-02-01'),
+    updatedAt: new Date('2024-02-10'),
+    isActive: true
+  },
+  {
+    id: '3',
+    name: 'Mariage Civil',
+    description: 'Des robes parfaites pour votre mariage civil, alliant simplicité et élégance.',
+    coverImage: '/lovable-uploads/2c7222b1-a23a-4739-8373-3dfadc9633e5.png',
+    images: [
+      '/lovable-uploads/2c7222b1-a23a-4739-8373-3dfadc9633e5.png',
+      '/lovable-uploads/4c0ac742-ef06-42c2-b9f0-b01290af4dd2.png'
+    ],
+    createdAt: new Date('2024-03-01'),
+    updatedAt: new Date('2024-03-05'),
+    isActive: true
+  }
+];
+
+export const getCollections = (): Collection[] => collections.filter(c => c.isActive);
+
+export const getAllCollections = (): Collection[] => collections;
+
+export const getCollectionById = (id: string): Collection | undefined => {
+  return collections.find(c => c.id === id);
+};
+
+export const addCollection = (collection: Omit<Collection, 'id' | 'createdAt' | 'updatedAt'>): Collection => {
+  const newCollection: Collection = {
+    ...collection,
+    id: Date.now().toString(),
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+  collections.push(newCollection);
+  return newCollection;
+};
+
+export const updateCollection = (id: string, updates: Partial<Collection>): boolean => {
+  const collection = collections.find(c => c.id === id);
+  if (collection) {
+    Object.assign(collection, { ...updates, updatedAt: new Date() });
+    return true;
+  }
+  return false;
+};
+
+export const deleteCollection = (id: string): boolean => {
+  const index = collections.findIndex(c => c.id === id);
+  if (index > -1) {
+    collections.splice(index, 1);
+    return true;
+  }
+  return false;
 };
 
 // Statistics with enhanced error handling

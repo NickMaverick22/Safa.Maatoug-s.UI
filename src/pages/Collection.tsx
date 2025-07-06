@@ -3,12 +3,30 @@ import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import LuxuryAnimations from '../components/LuxuryAnimations';
 import Lightbox from '../components/Lightbox';
+import { getCollections } from '../lib/cms-storage';
+import { Collection as CollectionType } from '../types/cms';
 
 const Collection = () => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [selectedFilter, setSelectedFilter] = useState('Toutes');
+  const [selectedCollection, setSelectedCollection] = useState<string>('all');
+  const [collections, setCollections] = useState<CollectionType[]>([]);
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    const loadCollections = () => {
+      try {
+        const data = getCollections();
+        setCollections(data);
+      } catch (error) {
+        console.error('Error loading collections:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadCollections();
+  }, []);
   const dresses = [
     {
       id: 1,
@@ -128,11 +146,43 @@ const Collection = () => {
     setCurrentImageIndex(index);
   };
 
-  const filteredDresses = selectedFilter === 'Toutes' ? dresses : 
-    dresses.filter(dress => dress.category === selectedFilter);
+  // Get images from selected collection or show all dresses if no collection selected
+  const getDisplayImages = () => {
+    if (selectedCollection === 'all') {
+      return dresses;
+    }
+    
+    const collection = collections.find(c => c.id === selectedCollection);
+    if (collection) {
+      return collection.images.map((image, index) => ({
+        id: index + 1,
+        image,
+        name: `${collection.name} - Image ${index + 1}`,
+        fabric: 'Détails disponibles sur demande',
+        colors: 'Couleurs personnalisables',
+        description: collection.description,
+        category: collection.name
+      }));
+    }
+    
+    return dresses;
+  };
 
-  const filters = ['Toutes', 'Mariage Civil', 'Cérémonie', 'Haute Couture'];
+  const displayImages = getDisplayImages();
 
+  if (loading) {
+    return (
+      <div className="min-h-screen">
+        <Navigation />
+        <div className="flex items-center justify-center h-64 pt-32">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-champagne mx-auto mb-4"></div>
+            <p className="font-sans text-navy/70">Chargement des collections...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <>
       <Navigation />
@@ -157,19 +207,33 @@ const Collection = () => {
         <section className="sticky top-20 z-30 bg-ivory/95 backdrop-blur-sm border-b border-champagne/20 py-4">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-center space-x-8">
-              {filters.map((filter) => (
+              <button
+                onClick={() => setSelectedCollection('all')}
+                className={`font-sans font-medium text-sm tracking-[1.2px] uppercase transition-all duration-300 relative ${
+                  selectedCollection === 'all' 
+                    ? 'text-champagne' 
+                    : 'text-navy hover:text-champagne'
+                }`}
+              >
+                Toutes les créations
+                <span className={`absolute bottom-0 left-0 h-0.5 bg-gold transition-all duration-300 ${
+                  selectedCollection === 'all' ? 'w-full' : 'w-0'
+                }`}></span>
+              </button>
+              
+              {collections.map((collection) => (
                 <button
-                  key={filter}
-                  onClick={() => setSelectedFilter(filter)}
+                  key={collection.id}
+                  onClick={() => setSelectedCollection(collection.id)}
                   className={`font-sans font-medium text-sm tracking-[1.2px] uppercase transition-all duration-300 relative ${
-                    selectedFilter === filter 
+                    selectedCollection === collection.id 
                       ? 'text-champagne' 
                       : 'text-navy hover:text-champagne'
                   }`}
                 >
-                  {filter}
+                  {collection.name}
                   <span className={`absolute bottom-0 left-0 h-0.5 bg-gold transition-all duration-300 ${
-                    selectedFilter === filter ? 'w-full' : 'w-0'
+                    selectedCollection === collection.id ? 'w-full' : 'w-0'
                   }`}></span>
                 </button>
               ))}
@@ -181,7 +245,7 @@ const Collection = () => {
         <section className="py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredDresses.map((dress, index) => (
+              {displayImages.map((dress, index) => (
                 <div
                   key={dress.id}
                   className="gallery-card fade-slide-up cursor-pointer"
@@ -234,7 +298,7 @@ const Collection = () => {
       <Footer />
 
       <Lightbox
-        images={filteredDresses}
+        images={displayImages}
         isOpen={lightboxOpen}
         currentIndex={currentImageIndex}
         onClose={closeLightbox}
