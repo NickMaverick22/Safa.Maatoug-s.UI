@@ -1,6 +1,24 @@
 import { supabase } from './supabaseClient';
+import { createClient } from '@supabase/supabase-js';
 import { Testimonial, Appointment, GalleryImage, CMSStats } from '../types/cms';
 import { SecureError } from './security';
+
+// Create a dedicated anonymous client for public operations
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Missing Supabase environment variables');
+}
+
+// Dedicated anonymous client (for unauthenticated submissions)
+const anonSupabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: false, // Don't store any session
+    autoRefreshToken: false, // No token refresh
+    detectSessionInUrl: false // Don't try to detect sessions
+  }
+});
 
 // Testimonials CRUD with enhanced error handling
 export const getTestimonials = async (): Promise<Testimonial[]> => {
@@ -166,7 +184,7 @@ export const deleteTestimonial = async (id: string): Promise<boolean> => {
 
 export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'submittedAt'>): Promise<Testimonial | null> => {
   try {
-    // Validate required fields more strictly
+    // Validate required fields
     if (!testimonial.name?.trim() || !testimonial.quote?.trim()) {
       throw new SecureError(
         'Tous les champs sont obligatoires',
@@ -175,13 +193,14 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
       );
     }
 
-    const { data, error } = await supabase
+    // Use the anonymous client for submission
+    const { data, error } = await anonSupabase
       .from('testimonials')
       .insert({
         name: testimonial.name.trim(),
         testimonial: testimonial.quote.trim(),
-        status: 'pending', // Explicitly set required status
-        user_id: testimonial.userId || null // Handle undefined/null cases
+        status: 'pending', // Explicit default status
+        user_id: null // Explicitly null for anonymous submissions
       })
       .select('*')
       .single();
@@ -199,11 +218,11 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
       id: data.id,
       name: data.name,
       quote: data.testimonial,
-      avatar: '', // Not stored in database
+      avatar: '',
       status: data.status,
       submittedAt: new Date(data.created_at),
       reviewedAt: null,
-      reviewedBy: '', // Not stored in database
+      reviewedBy: '',
       userId: data.user_id
     };
   } catch (error) {
