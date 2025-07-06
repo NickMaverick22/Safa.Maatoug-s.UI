@@ -19,4 +19,34 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  optimizeDeps: {
+    include: [
+      '@supabase/supabase-js',
+      'react',
+      'react-dom',
+      'react-router-dom',
+      'zod',
+      'date-fns'
+    ],
+    exclude: ['@vite/client', '@vite/env']
+  },
+  build: {
+    target: 'esnext',
+    minify: 'esbuild',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          supabase: ['@supabase/supabase-js'],
+          router: ['react-router-dom']
+        }
+      }
+    }
+  },
+  define: {
+    global: 'globalThis',
+  },
+  esbuild: {
+    target: 'esnext'
+  }
 }));

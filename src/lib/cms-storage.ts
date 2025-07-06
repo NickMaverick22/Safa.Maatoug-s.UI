@@ -1,24 +1,34 @@
 import { supabase } from './supabaseClient';
-import { createClient } from '@supabase/supabase-js';
 import { Testimonial, Appointment, GalleryImage, CMSStats } from '../types/cms';
 import { SecureError } from './security';
 
-// Create a dedicated anonymous client for public operations
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
-}
-
-// Dedicated anonymous client (for unauthenticated submissions)
-const anonSupabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: false, // Don't store any session
-    autoRefreshToken: false, // No token refresh
-    detectSessionInUrl: false // Don't try to detect sessions
+// Simple function to create anonymous request
+const createAnonymousRequest = async (tableName: string, data: any) => {
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+  
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error('Missing Supabase environment variables');
   }
-});
+
+  const response = await fetch(`${supabaseUrl}/rest/v1/${tableName}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': supabaseAnonKey,
+      'Authorization': `Bearer ${supabaseAnonKey}`,
+      'Prefer': 'return=representation'
+    },
+    body: JSON.stringify(data)
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`HTTP ${response.status}: ${errorText}`);
+  }
+
+  return response.json();
+};
 
 // Testimonials CRUD with enhanced error handling
 export const getTestimonials = async (): Promise<Testimonial[]> => {
@@ -193,46 +203,75 @@ export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'subm
       );
     }
 
-    // Use the anonymous client for submission
-    const { data, error } = await anonSupabase
-      .from('testimonials')
-      .insert({
-        name: testimonial.name.trim(),
-        testimonial: testimonial.quote.trim(),
-        status: 'pending', // Explicit default status
-        user_id: null // Explicitly null for anonymous submissions
-      })
-      .select('*')
-      .single();
+    // Validate field lengths
+    const trimmedName = testimonial.name.trim();
+    const trimmedQuote = testimonial.quote.trim();
 
-    if (error) {
-      console.error('Detailed Supabase error:', error);
+    if (trimmedName.length < 2 || trimmedName.length > 100) {
       throw new SecureError(
-        'Erreur de soumission',
-        `RLS validation failed: ${error.message}`,
-        403
+        'Le nom doit contenir entre 2 et 100 caractères',
+        'Name length validation failed',
+        400
       );
     }
 
+    if (trimmedQuote.length < 10 || trimmedQuote.length > 1000) {
+      throw new SecureError(
+        'Le témoignage doit contenir entre 10 et 1000 caractères',
+        'Testimonial length validation failed',
+        400
+      );
+    }
+
+    // Use direct fetch for anonymous submission
+    const insertData = {
+      name: trimmedName,
+      testimonial: trimmedQuote,
+      status: 'pending',
+      user_id: null
+    };
+
+    const data = await createAnonymousRequest('testimonials', insertData);
+    
+    if (!data || !Array.isArray(data) || data.length === 0) {
+      throw new SecureError(
+        'Erreur lors de la soumission',
+        'No data returned from insert',
+        500
+      );
+    }
+
+    const insertedRecord = data[0];
+
     return {
-      id: data.id,
-      name: data.name,
-      quote: data.testimonial,
+      id: insertedRecord.id,
+      name: insertedRecord.name,
+      quote: insertedRecord.testimonial,
       avatar: '',
-      status: data.status,
-      submittedAt: new Date(data.created_at),
+      status: insertedRecord.status,
+      submittedAt: new Date(insertedRecord.created_at),
       reviewedAt: null,
       reviewedBy: '',
-      userId: data.user_id
+      userId: insertedRecord.user_id
     };
   } catch (error) {
     console.error('Full error adding testimonial:', error);
     if (error instanceof SecureError) {
       throw error;
     }
+    
+    // Handle specific HTTP errors
+    if (error instanceof Error && error.message.includes('HTTP 403')) {
+      throw new SecureError(
+        'Erreur de permissions. Veuillez vérifier que tous les champs sont correctement remplis.',
+        'RLS policy violation',
+        403
+      );
+    }
+    
     throw new SecureError(
       'Erreur inattendue',
-      'Une erreur inattendue est survenue',
+      `Unexpected error: ${error}`,
       500
     );
   }
