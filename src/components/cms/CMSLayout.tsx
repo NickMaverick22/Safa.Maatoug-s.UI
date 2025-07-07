@@ -84,6 +84,12 @@ const CMSLayout: React.FC<CMSLayoutProps> = ({ children }) => {
             </div>
             
             <div className="flex items-center space-x-4">
+              <Link 
+                to="/" 
+                className="bg-soft-beige text-navy px-4 py-2 rounded-lg font-sans text-sm font-medium hover:bg-champagne transition-colors duration-200"
+              >
+                ← Retour au site
+              </Link>
               <span className="font-sans text-sm text-navy/70">Bonjour, {user.name}</span>
               <button
                 onClick={handleLogout}

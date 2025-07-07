@@ -59,36 +59,23 @@ const Navigation = () => {
 
             {/* Desktop Navigation */}
             <div className="hidden md:block">
-              <div className="ml-10 flex items-baseline justify-between w-full">
-                <div className="flex items-baseline space-x-8">
-                  {navItems.filter(item => item.label !== '').map((item) => (
-                    <Link
-                      key={item.href}
-                      to={item.href}
-                      onClick={handleLinkClick}
-                      className={`nav-link font-sans font-medium text-sm tracking-[1.2px] uppercase transition-all duration-300 ${
-                        location.pathname === item.href ? 'text-champagne' : 'text-navy hover:text-champagne'
-                      }`}
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
-                </div>
-                
-                {/* Admin Icon - positioned to the right */}
-                {navItems.filter(item => item.label === '').map((item) => (
+              <div className="ml-10 flex items-baseline space-x-8">
+                {navItems.map((item) => (
                   <Link
                     key={item.href}
                     to={item.href}
                     onClick={handleLinkClick}
-                    className={`nav-link font-sans font-medium text-sm tracking-[1.2px] uppercase transition-all duration-300 flex items-center ml-8 ${
+                    className={`nav-link font-sans font-medium text-sm tracking-[1.2px] uppercase transition-all duration-300 flex items-center gap-2 ${
                       location.pathname === item.href ? 'text-champagne' : 'text-navy hover:text-champagne'
                     }`}
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
+                    {item.icon && (
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                    )}
+                    {item.label}
                   </Link>
                 ))}
               </div>

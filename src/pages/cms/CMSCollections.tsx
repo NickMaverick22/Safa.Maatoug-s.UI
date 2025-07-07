@@ -278,13 +278,18 @@ const CMSCollections = () => {
                       className="flex-1 px-4 py-3 border border-champagne/30 rounded-lg focus:ring-2 focus:ring-champagne focus:border-transparent font-sans"
                       placeholder="https://..."
                     />
-                    <button
-                      type="button"
-                      onClick={() => setShowImageSelector(true)}
-                      className="bg-champagne text-navy px-4 py-3 rounded-lg font-sans text-sm hover:bg-gold transition-colors duration-200"
-                    >
-                      Choisir
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setShowImageSelector(true)}
+                        className="bg-champagne text-navy px-4 py-3 rounded-lg font-sans text-sm hover:bg-gold transition-colors duration-200 flex items-center gap-1"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        Galerie
+                      </button>
+                    </div>
                   </div>
                   {formData.coverImage && (
                     <img
@@ -315,13 +320,18 @@ const CMSCollections = () => {
                   <label className="block font-sans text-sm font-medium text-navy">
                     Images de la collection ({formData.images.length})
                   </label>
-                  <button
-                    type="button"
-                    onClick={() => setShowImageSelector(true)}
-                    className="bg-champagne text-navy px-4 py-2 rounded-lg font-sans text-sm hover:bg-gold transition-colors duration-200"
-                  >
-                    Ajouter une image
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowImageSelector(true)}
+                      className="bg-champagne text-navy px-4 py-2 rounded-lg font-sans text-sm hover:bg-gold transition-colors duration-200 flex items-center gap-1"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      </svg>
+                      Ajouter de la galerie
+                    </button>
+                  </div>
                 </div>
                 
                 <div className="grid grid-cols-3 gap-4">
