@@ -35,7 +35,7 @@ export const appointmentSchema = z.object({
 export const getCSPHeader = (): string => {
   return [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' https://cdn.gpteng.co",
+    "script-src 'self' 'unsafe-inline' data: https://cdn.gpteng.co",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: https: blob:",
