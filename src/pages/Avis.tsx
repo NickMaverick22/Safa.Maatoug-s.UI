@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import LuxuryAnimations from '../components/LuxuryAnimations';
-import { getTestimonials } from '../lib/cms-storage';
+import { supabase } from '../lib/supabaseClient';
 import { Testimonial } from '../types/cms';
 
 const Avis = () => {
@@ -14,9 +14,30 @@ const Avis = () => {
   useEffect(() => {
     const loadTestimonials = async () => {
       try {
-        const data = await getTestimonials();
+        // Load testimonials from Supabase
+        const { data, error } = await supabase
+          .from('testimonials2')
+          .select('*')
+          .eq('status', 'approved')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.error('Error loading testimonials:', error);
+          throw error;
+        }
+
         // Only show approved testimonials
-        const approvedTestimonials = data.filter(t => t.status === 'approved');
+        const approvedTestimonials = data.map(item => ({
+          id: item.id,
+          name: item.name,
+          quote: item.testimonial,
+          status: item.status,
+          submittedAt: new Date(item.created_at),
+          reviewedAt: item.updated_at ? new Date(item.updated_at) : undefined,
+          reviewedBy: '',
+          userId: item.user_id
+        }));
+        
         setTestimonials(approvedTestimonials);
       } catch (error) {
         console.error('Error loading testimonials:', error);
