@@ -128,3 +128,5 @@ const CMSLayout: React.FC<CMSLayoutProps> = ({ children }) => {
 };
 
 export default CMSLayout;
+  )
+}
