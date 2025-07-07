@@ -94,8 +94,6 @@ const CMSLayout: React.FC<CMSLayoutProps> = ({ children }) => {
             </div>
           </div>
         </div>
-          </div>
-        </div>
       </header>
 
       <div className="flex">
