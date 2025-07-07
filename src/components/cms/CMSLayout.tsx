@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { getCurrentUser, logout } from '../../lib/auth';
 import { User } from '../../types/cms';
+import { LayoutDashboard, Shirt, MessageSquare, Calendar, Image } from 'lucide-react';
 
 interface CMSLayoutProps {
   children: React.ReactNode;
@@ -59,17 +60,17 @@ const CMSLayout: React.FC<CMSLayoutProps> = ({ children }) => {
   }
 
   const menuItems = [
-    { path: '/cms', label: 'Dashboard', icon: '📊' },
-    { path: '/cms/collections', label: 'Collections', icon: '👗' },
-    { path: '/cms/testimonials', label: 'Témoignages', icon: '💬', badge: 'pendingTestimonials' },
-    { path: '/cms/appointments', label: 'Rendez-vous', icon: '📅' },
-    { path: '/cms/gallery', label: 'Galerie', icon: '🖼️' },
+    { path: '/cms', label: 'Dashboard', icon: <LayoutDashboard className="h-5 w-5" /> },
+    { path: '/cms/collections', label: 'Collections', icon: <Shirt className="h-5 w-5" /> },
+    { path: '/cms/testimonials', label: 'Témoignages', icon: <MessageSquare className="h-5 w-5" />, badge: 'pendingTestimonials' },
+    { path: '/cms/appointments', label: 'Rendez-vous', icon: <Calendar className="h-5 w-5" /> },
+    { path: '/cms/gallery', label: 'Galerie', icon: <Image className="h-5 w-5" /> },
   ];
 
   return (
     <div className="min-h-screen bg-soft-beige">
       {/* Header */}
-      <header className="bg-navy text-ivory shadow-lg">
+      <header className="bg-ivory text-navy shadow-lg border-b border-champagne/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
@@ -80,11 +81,10 @@ const CMSLayout: React.FC<CMSLayoutProps> = ({ children }) => {
                   className="h-8 w-auto"
                 />
               </Link>
-              <span className="text-champagne font-serif text-lg">CMS</span>
             </div>
             
             <div className="flex items-center space-x-4">
-              <span className="font-sans text-sm">Bonjour, {user.name}</span>
+              <span className="font-sans text-sm text-navy/70">Bonjour, {user.name}</span>
               <button
                 onClick={handleLogout}
                 className="bg-champagne text-navy px-4 py-2 rounded-lg font-sans text-sm font-medium hover:bg-gold transition-colors duration-200"
@@ -98,7 +98,7 @@ const CMSLayout: React.FC<CMSLayoutProps> = ({ children }) => {
 
       <div className="flex">
         {/* Sidebar */}
-        <aside className="w-64 bg-ivory shadow-lg min-h-screen">
+        <aside className="w-64 bg-ivory shadow-lg min-h-screen border-r border-champagne/20">
           <nav className="mt-8">
             <div className="px-4 space-y-2">
               {menuItems.map((item) => (
@@ -107,11 +107,11 @@ const CMSLayout: React.FC<CMSLayoutProps> = ({ children }) => {
                   to={item.path}
                   className={`flex items-center space-x-3 px-4 py-3 rounded-lg font-sans text-sm transition-colors duration-200 ${
                     location.pathname === item.path
-                      ? 'bg-champagne text-navy font-medium'
-                      : 'text-navy hover:bg-soft-beige'
+                      ? 'bg-champagne text-navy font-medium shadow-sm'
+                      : 'text-navy hover:bg-soft-beige hover:text-champagne'
                   }`}
                 >
-                  <span className="text-lg">{item.icon}</span>
+                  <span className="text-champagne">{item.icon}</span>
                   <span>{item.label}</span>
                 </Link>
               ))}
@@ -120,8 +120,10 @@ const CMSLayout: React.FC<CMSLayoutProps> = ({ children }) => {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-8">
-          {children}
+        <main className="flex-1 p-8 bg-soft-beige min-h-screen">
+          <div className="max-w-7xl mx-auto">
+            {children}
+          </div>
         </main>
       </div>
     </div>
