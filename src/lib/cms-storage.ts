@@ -188,6 +188,40 @@ export const deleteTestimonial = async (id: string): Promise<boolean> => {
   }
 };
 
+export const updateTestimonialStatus = async (id: string, status: 'approved' | 'rejected', reviewedBy: string): Promise<boolean> => {
+  try {
+    // Validate UUID format
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(id)) {
+      throw new SecureError('ID invalide', 'Invalid UUID format', 400);
+    }
+
+    const { error } = await supabase
+      .from('testimonials2')
+      .update({
+        status: status,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id);
+
+    if (error) {
+      throw new SecureError(
+        'Erreur lors de la mise à jour du statut',
+        `Supabase error: ${error.message}`,
+        500
+      );
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Error updating testimonial status:', error);
+    if (error instanceof SecureError) {
+      throw error;
+    }
+    return false;
+  }
+};
+
 export const addTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'submittedAt'>): Promise<Testimonial | null> => {
   try {
     // Validate required fields
