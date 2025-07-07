@@ -91,7 +91,6 @@ const CMSLayout: React.FC<CMSLayoutProps> = ({ children }) => {
               >
                 Déconnexion
               </button>
-            </div>
           </div>
         </div>
       </header>
