@@ -87,10 +87,10 @@ const CMSLogin = () => {
 
           {/* Demo Credentials */}
           <div className="mt-8 p-4 bg-soft-beige rounded-lg">
-            <p className="font-sans text-xs text-navy/60 text-center mb-2">Pour accéder au CMS:</p>
+            <p className="font-sans text-xs text-navy/60 text-center mb-2">Comptes administrateurs autorisés:</p>
             <p className="font-sans text-xs text-navy/80 text-center">
-              Vous devez créer un utilisateur dans votre projet Supabase<br />
-              avec l'email: admin@safamaatoug.com
+              • salim@admin.com<br />
+              • salimsoussi@mvrk22.com
             </p>
           </div>
         </div>

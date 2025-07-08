@@ -91,3 +91,20 @@ export const hashPassword = async (password: string): Promise<string> => {
   // This is no longer needed with Supabase as it handles password hashing
   return '';
 };
+
+// Legacy function for backward compatibility - not used with Supabase
+export const isValidEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email) && email.length <= 255 && !email.includes('<') && !email.includes('>');
+};
+
+// Admin email list for authorization
+export const ADMIN_EMAILS = [
+  'salim@admin.com',
+  'salimsoussi@mvrk22.com'
+];
+
+// Check if user is admin based on email
+export const isAdminUser = (email: string): boolean => {
+  return ADMIN_EMAILS.includes(email);
+};
